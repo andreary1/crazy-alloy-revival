@@ -3,6 +3,7 @@ package com.crazyalloy.revival.registry;
 import com.crazyalloy.revival.CrazyAlloyRevival;
 import com.crazyalloy.revival.recipe.ChocolateFactoryRecipe;
 import com.crazyalloy.revival.recipe.IceCreamMachineRecipe;
+import com.crazyalloy.revival.recipe.MineralConverterRecipe;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeBookCategory;
@@ -27,6 +28,13 @@ public final class ModRecipes {
     public static final Supplier<RecipeSerializer<IceCreamMachineRecipe>> ICE_CREAM_MACHINE_SERIALIZER = RECIPE_SERIALIZERS.register("ice_cream_machine",
             () -> new RecipeSerializer<>(IceCreamMachineRecipe.CODEC, IceCreamMachineRecipe.STREAM_CODEC));
     public static final Supplier<RecipeBookCategory> ICE_CREAM_MACHINE_CATEGORY = RECIPE_BOOK_CATEGORIES.register("ice_cream_machine",
+            RecipeBookCategory::new);
+
+    public static final Supplier<RecipeType<MineralConverterRecipe>> MINERAL_CONVERTER_TYPE = RECIPE_TYPES.register("mineral_converter",
+            () -> RecipeType.simple(CrazyAlloyRevival.id("mineral_converter")));
+    public static final Supplier<RecipeSerializer<MineralConverterRecipe>> MINERAL_CONVERTER_SERIALIZER = RECIPE_SERIALIZERS.register("mineral_converter",
+            () -> new RecipeSerializer<>(MineralConverterRecipe.CODEC, MineralConverterRecipe.STREAM_CODEC));
+    public static final Supplier<RecipeBookCategory> MINERAL_CONVERTER_CATEGORY = RECIPE_BOOK_CATEGORIES.register("mineral_converter",
             RecipeBookCategory::new);
 
     private ModRecipes() {}

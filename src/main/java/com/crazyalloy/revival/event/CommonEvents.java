@@ -71,6 +71,8 @@ public final class CommonEvents {
         event.put(ModEntities.ICE_CREAM_GARGOYLE.get(), com.crazyalloy.revival.entity.IceCreamGargoyle.createAttributes().build());
         event.put(ModEntities.ANGRY_ICE_CREAM_CONE.get(), com.crazyalloy.revival.entity.AngryIceCreamCone.createAttributes().build());
         event.put(ModEntities.ICE_CREAM_DRAGON.get(), com.crazyalloy.revival.entity.IceCreamDragon.createAttributes().build());
+        event.put(ModEntities.GUARD_DINOSAUR.get(), com.crazyalloy.revival.entity.GuardDinosaur.createAttributes().build());
+        event.put(ModEntities.SEGWAY.get(), com.crazyalloy.revival.entity.Segway.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -96,6 +98,8 @@ public final class CommonEvents {
         ground(event, ModEntities.ICE_CREAM_BEAST.get(), com.crazyalloy.revival.entity.IceCreamBeast::checkSpawnRules);
         ground(event, ModEntities.ICE_CREAM_GARGOYLE.get(), com.crazyalloy.revival.entity.IceCreamGargoyle::checkSpawnRules);
         ground(event, ModEntities.ANGRY_ICE_CREAM_CONE.get(), com.crazyalloy.revival.entity.AngryIceCreamCone::checkSpawnRules);
+        ground(event, ModEntities.GUARD_DINOSAUR.get(), com.crazyalloy.revival.entity.GuardDinosaur::checkSpawnRules);
+        ground(event, ModEntities.SEGWAY.get(), com.crazyalloy.revival.entity.GuardDinosaur::checkSpawnRules);
         event.register(ModEntities.JELLY_SHARK.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 JellyShark::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
@@ -108,6 +112,8 @@ public final class CommonEvents {
     static void onCapabilities(RegisterCapabilitiesEvent event) {
         // Hoppers and pipes: top = ingredients, sides = fuel, bottom = output.
         event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.CHOCOLATE_FACTORY.get(), WorldlyContainerWrapper::new);
+        // Mineral Converter: materials in from the top and sides, Money and Coins out from below.
+        event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.MINERAL_CONVERTER.get(), WorldlyContainerWrapper::new);
     }
 
     /** Applies the configured difficulty multipliers to Crazy Alloy creatures when they spawn. */

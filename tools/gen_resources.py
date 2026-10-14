@@ -574,6 +574,9 @@ def gen_lang():
     import lang_stage6  # tools/lang_stage6.py: stage 6 keys (Ice Cream Dimension, its creatures and the Ice Cream Dragon)
     EN = EN | lang_stage6.EN
     PT = PT | lang_stage6.PT
+    import lang_stage7  # tools/lang_stage7.py: stage 7 keys (Overworld tab: Bank, guards, money, Mineral Converter)
+    EN = EN | lang_stage7.EN
+    PT = PT | lang_stage7.PT
     for code, data in [("en_us", EN), ("pt_br", PT)]:
         missing = set(EN) - set(data)
         if missing:
@@ -596,5 +599,7 @@ if __name__ == "__main__":
     gen_stage5.generate()
     import gen_stage6  # tools/gen_stage6.py: Ice Cream Dimension, portal, Ice Cream Nest and Ice Cream Dragon
     gen_stage6.generate()
+    import gen_stage7  # tools/gen_stage7.py: the Bank, Guard Dinosaur, Segway, money, AK47 and Mineral Converter
+    gen_stage7.generate()
     gen_lang()
     print("resources generated")

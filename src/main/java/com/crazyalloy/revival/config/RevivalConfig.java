@@ -25,6 +25,8 @@ public final class RevivalConfig {
     public static final ModConfigSpec.BooleanValue ICE_CREAM_PORTAL_ENABLED;
     public static final ModConfigSpec.EnumValue<StructureFrequency> ICE_CREAM_NEST_FREQUENCY;
     public static final ModConfigSpec.IntValue ICE_CREAM_PINNACLES;
+    public static final ModConfigSpec.EnumValue<StructureFrequency> BANK_FREQUENCY;
+    public static final ModConfigSpec.BooleanValue BANK_GUARDS;
 
     // Creature spawning
     public static final ModConfigSpec.DoubleValue CANDY_TUBE_DOG_SPAWN_CHANCE;
@@ -62,11 +64,15 @@ public final class RevivalConfig {
     public static final ModConfigSpec.IntValue ICE_CREAM_DRAGON_HEALTH;
     public static final ModConfigSpec.IntValue ICE_CREAM_DRAGON_FIREBALL_POWER;
     public static final ModConfigSpec.IntValue ICE_CREAM_DRAGON_MAX_CONES;
+    public static final ModConfigSpec.BooleanValue GUARD_DINOSAUR_ALERT;
+    public static final ModConfigSpec.IntValue GUARD_DINOSAUR_ALERT_RADIUS;
+    public static final ModConfigSpec.DoubleValue AK47_BULLET_DAMAGE;
 
     // Machines
     public static final ModConfigSpec.DoubleValue CHOCOLATE_FACTORY_SPEED;
     public static final ModConfigSpec.DoubleValue ICE_CREAM_MACHINE_SPEED;
     public static final ModConfigSpec.IntValue ICE_CREAM_MACHINE_SERVINGS_PER_BUCKET;
+    public static final ModConfigSpec.BooleanValue MINERAL_CONVERTER_ENABLED;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -141,6 +147,15 @@ public final class RevivalConfig {
                 .comment("Attempts per chunk to grow a three-flavour ice cream pinnacle in the Ice Cream Plains (each attempt succeeds about one time in three). 0 disables them.")
                 .translation("crazyalloy_revival.configuration.iceCreamPinnacles")
                 .defineInRange("iceCreamPinnacles", 1, 0, 8);
+        BANK_FREQUENCY = b
+                .comment("How often Banks appear in Plains. DISABLED removes them from new chunks.")
+                .translation("crazyalloy_revival.configuration.bankFrequency")
+                .worldRestart()
+                .defineEnum("bankFrequency", StructureFrequency.NORMAL);
+        BANK_GUARDS = b
+                .comment("Each newly generated Bank has Guard Dinosaurs and a Segway placed in its security rooms (the spawners are separate and always generate). If false, guards placed by banks vanish when first loaded.")
+                .translation("crazyalloy_revival.configuration.bankGuards")
+                .define("bankGuards", true);
         b.pop();
 
         b.comment("Creature spawning. Each value is the chance (0 to 1) that a natural spawn attempt is allowed.").translation("crazyalloy_revival.configuration.spawns").push("spawns");
@@ -261,6 +276,18 @@ public final class RevivalConfig {
                 .comment("The Ice Cream Dragon stops calling Angry Ice Cream Cones while this many are within 16 blocks. 0 disables the summon.")
                 .translation("crazyalloy_revival.configuration.iceCreamDragonMaxCones")
                 .defineInRange("iceCreamDragonMaxCones", 4, 0, 12);
+        GUARD_DINOSAUR_ALERT = b
+                .comment("Revival proposal: a Guard Dinosaur that spots a player first stops, raises the alarm (with a roar) and calls the other guards nearby, then attacks. If false it attacks straight away, like the original.")
+                .translation("crazyalloy_revival.configuration.guardDinosaurAlert")
+                .define("guardDinosaurAlert", true);
+        GUARD_DINOSAUR_ALERT_RADIUS = b
+                .comment("How far (in blocks) the alarm of a Guard Dinosaur reaches other Guard Dinosaurs and Segways.")
+                .translation("crazyalloy_revival.configuration.guardDinosaurAlertRadius")
+                .defineInRange("guardDinosaurAlertRadius", 16, 0, 48);
+        AK47_BULLET_DAMAGE = b
+                .comment("Damage of each AK47 bullet.")
+                .translation("crazyalloy_revival.configuration.ak47BulletDamage")
+                .defineInRange("ak47BulletDamage", 4.0, 0.5, 20.0);
         b.pop();
 
         b.translation("crazyalloy_revival.configuration.machines").push("machines");
@@ -276,6 +303,10 @@ public final class RevivalConfig {
                 .comment("Ice creams the Ice Cream Machine makes from one Milk Bucket.")
                 .translation("crazyalloy_revival.configuration.iceCreamMachineServingsPerBucket")
                 .defineInRange("iceCreamMachineServingsPerBucket", 4, 1, 16);
+        MINERAL_CONVERTER_ENABLED = b
+                .comment("The Mineral Converter turns ingots and gems into Money and Coins. If false its Convert button does nothing.")
+                .translation("crazyalloy_revival.configuration.mineralConverterEnabled")
+                .define("mineralConverterEnabled", true);
         b.pop();
 
         SPEC = b.build();

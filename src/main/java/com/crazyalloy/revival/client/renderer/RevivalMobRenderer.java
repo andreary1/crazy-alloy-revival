@@ -54,6 +54,7 @@ public class RevivalMobRenderer<T extends Mob, M extends EntityModel<RevivalRend
             state.actionA.copyFrom(animated.actionA());
             state.actionB.copyFrom(animated.actionB());
             state.stance = animated.stance(partialTick);
+            state.roll = animated.roll(partialTick);
         }
     }
 

@@ -8,3 +8,4 @@ python3 tools/gen_structure.py
 python3 tools/gen_tower.py
 python3 tools/gen_stage4_structures.py
 python3 tools/gen_stage6_structures.py
+python3 tools/gen_stage7_structures.py

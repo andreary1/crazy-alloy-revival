@@ -56,6 +56,13 @@ public final class ModSounds {
     public static final MobSounds ICE_CREAM_DRAGON = mob("ice_cream_dragon");
     public static final DeferredHolder<SoundEvent, SoundEvent> ICE_CREAM_DRAGON_ROAR = register("entity.ice_cream_dragon.roar");
 
+    // Stage 7: the Bank (provisional re-pitched vanilla sounds).
+    public static final MobSounds GUARD_DINOSAUR = mob("guard_dinosaur");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUARD_DINOSAUR_ALERT = register("entity.guard_dinosaur.alert");
+    public static final MobSounds SEGWAY = mob("segway");
+    public static final DeferredHolder<SoundEvent, SoundEvent> AK47_SHOOT = register("item.ak47.shoot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MINERAL_CONVERTER_CONVERT = register("block.mineral_converter.convert");
+
     public record MobSounds(DeferredHolder<SoundEvent, SoundEvent> ambient, DeferredHolder<SoundEvent, SoundEvent> hurt,
                             DeferredHolder<SoundEvent, SoundEvent> death) {}
 

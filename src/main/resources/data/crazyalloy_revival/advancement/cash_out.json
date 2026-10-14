@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "id": "crazyalloy_revival:coin",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancements.crazyalloy_revival.cash_out.title"
+    },
+    "description": {
+      "translate": "advancements.crazyalloy_revival.cash_out.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "money": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "crazyalloy_revival:money"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "crazyalloy_revival:visit_bank"
+}

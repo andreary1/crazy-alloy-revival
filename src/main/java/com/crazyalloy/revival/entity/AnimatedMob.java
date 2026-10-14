@@ -23,4 +23,9 @@ public interface AnimatedMob {
     default float stance(float partialTick) {
         return 0.0F;
     }
+
+    /** Sideways lean in radians (the Segway tilting into a turn); positive leans to the creature's right. */
+    default float roll(float partialTick) {
+        return 0.0F;
+    }
 }

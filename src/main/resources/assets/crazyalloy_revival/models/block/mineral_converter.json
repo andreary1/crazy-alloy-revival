@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "crazyalloy_revival:block/mineral_converter_top",
+    "front": "crazyalloy_revival:block/mineral_converter_front",
+    "side": "crazyalloy_revival:block/mineral_converter_side"
+  }
+}

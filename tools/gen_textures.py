@@ -473,4 +473,6 @@ if __name__ == "__main__":
     gen_textures_v5.main()
     import gen_textures_v6  # tools/gen_textures_v6.py: stage 6 textures (Ice Cream Dimension blocks, items and creatures)
     gen_textures_v6.main()
+    import gen_textures_v7  # tools/gen_textures_v7.py: stage 7 textures (Bank: Mineral Converter, money, AK47, guards)
+    gen_textures_v7.main()
     print("textures generated")

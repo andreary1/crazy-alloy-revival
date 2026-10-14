@@ -23,7 +23,10 @@ import com.crazyalloy.revival.entity.JellyShark;
 import com.crazyalloy.revival.entity.JellySnake;
 import com.crazyalloy.revival.entity.LollipopGuy;
 import com.crazyalloy.revival.entity.RollCakeMonster;
+import com.crazyalloy.revival.entity.GuardDinosaur;
+import com.crazyalloy.revival.entity.Segway;
 import com.crazyalloy.revival.entity.projectile.BrownSugarBrickEntity;
+import com.crazyalloy.revival.entity.projectile.BulletEntity;
 import com.crazyalloy.revival.entity.projectile.GumdropShot;
 import com.crazyalloy.revival.entity.projectile.JellySnakeShot;
 import net.minecraft.world.entity.EntityType;
@@ -89,6 +92,12 @@ public final class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<IceCreamDragon>> ICE_CREAM_DRAGON = ENTITIES.registerEntityType(
             "ice_cream_dragon", IceCreamDragon::new, MobCategory.MONSTER, b -> b.sized(3.9F, 4.8F).eyeHeight(4.5F).clientTrackingRange(10).fireImmune());
 
+    // --- The Bank (stage 7, Overworld) ----------------------------------------------------------
+    public static final DeferredHolder<EntityType<?>, EntityType<GuardDinosaur>> GUARD_DINOSAUR = ENTITIES.registerEntityType(
+            "guard_dinosaur", GuardDinosaur::new, MobCategory.MONSTER, b -> b.sized(0.9F, 2.3F).eyeHeight(2.0F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<Segway>> SEGWAY = ENTITIES.registerEntityType(
+            "segway", Segway::new, MobCategory.MONSTER, b -> b.sized(0.9F, 1.5F).eyeHeight(1.2F).clientTrackingRange(10));
+
     // --- Projectiles ------------------------------------------------------------------------
     public static final DeferredHolder<EntityType<?>, EntityType<BrownSugarBrickEntity>> BROWN_SUGAR_BRICK = ENTITIES.registerEntityType(
             "brown_sugar_brick", BrownSugarBrickEntity::new, MobCategory.MISC, b -> b.noLootTable().sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10));
@@ -96,6 +105,9 @@ public final class ModEntities {
             "gumdrop_shot", GumdropShot::new, MobCategory.MISC, b -> b.noLootTable().sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10));
     public static final DeferredHolder<EntityType<?>, EntityType<JellySnakeShot>> JELLY_SNAKE_SHOT = ENTITIES.registerEntityType(
             "jelly_snake_shot", JellySnakeShot::new, MobCategory.MISC, b -> b.noLootTable().sized(0.35F, 0.35F).clientTrackingRange(4).updateInterval(10));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BulletEntity>> BULLET = ENTITIES.registerEntityType(
+            "bullet", BulletEntity::new, MobCategory.MISC, b -> b.noLootTable().sized(0.15F, 0.15F).clientTrackingRange(4).updateInterval(2));
 
     private ModEntities() {}
 }

@@ -9,6 +9,7 @@ import com.crazyalloy.revival.block.IceCreamPortalBlock;
 import com.crazyalloy.revival.block.InfestedJellyBeanBlock;
 import com.crazyalloy.revival.block.JellyBeanBlock;
 import com.crazyalloy.revival.block.LicoricePlantBlock;
+import com.crazyalloy.revival.block.MineralConverterBlock;
 import com.crazyalloy.revival.block.OrangeJellyBeanBlock;
 import com.crazyalloy.revival.block.RedJellyBeanBlock;
 import com.crazyalloy.revival.block.YellowJellyBeanBlock;
@@ -198,6 +199,10 @@ public final class ModBlocks {
             p -> p.noCollision().randomTicks().strength(-1.0F).sound(SoundType.GLASS).lightLevel(s -> 11).pushReaction(PushReaction.BLOCK).noLootTable());
     public static final DeferredBlock<IceCreamDragonEggBlock> ICE_CREAM_DRAGON_EGG = BLOCKS.registerBlock("ice_cream_dragon_egg", IceCreamDragonEggBlock::new,
             p -> p.mapColor(MapColor.COLOR_PINK).strength(3.0F, 9.0F).sound(SoundType.CALCITE).lightLevel(s -> 3).noOcclusion().pushReaction(PushReaction.BLOCK));
+
+    // --- The Bank (stage 7, Overworld) ---------------------------------------------------------
+    public static final DeferredBlock<MineralConverterBlock> MINERAL_CONVERTER = BLOCKS.registerBlock("mineral_converter", MineralConverterBlock::new,
+            p -> p.mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(3.5F, 6.0F).sound(SoundType.METAL));
 
     private ModBlocks() {}
 }

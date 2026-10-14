@@ -109,6 +109,13 @@ public final class RevivalGameTests {
         TESTS.put("ice_cream_nest_template_has_egg", RevivalGameTests::nestTemplate);
         TESTS.put("stage6_registry_and_worldgen", RevivalGameTests::stage6Registry);
         TESTS.put("ice_cream_flavors_are_variants", RevivalGameTests::flavorVariants);
+        TESTS.put("stage7_mobs_tick_without_crashing", RevivalGameTests::stage7MobsTick);
+        TESTS.put("mineral_converter_follows_table", RevivalGameTests::converterTable);
+        TESTS.put("mineral_converter_convert_button", RevivalGameTests::converterButton);
+        TESTS.put("guard_dinosaur_raises_alarm_before_attacking", RevivalGameTests::guardAlarm);
+        TESTS.put("ak47_fires_bullets_and_uses_ammo", RevivalGameTests::ak47Fires);
+        TESTS.put("bank_template_has_guards_and_vault", RevivalGameTests::bankTemplate);
+        TESTS.put("stage7_registry_and_worldgen", RevivalGameTests::stage7Registry);
     }
 
     private RevivalGameTests() {}
@@ -927,6 +934,185 @@ public final class RevivalGameTests {
         helper.assertTrue(mint, "12 mint zombies dropped no mint ice cream");
         helper.assertTrue(ModEntities.ICE_CREAM_BEAST.get().getHeight() > 3.5F, "the beast should be bigger");
         helper.assertTrue(ModEntities.ICE_CREAM_DRAGON.get().getWidth() > 3.5F && ModEntities.ICE_CREAM_DRAGON.get().getHeight() > 4.5F, "the dragon should be bigger");
+        helper.succeed();
+    }
+    // ------------------------------------------------------------------ stage 7: the Bank (Overworld tab)
+
+    private static void stage7MobsTick(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        List<Mob> mobs = List.of(helper.spawn(ModEntities.GUARD_DINOSAUR.get(), 2, 1, 2), helper.spawn(ModEntities.SEGWAY.get(), 6, 1, 6));
+        helper.runAfterDelay(100, () -> {
+            for (Mob mob : mobs) {
+                helper.assertTrue(mob.isAlive(), mob.getType().toShortString() + " died or was removed while ticking");
+            }
+            helper.assertTrue(mobs.get(0).getMaxHealth() == 30.0F && mobs.get(0).getAttributeValue(Attributes.ATTACK_DAMAGE) == 5.0,
+                    "guard dinosaur should have 30 health and 5 damage");
+            helper.assertTrue(mobs.get(1).getMaxHealth() == 20.0F && mobs.get(1).getAttributeValue(Attributes.ATTACK_DAMAGE) == 3.0,
+                    "segway should have 20 health and 3 damage");
+            helper.succeed();
+        });
+    }
+
+    /** Every row of the original table, one unit at a time; refused materials and a full output change nothing. */
+    private static void converterTable(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(4, 1, 4);
+        helper.setBlock(pos, ModBlocks.MINERAL_CONVERTER.get());
+        var converter = helper.getBlockEntity(pos, com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.class);
+        record Row(net.minecraft.world.item.Item item, int money, int coin) {}
+        List<Row> table = List.of(new Row(Items.COPPER_INGOT, 1, 1), new Row(Items.IRON_INGOT, 2, 2), new Row(Items.GOLD_INGOT, 3, 5),
+                new Row(Items.EMERALD, 7, 10), new Row(Items.DIAMOND, 10, 15), new Row(ModItems.TOURMALINE.get(), 20, 20),
+                new Row(Items.NETHERITE_INGOT, 64, 64));
+        int slotIn = com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_INPUT;
+        int slotMoney = com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_MONEY;
+        int slotCoin = com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_COIN;
+        for (Row row : table) {
+            converter.setItem(slotMoney, ItemStack.EMPTY);
+            converter.setItem(slotCoin, ItemStack.EMPTY);
+            converter.setItem(slotIn, new ItemStack(row.item(), 2));
+            helper.assertTrue(converter.convert(), "converting " + row.item() + " failed");
+            ItemStack money = converter.getItem(slotMoney);
+            ItemStack coin = converter.getItem(slotCoin);
+            helper.assertTrue(money.is(ModItems.MONEY.get()) && money.getCount() == row.money(), row.item() + " should give " + row.money() + " money, got " + money);
+            helper.assertTrue(coin.is(ModItems.COIN.get()) && coin.getCount() == row.coin(), row.item() + " should give " + row.coin() + " coins, got " + coin);
+            helper.assertTrue(converter.getItem(slotIn).getCount() == 1, "one unit of " + row.item() + " should be used");
+        }
+        // The netherite row filled both slots to 64: a second netherite ingot must wait.
+        helper.assertFalse(converter.convert(), "converted although the output slots are full");
+        helper.assertTrue(converter.getItem(slotIn).getCount() == 1, "a refused conversion used the material");
+        converter.setItem(slotMoney, ItemStack.EMPTY);
+        converter.setItem(slotCoin, ItemStack.EMPTY);
+        converter.setItem(slotIn, new ItemStack(Items.COBBLESTONE));
+        helper.assertFalse(converter.convert(), "cobblestone is not on the table");
+        helper.assertTrue(converter.getItem(slotMoney).isEmpty() && converter.getItem(slotIn).getCount() == 1, "a refused material changed the slots");
+        helper.succeed();
+    }
+
+    /** The Convert button reaches the server through the menu (as the client's button click does). */
+    private static void converterButton(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(4, 1, 4);
+        helper.setBlock(pos, ModBlocks.MINERAL_CONVERTER.get());
+        var converter = helper.getBlockEntity(pos, com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.class);
+        converter.setItem(com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_INPUT, new ItemStack(Items.DIAMOND, 3));
+        ServerPlayer player = survivalMockPlayer(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(4.5, 1, 6.5)));
+        var menu = (com.crazyalloy.revival.menu.MineralConverterMenu) converter.createMenu(1, player.getInventory(), player);
+        helper.assertTrue(menu.money() == 10 && menu.coin() == 15 && menu.ready(), "the screen preview should show 10 + 15 for a diamond");
+        menu.clickMenuButton(player, com.crazyalloy.revival.menu.MineralConverterMenu.BUTTON_CONVERT);
+        menu.clickMenuButton(player, com.crazyalloy.revival.menu.MineralConverterMenu.BUTTON_CONVERT);
+        helper.assertTrue(converter.getItem(com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_MONEY).getCount() == 20,
+                "two presses should give 20 money");
+        helper.assertTrue(converter.getItem(com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_COIN).getCount() == 30,
+                "two presses should give 30 coins");
+        helper.assertTrue(converter.getItem(com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_INPUT).getCount() == 1,
+                "two presses should use two diamonds");
+        helper.succeed();
+    }
+
+    /**
+     * A guard that spots a player first stops and raises the alarm (the player is not hit during the pause); the
+     * alarm sends the other guard and the Segway (both without AI, so only the alarm can give them a target) after
+     * the same player; then the guard attacks.
+     */
+    private static void guardAlarm(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var guard = helper.spawn(ModEntities.GUARD_DINOSAUR.get(), 2, 1, 2);
+        var other = helper.spawn(ModEntities.GUARD_DINOSAUR.get(), 7, 1, 7);
+        var segway = helper.spawn(ModEntities.SEGWAY.get(), 7, 1, 2);
+        other.setNoAi(true);
+        segway.setNoAi(true);
+        ServerPlayer player = survivalMockPlayer(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(5.5, 1, 4.5)));
+        float[] healthAtAlarm = {-1.0F};
+        helper.onEachTick(() -> {
+            if (healthAtAlarm[0] < 0.0F && other.getTarget() == player) {
+                healthAtAlarm[0] = player.getHealth();
+            }
+        });
+        helper.succeedWhen(() -> {
+            helper.assertTrue(guard.getTarget() == player, "the guard did not notice the player");
+            helper.assertTrue(other.getTarget() == player, "the alarm did not reach the other guard");
+            helper.assertTrue(segway.getTarget() == player, "the alarm did not reach the Segway");
+            helper.assertTrue(healthAtAlarm[0] == player.getMaxHealth(), "the player was hit before the alarm, health " + healthAtAlarm[0]);
+            helper.assertTrue(player.getHealth() < player.getMaxHealth(), "the guard never attacked after the alarm");
+        });
+    }
+
+    /** Each shot uses one ammo and one point of durability, and the bullet hurts what it hits. */
+    private static void ak47Fires(GameTestHelper helper) {
+        ServerPlayer player = survivalMockPlayer(helper);
+        Pig pig = helper.spawn(EntityType.PIG, 2, 1, 7);
+        pig.setNoAi(true);
+        Vec3 eye = helper.absoluteVec(new Vec3(2.5, 1, 2.5));
+        player.snapTo(eye.x, eye.y, eye.z, 0.0F, 12.0F);
+        ItemStack gun = new ItemStack(ModItems.AK47.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, gun);
+        player.getInventory().add(new ItemStack(ModItems.AK47_AMMO.get(), 5));
+        helper.assertTrue(com.crazyalloy.revival.item.Ak47Item.fire(helper.getLevel(), player, gun), "the AK47 did not fire");
+        int ammo = player.getInventory().countItem(ModItems.AK47_AMMO.get());
+        helper.assertTrue(ammo == 4, "one shot should use one ammo, 4 left, found " + ammo);
+        helper.assertTrue(gun.getDamageValue() == 1, "one shot should cost one durability");
+        helper.succeedWhen(() -> helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the bullet did not hit the pig"));
+    }
+
+    /** The bank: guards in the security room, four vault chests behind obsidian with bank loot, the gold "$". */
+    private static void bankTemplate(GameTestHelper helper) {
+        BlockPos where = helper.absolutePos(new BlockPos(0, 100, 0));
+        List<net.minecraft.world.entity.Entity> found = placeTemplate(helper, "bank", where);
+        var level = helper.getLevel();
+        long dinos = found.stream().filter(e -> e instanceof com.crazyalloy.revival.entity.GuardDinosaur).count();
+        long segways = found.stream().filter(e -> e instanceof com.crazyalloy.revival.entity.Segway).count();
+        helper.assertTrue(dinos == 2 && segways == 1, "expected 2 guard dinosaurs and 1 segway, found " + dinos + " and " + segways);
+        helper.assertTrue(level.getBlockState(where.offset(10, 14, 3)).is(net.minecraft.world.level.block.Blocks.GOLD_BLOCK), "no gold $ on the facade");
+        helper.assertTrue(level.getBlockState(where.offset(10, 1, 4)).is(net.minecraft.world.level.block.Blocks.IRON_DOOR), "no iron front door");
+        helper.assertTrue(level.getBlockState(where.offset(2, 5, 2)).is(net.minecraft.world.level.block.Blocks.QUARTZ_PILLAR), "no fluted column");
+        for (int x = 1; x <= 19; x++) {
+            helper.assertTrue(level.getBlockState(where.offset(x, 2, 43)).is(net.minecraft.world.level.block.Blocks.OBSIDIAN), "gap in the obsidian barrier at x " + x);
+        }
+        int spawners = 0;
+        for (BlockPos p : BlockPos.betweenClosed(where, where.offset(20, 3, 47))) {
+            if (level.getBlockEntity(p) instanceof net.minecraft.world.level.block.entity.SpawnerBlockEntity) {
+                spawners++;
+            }
+        }
+        helper.assertTrue(spawners == 3, "expected 3 spawners (2 guard dinosaurs, 1 segway), found " + spawners);
+        java.util.Set<net.minecraft.world.item.Item> allowed = java.util.Set.of(ModItems.MONEY.get(), ModItems.COIN.get(), Items.GOLD_INGOT,
+                Items.EMERALD, Items.DIAMOND, ModItems.AK47.get(), ModItems.AK47_AMMO.get(), ModItems.MINERAL_CONVERTER.get());
+        int stacks = 0;
+        for (int x : new int[] {4, 8, 12, 16}) {
+            var chest = level.getBlockEntity(where.offset(x, 1, 46));
+            helper.assertTrue(chest instanceof net.minecraft.world.level.block.entity.ChestBlockEntity, "no vault chest at x " + x);
+            var c = (net.minecraft.world.level.block.entity.ChestBlockEntity) chest;
+            c.unpackLootTable(null);
+            for (int i = 0; i < c.getContainerSize(); i++) {
+                ItemStack stack = c.getItem(i);
+                if (!stack.isEmpty()) {
+                    stacks++;
+                    helper.assertTrue(allowed.contains(stack.getItem()), "unexpected vault loot " + stack);
+                }
+            }
+        }
+        helper.assertTrue(stacks >= 4, "the four vault chests held only " + stacks + " stacks");
+        helper.succeed();
+    }
+
+    /** The bank is registered for Plains only, the converter knows the 7 materials, and the Overworld tab holds the new items. */
+    private static void stage7Registry(GameTestHelper helper) {
+        var access = helper.getLevel().registryAccess();
+        helper.assertTrue(access.lookupOrThrow(Registries.STRUCTURE).containsKey(CrazyAlloyRevival.id("bank")), "no bank structure");
+        var biomes = access.lookupOrThrow(Registries.BIOME);
+        var bankTag = net.minecraft.tags.TagKey.create(Registries.BIOME, CrazyAlloyRevival.id("has_structure/bank"));
+        helper.assertTrue(biomes.getOrThrow(net.minecraft.world.level.biome.Biomes.PLAINS).is(bankTag), "banks must generate in Plains");
+        helper.assertFalse(biomes.getOrThrow(net.minecraft.world.level.biome.Biomes.FOREST).is(bankTag), "banks should only generate in Plains");
+        long recipes = helper.getLevel().getServer().getRecipeManager().getRecipes().stream()
+                .filter(h -> h.value().getType() == com.crazyalloy.revival.registry.ModRecipes.MINERAL_CONVERTER_TYPE.get()).count();
+        helper.assertTrue(recipes == 7, "expected 7 mineral converter recipes, found " + recipes);
+        helper.assertTrue(net.minecraft.core.registries.BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(CrazyAlloyRevival.id("overworld")), "no Overworld tab");
+        var overworld = ModItems.OVERWORLD_TAB_ORDER.stream().map(d -> (net.minecraft.world.item.Item) d.get()).toList();
+        for (var item : List.of(ModItems.MINERAL_CONVERTER.get().asItem(), ModItems.MONEY.get(), ModItems.COIN.get(), ModItems.AK47.get(),
+                ModItems.AK47_AMMO.get(), ModItems.GUARD_DINOSAUR_SPAWN_EGG.get(), ModItems.SEGWAY_SPAWN_EGG.get())) {
+            helper.assertTrue(overworld.contains(item), item + " is missing from the Overworld tab");
+        }
+        helper.assertFalse(ModItems.TAB_ORDER.stream().anyMatch(d -> d.get() == ModItems.MONEY.get()), "money should not be in the candy tab");
         helper.succeed();
     }
 }

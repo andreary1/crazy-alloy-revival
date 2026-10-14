@@ -1,6 +1,7 @@
 package com.crazyalloy.revival.registry;
 
 import com.crazyalloy.revival.CrazyAlloyRevival;
+import com.crazyalloy.revival.item.Ak47Item;
 import com.crazyalloy.revival.item.BrownSugarBrickItem;
 import com.crazyalloy.revival.item.BrownSugarSwordItem;
 import com.crazyalloy.revival.item.IceCreamAmuletItem;
@@ -29,6 +30,8 @@ public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CrazyAlloyRevival.MOD_ID);
     /** Creative tab order. */
     public static final List<DeferredItem<? extends Item>> TAB_ORDER = new ArrayList<>();
+    /** Order of the Overworld tab: content not tied to a candy biome or dimension (the Bank, stage 7). */
+    public static final List<DeferredItem<? extends Item>> OVERWORLD_TAB_ORDER = new ArrayList<>();
 
     // --- Block items (same order as the creative tab) -------------------------------------
     public static final DeferredItem<?> CHOCOLATE_GRASS_BLOCK = block(ModBlocks.CHOCOLATE_GRASS_BLOCK);
@@ -160,6 +163,22 @@ public final class ModItems {
     public static final DeferredItem<SpawnEggItem> LIVING_ICE_CREAM_SPAWN_EGG = egg("living_ice_cream", ModEntities.LIVING_ICE_CREAM);
     public static final DeferredItem<SpawnEggItem> ANGRY_ICE_CREAM_CONE_SPAWN_EGG = egg("angry_ice_cream_cone", ModEntities.ANGRY_ICE_CREAM_CONE);
     public static final DeferredItem<SpawnEggItem> ICE_CREAM_DRAGON_SPAWN_EGG = egg("ice_cream_dragon", ModEntities.ICE_CREAM_DRAGON);
+
+    // --- Overworld tab: the Bank and the money economy (stage 7) -----------------------------
+    public static final DeferredItem<?> MINERAL_CONVERTER = overworld(ITEMS.registerSimpleBlockItem(ModBlocks.MINERAL_CONVERTER, p -> p.rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<Item> MONEY = overworld(ITEMS.registerSimpleItem("money"));
+    public static final DeferredItem<Item> COIN = overworld(ITEMS.registerSimpleItem("coin"));
+    public static final DeferredItem<Ak47Item> AK47 = overworld(ITEMS.registerItem("ak47", Ak47Item::new, p -> p.durability(600).rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> AK47_AMMO = overworld(ITEMS.registerSimpleItem("ak47_ammo"));
+    public static final DeferredItem<SpawnEggItem> GUARD_DINOSAUR_SPAWN_EGG = overworld(ITEMS.registerItem("guard_dinosaur_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.GUARD_DINOSAUR.get()))));
+    public static final DeferredItem<SpawnEggItem> SEGWAY_SPAWN_EGG = overworld(ITEMS.registerItem("segway_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.SEGWAY.get()))));
+
+    private static <I extends Item> DeferredItem<I> overworld(DeferredItem<I> item) {
+        OVERWORLD_TAB_ORDER.add(item);
+        return item;
+    }
 
     private static DeferredItem<SpawnEggItem> egg(String name, java.util.function.Supplier<? extends net.minecraft.world.entity.EntityType<?>> type) {
         return tab(ITEMS.registerItem(name + "_spawn_egg", p -> new SpawnEggItem(p.spawnEgg(type.get()))));

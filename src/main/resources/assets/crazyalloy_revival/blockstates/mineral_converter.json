@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "crazyalloy_revival:block/mineral_converter"
+    },
+    "facing=east": {
+      "model": "crazyalloy_revival:block/mineral_converter",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "crazyalloy_revival:block/mineral_converter",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "crazyalloy_revival:block/mineral_converter",
+      "y": 270
+    }
+  }
+}
