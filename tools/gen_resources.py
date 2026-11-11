@@ -577,6 +577,9 @@ def gen_lang():
     import lang_stage7  # tools/lang_stage7.py: stage 7 keys (Overworld tab: Bank, guards, money, Mineral Converter)
     EN = EN | lang_stage7.EN
     PT = PT | lang_stage7.PT
+    import lang_stage8  # tools/lang_stage8.py: stage 8 keys (Enchanted tab: Mystic Grove, Troll, fairies, Ent)
+    EN = EN | lang_stage8.EN
+    PT = PT | lang_stage8.PT
     for code, data in [("en_us", EN), ("pt_br", PT)]:
         missing = set(EN) - set(data)
         if missing:
@@ -601,5 +604,7 @@ if __name__ == "__main__":
     gen_stage6.generate()
     import gen_stage7  # tools/gen_stage7.py: the Bank, Guard Dinosaur, Segway, money, AK47 and Mineral Converter
     gen_stage7.generate()
+    import gen_stage8  # tools/gen_stage8.py: the Mystic Grove, mystic wood, Troll, fairies and Ent (Enchanted tab)
+    gen_stage8.generate()
     gen_lang()
     print("resources generated")

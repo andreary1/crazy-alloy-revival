@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "W": "crazyalloy_revival:mystic_planks",
+    "#": "minecraft:stick"
+  },
+  "pattern": [
+    "#W#",
+    "#W#"
+  ],
+  "result": {
+    "id": "crazyalloy_revival:mystic_fence_gate",
+    "count": 1
+  },
+  "group": "wooden_fence_gate"
+}

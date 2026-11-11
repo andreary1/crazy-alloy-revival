@@ -204,5 +204,44 @@ public final class ModBlocks {
     public static final DeferredBlock<MineralConverterBlock> MINERAL_CONVERTER = BLOCKS.registerBlock("mineral_converter", MineralConverterBlock::new,
             p -> p.mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(3.5F, 6.0F).sound(SoundType.METAL));
 
+    // --- Mystic Grove (stage 8, enchanted tab) ---------------------------------------------------
+    public static final DeferredBlock<Block> MYSTIC_DIRT = BLOCKS.registerSimpleBlock("mystic_dirt",
+            p -> p.mapColor(MapColor.COLOR_CYAN).strength(0.5F).sound(SoundType.ROOTED_DIRT));
+    public static final DeferredBlock<Block> MYSTIC_GRASS_BLOCK = BLOCKS.registerSimpleBlock("mystic_grass_block",
+            p -> p.mapColor(MapColor.WARPED_WART_BLOCK).strength(0.6F).sound(SoundType.GRASS));
+    public static final DeferredBlock<RotatedPillarBlock> MYSTIC_LOG = BLOCKS.registerBlock("mystic_log",
+            RotatedPillarBlock::new,
+            p -> p.mapColor(MapColor.TERRACOTTA_CYAN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava());
+    public static final DeferredBlock<Block> MYSTIC_PLANKS = BLOCKS.registerSimpleBlock("mystic_planks", ModBlocks::mysticWood);
+    /** Dark teal leaves; now and then a spore drifts down from them. */
+    public static final DeferredBlock<UntintedParticleLeavesBlock> MYSTIC_LEAVES = BLOCKS.registerBlock("mystic_leaves",
+            p -> new UntintedParticleLeavesBlock(0.01F, ParticleTypes.SPORE_BLOSSOM_AIR, p),
+            p -> p.mapColor(MapColor.COLOR_CYAN).strength(0.2F).randomTicks().sound(SoundType.AZALEA_LEAVES).noOcclusion()
+                    .isSuffocating((s, l, pos) -> false).isViewBlocking((s, l, pos) -> false)
+                    .isRedstoneConductor((s, l, pos) -> false).ignitedByLava().pushReaction(PushReaction.DESTROY));
+    /** Revival addition: one sapling grows a tall mystic tree; four in a square grow a giant one. */
+    public static final DeferredBlock<SaplingBlock> MYSTIC_SAPLING = BLOCKS.registerBlock("mystic_sapling",
+            p -> new SaplingBlock(ModTreeGrowers.MYSTIC, p),
+            p -> p.mapColor(MapColor.COLOR_CYAN).noCollision().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY));
+
+    private static BlockBehaviour.Properties mysticWood(BlockBehaviour.Properties p) {
+        return p.mapColor(MapColor.TERRACOTTA_CYAN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava();
+    }
+
+    // Mystic wood set. It reuses the dark oak block set and wood type for its sounds, so no new types are registered.
+    public static final DeferredBlock<StairBlock> MYSTIC_STAIRS = BLOCKS.registerBlock("mystic_stairs",
+            p -> new StairBlock(MYSTIC_PLANKS.get().defaultBlockState(), p), ModBlocks::mysticWood);
+    public static final DeferredBlock<SlabBlock> MYSTIC_SLAB = BLOCKS.registerBlock("mystic_slab", SlabBlock::new, ModBlocks::mysticWood);
+    public static final DeferredBlock<FenceBlock> MYSTIC_FENCE = BLOCKS.registerBlock("mystic_fence", FenceBlock::new, ModBlocks::mysticWood);
+    public static final DeferredBlock<FenceGateBlock> MYSTIC_FENCE_GATE = BLOCKS.registerBlock("mystic_fence_gate",
+            p -> new FenceGateBlock(WoodType.DARK_OAK, p), p -> mysticWood(p).forceSolidOn());
+    public static final DeferredBlock<DoorBlock> MYSTIC_DOOR = BLOCKS.registerBlock("mystic_door",
+            p -> new DoorBlock(BlockSetType.DARK_OAK, p), p -> mysticWood(p).strength(3.0F).noOcclusion().pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<ButtonBlock> MYSTIC_BUTTON = BLOCKS.registerBlock("mystic_button",
+            p -> new ButtonBlock(BlockSetType.DARK_OAK, 30, p), p -> p.noCollision().strength(0.5F).pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<PressurePlateBlock> MYSTIC_PRESSURE_PLATE = BLOCKS.registerBlock("mystic_pressure_plate",
+            p -> new PressurePlateBlock(BlockSetType.DARK_OAK, p),
+            p -> p.mapColor(MapColor.TERRACOTTA_CYAN).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollision().strength(0.5F).ignitedByLava().pushReaction(PushReaction.DESTROY));
+
     private ModBlocks() {}
 }

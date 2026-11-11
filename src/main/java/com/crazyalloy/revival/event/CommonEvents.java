@@ -73,6 +73,10 @@ public final class CommonEvents {
         event.put(ModEntities.ICE_CREAM_DRAGON.get(), com.crazyalloy.revival.entity.IceCreamDragon.createAttributes().build());
         event.put(ModEntities.GUARD_DINOSAUR.get(), com.crazyalloy.revival.entity.GuardDinosaur.createAttributes().build());
         event.put(ModEntities.SEGWAY.get(), com.crazyalloy.revival.entity.Segway.createAttributes().build());
+        event.put(ModEntities.TROLL.get(), com.crazyalloy.revival.entity.Troll.createAttributes().build());
+        event.put(ModEntities.FAIRY.get(), com.crazyalloy.revival.entity.Fairy.createAttributes().build());
+        event.put(ModEntities.EVIL_FAIRY.get(), com.crazyalloy.revival.entity.EvilFairy.createAttributes().build());
+        event.put(ModEntities.ENT.get(), com.crazyalloy.revival.entity.Ent.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -100,6 +104,10 @@ public final class CommonEvents {
         ground(event, ModEntities.ANGRY_ICE_CREAM_CONE.get(), com.crazyalloy.revival.entity.AngryIceCreamCone::checkSpawnRules);
         ground(event, ModEntities.GUARD_DINOSAUR.get(), com.crazyalloy.revival.entity.GuardDinosaur::checkSpawnRules);
         ground(event, ModEntities.SEGWAY.get(), com.crazyalloy.revival.entity.GuardDinosaur::checkSpawnRules);
+        ground(event, ModEntities.TROLL.get(), com.crazyalloy.revival.entity.Troll::checkSpawnRules);
+        ground(event, ModEntities.FAIRY.get(), com.crazyalloy.revival.entity.Fairy::checkSpawnRules);
+        ground(event, ModEntities.EVIL_FAIRY.get(), com.crazyalloy.revival.entity.EvilFairy::checkSpawnRules);
+        ground(event, ModEntities.ENT.get(), com.crazyalloy.revival.entity.Ent::checkSpawnRules);
         event.register(ModEntities.JELLY_SHARK.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 JellyShark::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }

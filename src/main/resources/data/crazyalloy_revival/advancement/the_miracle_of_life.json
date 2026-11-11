@@ -1,0 +1,24 @@
+{
+  "display": {
+    "icon": {
+      "id": "crazyalloy_revival:elixir_of_life",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancements.crazyalloy_revival.the_miracle_of_life.title"
+    },
+    "description": {
+      "translate": "advancements.crazyalloy_revival.the_miracle_of_life.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "cure": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "crazyalloy_revival:land_of_fantastic_things"
+}

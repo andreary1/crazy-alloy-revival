@@ -32,6 +32,8 @@ public final class ModItems {
     public static final List<DeferredItem<? extends Item>> TAB_ORDER = new ArrayList<>();
     /** Order of the Overworld tab: content not tied to a candy biome or dimension (the Bank, stage 7). */
     public static final List<DeferredItem<? extends Item>> OVERWORLD_TAB_ORDER = new ArrayList<>();
+    /** Order of the Enchanted tab: the Mystic Grove and its creatures (stage 8). */
+    public static final List<DeferredItem<? extends Item>> ENCHANTED_TAB_ORDER = new ArrayList<>();
 
     // --- Block items (same order as the creative tab) -------------------------------------
     public static final DeferredItem<?> CHOCOLATE_GRASS_BLOCK = block(ModBlocks.CHOCOLATE_GRASS_BLOCK);
@@ -174,6 +176,42 @@ public final class ModItems {
             p -> new SpawnEggItem(p.spawnEgg(ModEntities.GUARD_DINOSAUR.get()))));
     public static final DeferredItem<SpawnEggItem> SEGWAY_SPAWN_EGG = overworld(ITEMS.registerItem("segway_spawn_egg",
             p -> new SpawnEggItem(p.spawnEgg(ModEntities.SEGWAY.get()))));
+
+    // --- Enchanted tab: the Mystic Grove and its creatures (stage 8) ----------------------------
+    public static final DeferredItem<?> MYSTIC_GRASS_BLOCK = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_GRASS_BLOCK));
+    public static final DeferredItem<?> MYSTIC_DIRT = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_DIRT));
+    public static final DeferredItem<?> MYSTIC_LOG = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_LOG));
+    public static final DeferredItem<?> MYSTIC_PLANKS = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_PLANKS));
+    public static final DeferredItem<?> MYSTIC_LEAVES = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_LEAVES));
+    public static final DeferredItem<?> MYSTIC_SAPLING = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_SAPLING));
+    public static final DeferredItem<?> MYSTIC_STAIRS = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_STAIRS));
+    public static final DeferredItem<?> MYSTIC_SLAB = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_SLAB));
+    public static final DeferredItem<?> MYSTIC_FENCE = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_FENCE));
+    public static final DeferredItem<?> MYSTIC_FENCE_GATE = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_FENCE_GATE));
+    public static final DeferredItem<?> MYSTIC_DOOR = enchanted(ITEMS.registerItem("mystic_door",
+            p -> new DoubleHighBlockItem(ModBlocks.MYSTIC_DOOR.get(), p), p -> p.useBlockDescriptionPrefix()));
+    public static final DeferredItem<?> MYSTIC_BUTTON = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_BUTTON));
+    public static final DeferredItem<?> MYSTIC_PRESSURE_PLATE = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_PRESSURE_PLATE));
+    /** Empty jar: use it on a Fairy to catch it. */
+    public static final DeferredItem<Item> JAR = enchanted(ITEMS.registerSimpleItem("jar", p -> p.stacksTo(16)));
+    public static final DeferredItem<com.crazyalloy.revival.item.FairyJarItem> JAR_WITH_A_FAIRY = enchanted(ITEMS.registerItem("jar_with_a_fairy",
+            com.crazyalloy.revival.item.FairyJarItem::new, p -> p.stacksTo(1).rarity(Rarity.UNCOMMON)));
+    /** Use it on an Evil Fairy to turn it into an ordinary fairy. */
+    public static final DeferredItem<Item> ELIXIR_OF_LIFE = enchanted(ITEMS.registerSimpleItem("elixir_of_life",
+            p -> p.stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<SpawnEggItem> TROLL_SPAWN_EGG = enchanted(ITEMS.registerItem("troll_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.TROLL.get()))));
+    public static final DeferredItem<SpawnEggItem> FAIRY_SPAWN_EGG = enchanted(ITEMS.registerItem("fairy_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.FAIRY.get()))));
+    public static final DeferredItem<SpawnEggItem> EVIL_FAIRY_SPAWN_EGG = enchanted(ITEMS.registerItem("evil_fairy_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.EVIL_FAIRY.get()))));
+    public static final DeferredItem<SpawnEggItem> ENT_SPAWN_EGG = enchanted(ITEMS.registerItem("ent_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.ENT.get()))));
+
+    private static <I extends Item> DeferredItem<I> enchanted(DeferredItem<I> item) {
+        ENCHANTED_TAB_ORDER.add(item);
+        return item;
+    }
 
     private static <I extends Item> DeferredItem<I> overworld(DeferredItem<I> item) {
         OVERWORLD_TAB_ORDER.add(item);

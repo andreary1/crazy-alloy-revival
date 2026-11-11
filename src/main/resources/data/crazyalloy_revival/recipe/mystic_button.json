@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "crazyalloy_revival:mystic_planks"
+  ],
+  "result": {
+    "id": "crazyalloy_revival:mystic_button",
+    "count": 1
+  }
+}

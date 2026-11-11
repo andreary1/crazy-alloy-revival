@@ -90,6 +90,9 @@ public final class CrazyAlloyRevivalClient {
         event.registerLayerDefinition(ModModelLayers.ICE_CREAM_DRAGON, com.crazyalloy.revival.client.model.IceCreamDragonModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.GUARD_DINOSAUR, com.crazyalloy.revival.client.model.GuardDinosaurModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.SEGWAY, com.crazyalloy.revival.client.model.SegwayModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.TROLL, com.crazyalloy.revival.client.model.TrollModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.FAIRY, com.crazyalloy.revival.client.model.FairyModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.ENT, com.crazyalloy.revival.client.model.EntModel::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -128,6 +131,7 @@ public final class CrazyAlloyRevivalClient {
                 new com.crazyalloy.revival.client.model.GuardDinosaurModel(c.bakeLayer(ModModelLayers.GUARD_DINOSAUR)), 0.6F, "guard_dinosaur", 1.0F));
         event.registerEntityRenderer(ModEntities.SEGWAY.get(), c -> new RevivalMobRenderer<>(c,
                 new com.crazyalloy.revival.client.model.SegwayModel(c.bakeLayer(ModModelLayers.SEGWAY)), 0.5F, "segway", 1.0F));
+        registerMysticGrove(event);
         event.registerEntityRenderer(ModEntities.BULLET.get(), c -> new ThrownItemRenderer<>(c, 0.5F, false));
         event.registerEntityRenderer(ModEntities.BROWN_SUGAR_BRICK.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.GUMDROP_SHOT.get(), ThrownItemRenderer::new);
@@ -150,6 +154,18 @@ public final class CrazyAlloyRevivalClient {
                 new com.crazyalloy.revival.client.model.AngryIceCreamConeModel(c.bakeLayer(ModModelLayers.ANGRY_ICE_CREAM_CONE)), 0.35F, "angry_ice_cream_cone", 1.0F));
         event.registerEntityRenderer(ModEntities.ICE_CREAM_DRAGON.get(), c -> new RevivalMobRenderer<>(c,
                 new com.crazyalloy.revival.client.model.IceCreamDragonModel(c.bakeLayer(ModModelLayers.ICE_CREAM_DRAGON)), 1.4F, "ice_cream_dragon", 2.4F));
+    }
+
+    /** Stage 8 creatures. The Fairy and the Evil Fairy share one model with different textures. */
+    private static void registerMysticGrove(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.TROLL.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.TrollModel(c.bakeLayer(ModModelLayers.TROLL)), 0.7F, "troll", 1.0F));
+        event.registerEntityRenderer(ModEntities.FAIRY.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.FairyModel(c.bakeLayer(ModModelLayers.FAIRY)), 0.4F, "fairy", 0.6F));
+        event.registerEntityRenderer(ModEntities.EVIL_FAIRY.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.FairyModel(c.bakeLayer(ModModelLayers.FAIRY)), 0.4F, "evil_fairy", 0.6F));
+        event.registerEntityRenderer(ModEntities.ENT.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.EntModel(c.bakeLayer(ModModelLayers.ENT)), 0.7F, "ent", 1.4F));
     }
 
     @SubscribeEvent

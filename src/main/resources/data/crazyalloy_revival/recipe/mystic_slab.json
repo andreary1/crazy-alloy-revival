@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": "crazyalloy_revival:mystic_planks"
+  },
+  "pattern": [
+    "###"
+  ],
+  "result": {
+    "id": "crazyalloy_revival:mystic_slab",
+    "count": 6
+  },
+  "group": "wooden_slab"
+}

@@ -25,5 +25,13 @@ public final class ModCreativeTabs {
             .displayItems((params, output) -> ModItems.OVERWORLD_TAB_ORDER.forEach(item -> output.accept(item.get())))
             .build());
 
+    /** The enchanted part of Crazy Alloy: the Mystic Grove, its wood, the Troll, the fairies and the Ent. */
+    public static final Supplier<CreativeModeTab> ENCHANTED = TABS.register("enchanted", () -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.crazyalloy_revival.enchanted"))
+            .icon(() -> new ItemStack(ModItems.JAR_WITH_A_FAIRY.get()))
+            .withTabsBefore(CrazyAlloyRevival.id("overworld"))
+            .displayItems((params, output) -> ModItems.ENCHANTED_TAB_ORDER.forEach(item -> output.accept(item.get())))
+            .build());
+
     private ModCreativeTabs() {}
 }

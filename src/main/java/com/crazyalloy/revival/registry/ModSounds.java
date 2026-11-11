@@ -63,6 +63,12 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> AK47_SHOOT = register("item.ak47.shoot");
     public static final DeferredHolder<SoundEvent, SoundEvent> MINERAL_CONVERTER_CONVERT = register("block.mineral_converter.convert");
 
+    // Stage 8: the Mystic Grove (provisional re-pitched vanilla sounds).
+    public static final MobSounds TROLL = mob("troll");
+    public static final MobSounds FAIRY = mob("fairy");
+    public static final MobSounds EVIL_FAIRY = mob("evil_fairy");
+    public static final MobSounds ENT = mob("ent");
+
     public record MobSounds(DeferredHolder<SoundEvent, SoundEvent> ambient, DeferredHolder<SoundEvent, SoundEvent> hurt,
                             DeferredHolder<SoundEvent, SoundEvent> death) {}
 

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": "crazyalloy_revival:mystic_planks"
+  },
+  "pattern": [
+    "##",
+    "##",
+    "##"
+  ],
+  "result": {
+    "id": "crazyalloy_revival:mystic_door",
+    "count": 3
+  },
+  "group": "wooden_door"
+}

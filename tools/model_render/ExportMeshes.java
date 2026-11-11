@@ -59,5 +59,8 @@ public class ExportMeshes {
         dump("jelly_bunny", JellyBunnyModel::createBodyLayer, JellyBunnyModel::new, net.minecraft.client.renderer.entity.state.LivingEntityRenderState::new, out);
         dump("jelly_snake", JellySnakeModel::createBodyLayer, JellySnakeModel::new, net.minecraft.client.renderer.entity.state.LivingEntityRenderState::new, out);
         dump("bubblegum", BubblegumModel::createBodyLayer, BubblegumModel::new, net.minecraft.client.renderer.entity.state.LivingEntityRenderState::new, out);
+        dump("troll", TrollModel::createBodyLayer, TrollModel::new, RevivalRenderState::new, out);
+        dump("fairy", FairyModel::createBodyLayer, FairyModel::new, RevivalRenderState::new, out);
+        dump("ent", EntModel::createBodyLayer, EntModel::new, RevivalRenderState::new, out);
     }
 }

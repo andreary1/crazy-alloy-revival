@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "crazyalloy_revival:block/mystic_leaves"
+  }
+}

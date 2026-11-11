@@ -20,5 +20,18 @@ public final class ModTreeGrowers {
             Optional.of(SWEETWOOD_TREE), Optional.of(TALL_SWEETWOOD_TREE),
             Optional.empty(), Optional.empty());
 
+    public static final ResourceKey<ConfiguredFeature<?, ?>> MYSTIC_TREE =
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, CrazyAlloyRevival.id("mystic_tree"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GIANT_MYSTIC_TREE =
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, CrazyAlloyRevival.id("giant_mystic_tree"));
+
+    /** One sapling: a tall mystic tree. Four in a square: a giant one with a 2x2 trunk. */
+    public static final TreeGrower MYSTIC = new TreeGrower(
+            CrazyAlloyRevival.MOD_ID + ":mystic",
+            0.0F,
+            Optional.of(GIANT_MYSTIC_TREE), Optional.empty(),
+            Optional.of(MYSTIC_TREE), Optional.empty(),
+            Optional.empty(), Optional.empty());
+
     private ModTreeGrowers() {}
 }

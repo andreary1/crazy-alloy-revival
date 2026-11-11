@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/button",
+  "textures": {
+    "texture": "crazyalloy_revival:block/mystic_planks"
+  }
+}

@@ -25,6 +25,10 @@ import com.crazyalloy.revival.entity.LollipopGuy;
 import com.crazyalloy.revival.entity.RollCakeMonster;
 import com.crazyalloy.revival.entity.GuardDinosaur;
 import com.crazyalloy.revival.entity.Segway;
+import com.crazyalloy.revival.entity.Troll;
+import com.crazyalloy.revival.entity.Fairy;
+import com.crazyalloy.revival.entity.EvilFairy;
+import com.crazyalloy.revival.entity.Ent;
 import com.crazyalloy.revival.entity.projectile.BrownSugarBrickEntity;
 import com.crazyalloy.revival.entity.projectile.BulletEntity;
 import com.crazyalloy.revival.entity.projectile.GumdropShot;
@@ -97,6 +101,16 @@ public final class ModEntities {
             "guard_dinosaur", GuardDinosaur::new, MobCategory.MONSTER, b -> b.sized(0.9F, 2.3F).eyeHeight(2.0F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Segway>> SEGWAY = ENTITIES.registerEntityType(
             "segway", Segway::new, MobCategory.MONSTER, b -> b.sized(0.9F, 1.5F).eyeHeight(1.2F).clientTrackingRange(10));
+
+    // --- Mystic Grove (stage 8) -----------------------------------------------------------------
+    public static final DeferredHolder<EntityType<?>, EntityType<Troll>> TROLL = ENTITIES.registerEntityType(
+            "troll", Troll::new, MobCategory.CREATURE, b -> b.sized(1.1F, 2.3F).eyeHeight(1.95F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<Fairy>> FAIRY = ENTITIES.registerEntityType(
+            "fairy", Fairy::new, MobCategory.CREATURE, b -> b.sized(0.4F, 0.7F).eyeHeight(0.55F).clientTrackingRange(8));
+    public static final DeferredHolder<EntityType<?>, EntityType<EvilFairy>> EVIL_FAIRY = ENTITIES.registerEntityType(
+            "evil_fairy", EvilFairy::new, MobCategory.MONSTER, b -> b.sized(0.4F, 0.7F).eyeHeight(0.55F).clientTrackingRange(8));
+    public static final DeferredHolder<EntityType<?>, EntityType<Ent>> ENT = ENTITIES.registerEntityType(
+            "ent", Ent::new, MobCategory.CREATURE, b -> b.sized(1.4F, 4.2F).eyeHeight(3.5F).clientTrackingRange(10));
 
     // --- Projectiles ------------------------------------------------------------------------
     public static final DeferredHolder<EntityType<?>, EntityType<BrownSugarBrickEntity>> BROWN_SUGAR_BRICK = ENTITIES.registerEntityType(
