@@ -262,6 +262,8 @@ def items():
     spawn_egg("fairy", hexc("3f9a4a"), hexc("b05a32"))
     spawn_egg("evil_fairy", hexc("3e2350"), hexc("d02a2a"))
     spawn_egg("ent", BARK, STREAK_L)
+    spawn_egg("shadow_eye", hexc("4a2a6a"), hexc("f08a1a"))
+    spawn_egg("shadow_wanderer", hexc("2a1638"), hexc("6a3a9a"))
 
 # ================================================================== creatures
 SKIN = hexc("d8c49a")
@@ -437,9 +439,93 @@ def ent():
     }
     paint("ent", "EntModel.java", 128, 128, painters)
 
+# ================================================================== shadow creatures
+VIOLET = hexc("6a3a9a")
+VIOLET_L = hexc("8a52c0")
+VIOLET_D = hexc("4a2672")
+SHADOW = hexc("2a1638")
+SHADOW_D = hexc("150b1e")
+EYE_O = hexc("f08a1a")
+EYE_L = hexc("ffc04a")
+EYE_D = hexc("b8560e")
+
+def violet(x, y, w, h):
+    """Purple surface with small differences in tone."""
+    r = rng.random()
+    return VIOLET_L if r < 0.12 else VIOLET_D if r < 0.3 else jitter(VIOLET, 0.08)
+
+def violet_side(x, y, w, h):
+    # Lighter top rows, darker bottom rows, to read the volume.
+    if y <= 1:
+        return jitter(VIOLET_L, 0.06)
+    if y >= h - 2:
+        return jitter(VIOLET_D, 0.06)
+    return violet(x, y, w, h)
+
+def shadow_purple(x, y, w, h):
+    r = rng.random()
+    return VIOLET_D if r < 0.25 else SHADOW_D if r < 0.4 else jitter(SHADOW, 0.1)
+
+def iris(x, y, w, h):
+    """Angular orange eye: a bright ring with darker corners cut off, lighter toward the top."""
+    corner = (x in (0, w - 1)) and (y in (0, w - 1))
+    if corner:
+        return VIOLET_D
+    if x in (0, w - 1) or y in (0, h - 1):
+        return EYE_D
+    return EYE_L if y <= 1 else jitter(EYE_O, 0.06)
+
+def shadow_eye():
+    painters = {
+        "core": {"side": violet_side, "front": violet_side, "back": violet_side, "top": violet, "bottom": fill(VIOLET_D)},
+        "step": {"side": fill(VIOLET_L), "top": violet, "bottom": fill(VIOLET_D)},
+        "crest": {"side": fill(VIOLET_L), "top": lambda x, y, w, h: jitter(VIOLET_L, 0.08), "bottom": fill(VIOLET_D)},
+        "iris": {"side": fill(EYE_D), "front": iris, "back": fill(EYE_D), "top": fill(EYE_D), "bottom": fill(EYE_D)},
+        "pupil": fill(hexc("12080e")),
+        "ring": lambda x, y, w, h: jitter(hexc("3a1a52"), 0.12),
+    }
+    paint("shadow_eye", "ShadowEyeModel.java", 64, 64, painters)
+
+def wanderer_torso_front(x, y, w, h):
+    # Nearly black down the front, with a faint ribbed edge.
+    if x in (0, w - 1):
+        return shadow_purple(x, y, w, h)
+    if y % 3 == 1 and 1 < x < w - 2:
+        return hexc("1e1028")
+    return jitter(SHADOW_D, 0.1)
+
+def snout_front(x, y, w, h):
+    return SHADOW_D if y == h - 1 else shadow_purple(x, y, w, h)
+
+def jaw_top(x, y, w, h):
+    # The inside of the open mouth: near black, with a dim violet tongue line.
+    return hexc("3a1a52") if x in (1, 2) and y > 1 else hexc("0c0610")
+
+def dark_tip(base):
+    def f(x, y, w, h):
+        return SHADOW_D if y >= h - 2 else base(x, y, w, h)
+    return f
+
+def shadow_wanderer():
+    painters = {
+        "torso": {"side": shadow_purple, "front": wanderer_torso_front, "back": shadow_purple, "top": shadow_purple, "bottom": shadow_purple},
+        "spine": {"side": fill(VIOLET_D), "top": fill(VIOLET), "bottom": fill(SHADOW)},
+        "head": {"side": shadow_purple, "front": lambda x, y, w, h: SHADOW_D if y >= h - 2 and 1 < x < w - 2 else shadow_purple(x, y, w, h),
+                 "top": shadow_purple, "bottom": fill(SHADOW_D)},
+        "snout": {"side": shadow_purple, "front": snout_front, "top": shadow_purple, "bottom": fill(hexc("0c0610"))},
+        "jaw": {"side": shadow_purple, "front": shadow_purple, "top": jaw_top, "bottom": shadow_purple},
+        "spike": {"side": lambda x, y, w, h: VIOLET if y <= 1 else shadow_purple(x, y, w, h), "top": fill(VIOLET)},
+        "thigh": shadow_purple, "shin": shadow_purple,
+        "foot": {"side": dark_tip(shadow_purple), "front": fill(SHADOW_D), "top": shadow_purple, "bottom": fill(SHADOW_D)},
+        "upper_arm": shadow_purple, "forearm": shadow_purple,
+        "palm": shadow_purple,
+        "finger": {"side": dark_tip(shadow_purple), "bottom": fill(hexc("0c0610"))},
+    }
+    paint("shadow_wanderer", "ShadowWandererModel.java", 64, 64, painters)
+
 def main():
     blocks(); items()
-    troll(); fairy_textures(); ent()
+    troll(); fairy_textures(); ent(); shadow_eye(); shadow_wanderer()
     print("stage 8 textures generated")
 
 if __name__ == "__main__":

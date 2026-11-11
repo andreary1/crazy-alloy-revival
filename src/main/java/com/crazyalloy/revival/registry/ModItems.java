@@ -207,6 +207,10 @@ public final class ModItems {
             p -> new SpawnEggItem(p.spawnEgg(ModEntities.EVIL_FAIRY.get()))));
     public static final DeferredItem<SpawnEggItem> ENT_SPAWN_EGG = enchanted(ITEMS.registerItem("ent_spawn_egg",
             p -> new SpawnEggItem(p.spawnEgg(ModEntities.ENT.get()))));
+    public static final DeferredItem<SpawnEggItem> SHADOW_EYE_SPAWN_EGG = enchanted(ITEMS.registerItem("shadow_eye_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.SHADOW_EYE.get()))));
+    public static final DeferredItem<SpawnEggItem> SHADOW_WANDERER_SPAWN_EGG = enchanted(ITEMS.registerItem("shadow_wanderer_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.SHADOW_WANDERER.get()))));
 
     private static <I extends Item> DeferredItem<I> enchanted(DeferredItem<I> item) {
         ENCHANTED_TAB_ORDER.add(item);

@@ -111,6 +111,10 @@ public final class ModEntities {
             "evil_fairy", EvilFairy::new, MobCategory.MONSTER, b -> b.sized(0.4F, 0.7F).eyeHeight(0.55F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Ent>> ENT = ENTITIES.registerEntityType(
             "ent", Ent::new, MobCategory.CREATURE, b -> b.sized(1.4F, 4.2F).eyeHeight(3.5F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.ShadowEye>> SHADOW_EYE = ENTITIES.registerEntityType(
+            "shadow_eye", com.crazyalloy.revival.entity.ShadowEye::new, MobCategory.MONSTER, b -> b.sized(0.9F, 0.9F).eyeHeight(0.45F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.ShadowWanderer>> SHADOW_WANDERER = ENTITIES.registerEntityType(
+            "shadow_wanderer", com.crazyalloy.revival.entity.ShadowWanderer::new, MobCategory.MONSTER, b -> b.sized(0.7F, 2.5F).eyeHeight(2.15F).clientTrackingRange(10));
 
     // --- Projectiles ------------------------------------------------------------------------
     public static final DeferredHolder<EntityType<?>, EntityType<BrownSugarBrickEntity>> BROWN_SUGAR_BRICK = ENTITIES.registerEntityType(

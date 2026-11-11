@@ -31,6 +31,8 @@ public final class ModModelLayers {
     public static final ModelLayerLocation TROLL = layer("troll");
     public static final ModelLayerLocation FAIRY = layer("fairy");
     public static final ModelLayerLocation ENT = layer("ent");
+    public static final ModelLayerLocation SHADOW_EYE = layer("shadow_eye");
+    public static final ModelLayerLocation SHADOW_WANDERER = layer("shadow_wanderer");
 
     private static ModelLayerLocation layer(String name) {
         return new ModelLayerLocation(CrazyAlloyRevival.id(name), "main");

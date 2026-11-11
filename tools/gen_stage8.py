@@ -46,7 +46,8 @@ def gen_assets():
     flat_item("mystic_sapling", "block/mystic_sapling")
     gen_stage2.wood_set("mystic")
     # Items.
-    for i in ("jar", "jar_with_a_fairy", "elixir_of_life", "troll_spawn_egg", "fairy_spawn_egg", "evil_fairy_spawn_egg", "ent_spawn_egg"):
+    for i in ("jar", "jar_with_a_fairy", "elixir_of_life", "troll_spawn_egg", "fairy_spawn_egg", "evil_fairy_spawn_egg", "ent_spawn_egg",
+              "shadow_eye_spawn_egg", "shadow_wanderer_spawn_egg"):
         flat_item(i)
 
 def gen_sounds():
@@ -69,6 +70,10 @@ def gen_sounds():
     mob("ent", ["minecraft:random/door_open", "minecraft:random/door_close"],
         ["minecraft:dig/wood1", "minecraft:dig/wood2", "minecraft:dig/wood3", "minecraft:dig/wood4"],
         ["minecraft:random/break"], 0.45, 1.2)
+    mob("shadow_eye", [f"minecraft:mob/phantom/idle{i}" for i in range(1, 6)], [f"minecraft:mob/phantom/hurt{i}" for i in range(1, 4)],
+        [f"minecraft:mob/phantom/death{i}" for i in range(1, 4)], 0.6, 0.6)
+    mob("shadow_wanderer", [f"minecraft:mob/endermen/idle{i}" for i in range(1, 6)], [f"minecraft:mob/endermen/hit{i}" for i in range(1, 5)],
+        ["minecraft:mob/endermen/death"], 0.65, 0.9)
     write(path, sounds)
 
 # =================================================================== loot
@@ -110,6 +115,8 @@ def gen_loot():
     entity("troll", [pool("minecraft:leather", 0.0, 2.0), pool("minecraft:moss_carpet", 0.0, 2.0)])
     entity("fairy", [pool("minecraft:glowstone_dust", 0.0, 1.0)])
     entity("evil_fairy", [pool("minecraft:glowstone_dust", 0.0, 2.0), pool("minecraft:redstone", 0.0, 1.0)])
+    entity("shadow_eye", [pool("minecraft:black_dye", 0.0, 2.0), pool("minecraft:ender_pearl", 1.0, 1.0, chance=0.25)])
+    entity("shadow_wanderer", [pool("minecraft:black_dye", 0.0, 2.0), pool("minecraft:ender_pearl", 0.0, 1.0)])
     entity("ent", [pool("mystic_log", 1.0, 3.0), pool("minecraft:stick", 1.0, 3.0), pool("mystic_sapling", 1.0, 1.0, chance=0.3)])
 
 # =================================================================== recipes
@@ -161,10 +168,9 @@ def gen_tags():
     tag("item", "minecraft", "grass_blocks", n("mystic_grass_block"))
     # The original's Trolls target the Shadow Eye and the Shadow Wanderer. Neither exists in the revival yet, so the
     # entries are optional: the tag loads today and starts matching as soon as those creatures are registered.
-    tag("entity_type", NS, "troll_enemies", [{"id": f"{NS}:shadow_eye", "required": False},
-                                             {"id": f"{NS}:shadow_wanderer", "required": False}])
+    tag("entity_type", NS, "troll_enemies", n("shadow_eye", "shadow_wanderer"))
     tag("entity_type", NS, "fairies", n("fairy", "evil_fairy"))
-    tag("entity_type", "minecraft", "fall_damage_immune", n("fairy", "evil_fairy"))
+    tag("entity_type", "minecraft", "fall_damage_immune", n("fairy", "evil_fairy", "shadow_eye"))
     for t in [("minecraft", "is_overworld"), ("c", "is_overworld"), ("minecraft", "is_forest"), ("c", "is_forest"), (NS, "is_mystic"),
               ("minecraft", "has_structure/mineshaft"), ("minecraft", "has_structure/stronghold"),
               ("minecraft", "has_structure/ruined_portal_standard"), ("minecraft", "has_structure/trial_chambers"),
@@ -300,7 +306,8 @@ def gen_worldgen():
             "ambient": [spawn("minecraft:bat", 10, 8, 8)], "axolotls": [],
             "creature": [spawn("fairy", 12, 1, 2), spawn("troll", 6, 1, 1), spawn("ent", 3, 1, 1)],
             "misc": [],
-            "monster": [spawn("evil_fairy", 30, 1, 1)] + vanilla_monsters,
+            # The shadow creatures only spawn naturally while the sky is dark (see ShadowWanderer.nightOrNotNatural).
+            "monster": [spawn("evil_fairy", 30, 1, 1), spawn("shadow_eye", 25, 1, 1), spawn("shadow_wanderer", 20, 1, 1)] + vanilla_monsters,
             "underground_water_creature": [spawn("minecraft:glow_squid", 10, 4, 6)], "water_ambient": [], "water_creature": []},
         "temperature": 0.6})
 

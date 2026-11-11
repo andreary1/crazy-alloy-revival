@@ -125,6 +125,14 @@ public final class RevivalGameTests {
         TESTS.put("giant_red_mushroom_generates", RevivalGameTests::giantMushroomGrows);
         TESTS.put("mystic_sapling_grows", RevivalGameTests::mysticSaplingGrows);
         TESTS.put("stage8_registry_and_worldgen", RevivalGameTests::stage8Registry);
+        TESTS.put("shadow_creatures_tick_without_crashing", RevivalGameTests::shadowMobsTick);
+        TESTS.put("troll_hunts_shadow_wanderer", RevivalGameTests::trollHuntsWanderer);
+        TESTS.put("troll_hunts_shadow_eye", RevivalGameTests::trollHuntsEye);
+        TESTS.put("shadow_eye_gaze_needs_line_of_sight", RevivalGameTests::shadowEyeGaze);
+        TESTS.put("shadow_eye_gazes_at_its_target", RevivalGameTests::shadowEyeGazeGoal);
+        TESTS.put("shadow_wanderer_claws_players", RevivalGameTests::wandererClaws);
+        TESTS.put("shadow_creatures_spawn_only_at_night", RevivalGameTests::shadowNightSpawns);
+        TESTS.put("shadow_creatures_registry", RevivalGameTests::shadowRegistry);
     }
 
     private RevivalGameTests() {}
@@ -465,6 +473,7 @@ public final class RevivalGameTests {
         var tsize = template.getSize();
         for (int cx = where.getX() >> 4; cx <= (where.getX() + tsize.getX()) >> 4; cx++) {
             for (int cz = where.getZ() >> 4; cz <= (where.getZ() + tsize.getZ()) >> 4; cz++) {
+                level.setChunkForced(cx, cz, true);
                 level.getChunk(cx, cz);
             }
         }
@@ -1073,8 +1082,16 @@ public final class RevivalGameTests {
     /** The bank: guards in the security room, four vault chests behind obsidian with bank loot, the gold "$". */
     private static void bankTemplate(GameTestHelper helper) {
         BlockPos where = helper.absolutePos(new BlockPos(0, 100, 0));
-        List<net.minecraft.world.entity.Entity> found = placeTemplate(helper, "bank", where);
+        placeTemplate(helper, "bank", where);
         var level = helper.getLevel();
+        // Entities in freshly loaded chunks only become visible once those chunks tick, so check a few ticks later.
+        helper.runAfterDelay(5, () -> bankTemplateChecks(helper, where));
+    }
+
+    private static void bankTemplateChecks(GameTestHelper helper, BlockPos where) {
+        var level = helper.getLevel();
+        var box = new net.minecraft.world.phys.AABB(where.getX(), where.getY(), where.getZ(), where.getX() + 21, where.getY() + 22, where.getZ() + 48);
+        List<net.minecraft.world.entity.Entity> found = level.getEntitiesOfClass(net.minecraft.world.entity.Entity.class, box, e -> !(e instanceof Player));
         long dinos = found.stream().filter(e -> e instanceof com.crazyalloy.revival.entity.GuardDinosaur).count();
         long segways = found.stream().filter(e -> e instanceof com.crazyalloy.revival.entity.Segway).count();
         helper.assertTrue(dinos == 2 && segways == 1, "expected 2 guard dinosaurs and 1 segway, found " + dinos + " and " + segways);
@@ -1283,6 +1300,120 @@ public final class RevivalGameTests {
                 ModBlocks.MYSTIC_GRASS_BLOCK.get().asItem(), ModBlocks.MYSTIC_LOG.get().asItem(), ModBlocks.MYSTIC_PRESSURE_PLATE.get().asItem())) {
             helper.assertTrue(enchanted.contains(item), item + " is missing from the Enchanted tab");
         }
+        helper.succeed();
+    }
+
+    // ------------------------------------------------------------------ shadow creatures
+
+    private static void shadowMobsTick(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        List<Mob> mobs = List.of(helper.spawn(ModEntities.SHADOW_EYE.get(), 2, 2, 2), helper.spawn(ModEntities.SHADOW_WANDERER.get(), 6, 1, 6));
+        helper.runAfterDelay(100, () -> {
+            for (Mob mob : mobs) {
+                helper.assertTrue(mob.isAlive(), mob.getType().toShortString() + " died or was removed while ticking");
+            }
+            helper.assertTrue(mobs.get(0).getMaxHealth() == 16.0F, "shadow eye should have 16 health");
+            helper.assertTrue(mobs.get(1).getMaxHealth() == 30.0F && mobs.get(1).getAttributeValue(Attributes.ATTACK_DAMAGE) == 6.0,
+                    "shadow wanderer should have 30 health and 6 damage");
+            helper.assertTrue(mobs.get(0).getY() >= helper.absoluteVec(Vec3.ZERO).y + 1.5, "the shadow eye should float above the ground");
+            helper.succeed();
+        });
+    }
+
+    private static void trollHuntsWanderer(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var troll = helper.spawn(ModEntities.TROLL.get(), 1, 1, 4);
+        var wanderer = helper.spawn(ModEntities.SHADOW_WANDERER.get(), 7, 1, 4);
+        wanderer.setNoAi(true);
+        helper.assertTrue(com.crazyalloy.revival.entity.Troll.isEnemy(wanderer), "the shadow wanderer should be a troll enemy");
+        helper.succeedWhen(() -> helper.assertTrue(troll.getTarget() == wanderer || wanderer.getLastHurtByMob() == troll,
+                "the troll did not go after the shadow wanderer"));
+    }
+
+    private static void trollHuntsEye(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var troll = helper.spawn(ModEntities.TROLL.get(), 1, 1, 4);
+        var eye = helper.spawn(ModEntities.SHADOW_EYE.get(), 7, 2, 4);
+        eye.setNoAi(true);
+        helper.assertTrue(com.crazyalloy.revival.entity.Troll.isEnemy(eye), "the shadow eye should be a troll enemy");
+        helper.succeedWhen(() -> helper.assertTrue(troll.getTarget() == eye, "the troll did not go after the shadow eye"));
+    }
+
+    /** A clear line hurts and slows; a wall in between makes the gaze miss. */
+    private static void shadowEyeGaze(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var eye = helper.spawn(ModEntities.SHADOW_EYE.get(), 1, 2, 4);
+        eye.setNoAi(true);
+        var pig = helper.spawn(EntityType.PIG, 6, 1, 4);
+        pig.setNoAi(true);
+        helper.assertTrue(eye.gaze(level, pig), "the gaze missed a pig in plain sight");
+        helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the gaze did no damage");
+        helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "the gaze did not slow the pig");
+        var pig2 = helper.spawn(EntityType.PIG, 6, 1, 7);
+        pig2.setNoAi(true);
+        for (int y = 1; y <= 4; y++) {
+            for (int z = 6; z <= 8; z++) {
+                helper.setBlock(new BlockPos(4, y, z), net.minecraft.world.level.block.Blocks.STONE);
+            }
+        }
+        eye.snapTo(helper.absoluteVec(new Vec3(1.5, 2, 7.5)));
+        helper.assertFalse(eye.gaze(level, pig2), "the gaze went through a wall");
+        helper.assertTrue(pig2.getHealth() == pig2.getMaxHealth(), "a pig behind a wall was hurt");
+        helper.succeed();
+    }
+
+    /** With a target in sight the eye warns, then strikes on its own. */
+    private static void shadowEyeGazeGoal(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var eye = helper.spawn(ModEntities.SHADOW_EYE.get(), 1, 2, 4);
+        var pig = helper.spawn(EntityType.PIG, 7, 1, 4);
+        pig.setNoAi(true);
+        pig.setInvulnerable(false);
+        eye.setTarget(pig);
+        helper.succeedWhen(() -> {
+            eye.setTarget(pig);
+            helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the shadow eye never struck its target");
+        });
+    }
+
+    private static void wandererClaws(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var wanderer = helper.spawn(ModEntities.SHADOW_WANDERER.get(), 2, 1, 4);
+        ServerPlayer player = survivalMockPlayer(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(6.5, 1, 4.5)));
+        helper.succeedWhen(() -> {
+            helper.assertTrue(player.getHealth() < player.getMaxHealth(), "the shadow wanderer did not attack the player");
+            player.discard();
+        });
+    }
+
+    private static void shadowNightSpawns(GameTestHelper helper) {
+        var server = helper.getLevel().getServer();
+        var source = server.createCommandSourceStack().withSuppressedOutput();
+        server.getCommands().performPrefixedCommand(source, "time set noon");
+        helper.runAfterDelay(3, () -> {
+            helper.assertFalse(com.crazyalloy.revival.entity.ShadowWanderer.nightOrNotNatural(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.NATURAL),
+                    "shadow creatures should not spawn naturally at noon");
+            helper.assertTrue(com.crazyalloy.revival.entity.ShadowWanderer.nightOrNotNatural(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.SPAWN_ITEM_USE),
+                    "spawn eggs should work by day");
+            server.getCommands().performPrefixedCommand(source, "time set midnight");
+            helper.runAfterDelay(3, () -> {
+                boolean night = com.crazyalloy.revival.entity.ShadowWanderer.nightOrNotNatural(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.NATURAL);
+                server.getCommands().performPrefixedCommand(source, "time set day");
+                helper.assertTrue(night, "shadow creatures should spawn naturally at midnight");
+                helper.succeed();
+            });
+        });
+    }
+
+    private static void shadowRegistry(GameTestHelper helper) {
+        var grove = helper.getLevel().registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(com.crazyalloy.revival.worldgen.ModWorldgen.MYSTIC_GROVE);
+        var monsters = grove.value().getMobSettings().getMobs(net.minecraft.world.entity.MobCategory.MONSTER).unwrap().stream().map(w -> w.value().type()).toList();
+        helper.assertTrue(monsters.contains(ModEntities.SHADOW_EYE.get()), "the shadow eye does not spawn in the mystic grove");
+        helper.assertTrue(monsters.contains(ModEntities.SHADOW_WANDERER.get()), "the shadow wanderer does not spawn in the mystic grove");
+        var enchanted = ModItems.ENCHANTED_TAB_ORDER.stream().map(d -> (net.minecraft.world.item.Item) d.get()).toList();
+        helper.assertTrue(enchanted.contains(ModItems.SHADOW_EYE_SPAWN_EGG.get()) && enchanted.contains(ModItems.SHADOW_WANDERER_SPAWN_EGG.get()),
+                "shadow spawn eggs missing from the Enchanted tab");
         helper.succeed();
     }
 }

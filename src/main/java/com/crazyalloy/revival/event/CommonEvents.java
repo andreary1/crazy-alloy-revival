@@ -77,6 +77,8 @@ public final class CommonEvents {
         event.put(ModEntities.FAIRY.get(), com.crazyalloy.revival.entity.Fairy.createAttributes().build());
         event.put(ModEntities.EVIL_FAIRY.get(), com.crazyalloy.revival.entity.EvilFairy.createAttributes().build());
         event.put(ModEntities.ENT.get(), com.crazyalloy.revival.entity.Ent.createAttributes().build());
+        event.put(ModEntities.SHADOW_EYE.get(), com.crazyalloy.revival.entity.ShadowEye.createAttributes().build());
+        event.put(ModEntities.SHADOW_WANDERER.get(), com.crazyalloy.revival.entity.ShadowWanderer.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -108,6 +110,8 @@ public final class CommonEvents {
         ground(event, ModEntities.FAIRY.get(), com.crazyalloy.revival.entity.Fairy::checkSpawnRules);
         ground(event, ModEntities.EVIL_FAIRY.get(), com.crazyalloy.revival.entity.EvilFairy::checkSpawnRules);
         ground(event, ModEntities.ENT.get(), com.crazyalloy.revival.entity.Ent::checkSpawnRules);
+        ground(event, ModEntities.SHADOW_EYE.get(), com.crazyalloy.revival.entity.ShadowEye::checkSpawnRules);
+        ground(event, ModEntities.SHADOW_WANDERER.get(), com.crazyalloy.revival.entity.ShadowWanderer::checkSpawnRules);
         event.register(ModEntities.JELLY_SHARK.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 JellyShark::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }

@@ -67,6 +67,8 @@ public final class ModSounds {
     public static final MobSounds TROLL = mob("troll");
     public static final MobSounds FAIRY = mob("fairy");
     public static final MobSounds EVIL_FAIRY = mob("evil_fairy");
+    public static final MobSounds SHADOW_EYE = mob("shadow_eye");
+    public static final MobSounds SHADOW_WANDERER = mob("shadow_wanderer");
     public static final MobSounds ENT = mob("ent");
 
     public record MobSounds(DeferredHolder<SoundEvent, SoundEvent> ambient, DeferredHolder<SoundEvent, SoundEvent> hurt,

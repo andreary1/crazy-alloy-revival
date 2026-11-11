@@ -51,6 +51,9 @@ public final class RevivalConfig {
     public static final ModConfigSpec.DoubleValue TROLL_SPAWN_CHANCE;
     public static final ModConfigSpec.DoubleValue FAIRY_SPAWN_CHANCE;
     public static final ModConfigSpec.DoubleValue EVIL_FAIRY_SPAWN_CHANCE;
+    public static final ModConfigSpec.DoubleValue SHADOW_EYE_SPAWN_CHANCE;
+    public static final ModConfigSpec.DoubleValue SHADOW_WANDERER_SPAWN_CHANCE;
+    public static final ModConfigSpec.BooleanValue SHADOW_EYE_GAZE;
     public static final ModConfigSpec.DoubleValue ENT_SPAWN_CHANCE;
 
     // Difficulty
@@ -241,6 +244,12 @@ public final class RevivalConfig {
         ENT_SPAWN_CHANCE = b
                 .translation("crazyalloy_revival.configuration.entSpawnChance")
                 .defineInRange("entSpawnChance", 1.0, 0.0, 1.0);
+        SHADOW_EYE_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.shadowEyeSpawnChance")
+                .defineInRange("shadowEyeSpawnChance", 1.0, 0.0, 1.0);
+        SHADOW_WANDERER_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.shadowWandererSpawnChance")
+                .defineInRange("shadowWandererSpawnChance", 1.0, 0.0, 1.0);
         b.pop();
 
         b.comment("Difficulty of Crazy Alloy creatures, applied when they spawn.").translation("crazyalloy_revival.configuration.difficulty").push("difficulty");
@@ -326,6 +335,10 @@ public final class RevivalConfig {
                 .comment("Revival proposal: an idle Ent sometimes takes root and stands still with its arms raised like branches until it is hit, blending in with the trees. Naturally spawned Ents often start rooted. If false Ents always walk around.")
                 .translation("crazyalloy_revival.configuration.entRooting")
                 .define("entRooting", true);
+        SHADOW_EYE_GAZE = b
+                .comment("Revival proposal: the Shadow Eye warns for 1.5 seconds (rings line up, pupil widens) and then strikes a target still in its sight for 4 magic damage plus a short Darkness. If false it only floats around.")
+                .translation("crazyalloy_revival.configuration.shadowEyeGaze")
+                .define("shadowEyeGaze", true);
         b.pop();
 
         b.translation("crazyalloy_revival.configuration.machines").push("machines");

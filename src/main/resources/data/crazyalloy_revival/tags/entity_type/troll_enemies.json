@@ -1,13 +1,7 @@
 {
   "replace": false,
   "values": [
-    {
-      "id": "crazyalloy_revival:shadow_eye",
-      "required": false
-    },
-    {
-      "id": "crazyalloy_revival:shadow_wanderer",
-      "required": false
-    }
+    "crazyalloy_revival:shadow_eye",
+    "crazyalloy_revival:shadow_wanderer"
   ]
 }
