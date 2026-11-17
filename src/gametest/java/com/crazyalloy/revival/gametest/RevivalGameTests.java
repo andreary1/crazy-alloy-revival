@@ -1503,6 +1503,9 @@ public final class RevivalGameTests {
             helper.assertTrue(level.getBlockEntity(where.offset(7, 1, 4)) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity, "no chest at the back of the hut");
             helper.assertTrue(level.getBlockState(where.offset(7, 1, 1)).isAir() && level.getBlockState(where.offset(7, 2, 1)).isAir(), "the doorway should be open");
             helper.assertTrue(level.getBlockState(where.offset(1, 1, 3)).is(net.minecraft.world.level.block.Blocks.IRON_ORE), "no ore block in the yard");
+            BlockState corner = level.getBlockState(where.offset(0, 1, 1));
+            helper.assertTrue(corner.getValue(net.minecraft.world.level.block.CrossCollisionBlock.EAST) && corner.getValue(net.minecraft.world.level.block.CrossCollisionBlock.SOUTH),
+                    "the yard fence corner is not joined");
             helper.succeed();
         });
     }
@@ -1521,6 +1524,14 @@ public final class RevivalGameTests {
             helper.assertTrue(level.getBlockState(where.offset(16, 16, 8)).is(net.minecraft.world.level.block.Blocks.BREWING_STAND), "no brewing stand in the lab");
             helper.assertTrue(level.getBlockEntity(where.offset(13, 15, 3)) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity
                     && level.getBlockEntity(where.offset(13, 15, 4)) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity, "no double chest in the lab");
+            // The two halves must really form one double chest, and the study windows must join the walls beside them.
+            BlockState half = level.getBlockState(where.offset(13, 15, 3));
+            helper.assertTrue(half.getValue(net.minecraft.world.level.block.ChestBlock.TYPE) != net.minecraft.world.level.block.state.properties.ChestType.SINGLE
+                    && where.offset(13, 15, 3).relative(net.minecraft.world.level.block.ChestBlock.getConnectedDirection(half)).equals(where.offset(13, 15, 4)),
+                    "the lab chests do not join into a double chest");
+            BlockState pane = level.getBlockState(where.offset(12, 9, 3));
+            helper.assertTrue(pane.getValue(net.minecraft.world.level.block.CrossCollisionBlock.NORTH) && pane.getValue(net.minecraft.world.level.block.CrossCollisionBlock.SOUTH),
+                    "the study window pane is not joined to the wall");
             int lecterns = 0, glass = 0;
             for (BlockPos p : BlockPos.betweenClosed(where, where.offset(32, 29, 10))) {
                 BlockState st = level.getBlockState(p);

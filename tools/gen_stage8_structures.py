@@ -67,6 +67,50 @@ def stepped_roof(t, x0, x1, z0, z1, y, steps):
     return y + steps
 
 
+# Blocks that connect to their neighbours (fences, panes, walls, double chests) keep the states written in the template:
+# structure placement does not update shapes. So work the connections out here, the way the game would.
+NOT_STURDY = ("air", "pane", "fence", "torch", "lantern", "ladder", "slab", "stairs", "chest", "candle", "bed", "lectern",
+              "brewing", "cauldron", "pot", "flower", "cornflower", "_wall", "grindstone", "door", "carpet", "button", "sign",
+              "banner", "bars", "chain")
+SIDES = {"north": (0, -1), "south": (0, 1), "west": (-1, 0), "east": (1, 0)}
+CLOCKWISE = {"north": "east", "east": "south", "south": "west", "west": "north"}
+
+
+def sturdy(name):
+    return name is not None and not any(k in name for k in NOT_STURDY)
+
+
+def connect(t):
+    for (x, y, z), (name, props, nbt) in list(t.blocks.items()):
+        if name.endswith("_fence") or name.endswith("_pane") or name.endswith("_wall"):
+            for side, (dx, dz) in SIDES.items():
+                other = t.get(x + dx, y, z + dz)
+                if name.endswith("_fence"):
+                    joins = other is not None and ((other.endswith("_fence") and "nether" not in other) or other.endswith("fence_gate") or sturdy(other))
+                else:   # panes and walls join each other, glass, bars and full faces
+                    joins = other is not None and (other.endswith("_pane") or other.endswith("_wall") or other.endswith("bars") or sturdy(other))
+                if name.endswith("_wall"):
+                    props[side] = "low" if joins else "none"
+                else:
+                    props[side] = "true" if joins else "false"
+    # Two chests side by side, facing the same way, become one double chest: the "left" half has its partner clockwise
+    # of its facing, the "right" half counter-clockwise.
+    chests = sorted(p for p, b in t.blocks.items() if b[0] == "minecraft:chest")
+    for p in chests:
+        t.blocks[p][1]["type"] = "single"
+    paired = set()
+    for (x, y, z) in chests:
+        if (x, y, z) in paired:
+            continue
+        facing = t.blocks[(x, y, z)][1]["facing"]
+        dx, dz = SIDES[CLOCKWISE[facing]]
+        q = (x + dx, y, z + dz)
+        if q in t.blocks and q not in paired and t.blocks[q][0] == "minecraft:chest" and t.blocks[q][1].get("facing") == facing:
+            t.blocks[(x, y, z)][1]["type"] = "left"
+            t.blocks[q][1]["type"] = "right"
+            paired.update({(x, y, z), q})
+
+
 # =============================================================================================== Dwarf Hut
 def dwarf_hut():
     W, H, D = 11, 9, 9
@@ -77,6 +121,7 @@ def dwarf_hut():
     t.fill(5, 9, 1, 3, 1, 5, DARK)
     t.fill(6, 8, 1, 3, 2, 4, "minecraft:air")
     t.fill(7, 7, 1, 2, 1, 1, "minecraft:air")                 # doorway, no door
+    t.put(7, 0, 0, DSLAB, type="bottom", **NOT_WET)            # step up to the floor
     t.put(7, 1, 4, "minecraft:chest", nbt=container("chest", "dwarf_hut"), facing="north", type="single", **NOT_WET)
     t.put(6, 1, 4, "minecraft:barrel", nbt=container("barrel", "dwarf_hut_stores"), facing="up", open="false")
     t.put(8, 1, 4, "minecraft:crafting_table")
@@ -99,6 +144,7 @@ def dwarf_hut():
     t.put(10, 1, 7, "minecraft:mossy_cobblestone")
     t.put(3, 1, 7, "minecraft:cornflower")
     t.entity("dwarf", 7.5, 1.0, 3.0, yaw=180.0, FromStructure=Byte(1))
+    connect(t)
     t.save("dwarf_hut")
 
 
@@ -247,6 +293,7 @@ def wizard_tower():
     for y in (base + 1, base + 2):
         for x in (7, 25, cx0, cx1):
             t.put(x, y, 5, "minecraft:air")
+    connect(t)
     t.save("wizard_tower")
 
 

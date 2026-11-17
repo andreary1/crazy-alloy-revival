@@ -145,9 +145,11 @@ def gen_worldgen():
                 {"type": "minecraft:would_survive", "state": {"Name": ns(name)}}]}}]})
 
     def structure(name, adaptation, salt, spacing):
+        # A single pool element is placed one block lower than the surface (its ground level delta is 1), which sank
+        # the hut and the tower into the ground; start one block higher so the bottom layer rests on the surface.
         write(f"{W}/structure/{name}.json", {"type": "minecraft:jigsaw", "biomes": f"#{NS}:has_structure/{name}",
             "step": "surface_structures", "spawn_overrides": {}, "terrain_adaptation": adaptation,
-            "start_pool": f"{NS}:{name}/start", "size": 1, "start_height": {"absolute": 0},
+            "start_pool": f"{NS}:{name}/start", "size": 1, "start_height": {"absolute": 1},
             "project_start_to_heightmap": "WORLD_SURFACE_WG", "max_distance_from_center": 40, "use_expansion_hack": False})
         write(f"{W}/template_pool/{name}/start.json", {"fallback": "minecraft:empty", "elements": [{"weight": 1, "element": {
             "element_type": "minecraft:single_pool_element", "location": f"{NS}:{name}", "projection": "rigid", "processors": "minecraft:empty"}}]})
