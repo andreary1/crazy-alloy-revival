@@ -27,6 +27,8 @@ public final class RevivalConfig {
     public static final ModConfigSpec.IntValue ICE_CREAM_PINNACLES;
     public static final ModConfigSpec.EnumValue<StructureFrequency> BANK_FREQUENCY;
     public static final ModConfigSpec.BooleanValue BANK_GUARDS;
+    public static final ModConfigSpec.EnumValue<StructureFrequency> WIZARD_TOWER_FREQUENCY;
+    public static final ModConfigSpec.EnumValue<StructureFrequency> DWARF_HUT_FREQUENCY;
     public static final ModConfigSpec.IntValue MYSTIC_REGION_WEIGHT;
     public static final ModConfigSpec.BooleanValue MYSTIC_GROVE_ENABLED;
     public static final ModConfigSpec.IntValue GIANT_MUSHROOMS;
@@ -167,6 +169,16 @@ public final class RevivalConfig {
                 .comment("Each newly generated Bank has Guard Dinosaurs and a Segway placed in its security rooms (the spawners are separate and always generate). If false, guards placed by banks vanish when first loaded.")
                 .translation("crazyalloy_revival.configuration.bankGuards")
                 .define("bankGuards", true);
+        WIZARD_TOWER_FREQUENCY = b
+                .comment("How often Wizard Towers appear in the Mystic Grove. DISABLED removes them from new chunks.")
+                .translation("crazyalloy_revival.configuration.wizardTowerFrequency")
+                .worldRestart()
+                .defineEnum("wizardTowerFrequency", StructureFrequency.NORMAL);
+        DWARF_HUT_FREQUENCY = b
+                .comment("How often Dwarf Huts appear in the Mystic Grove. DISABLED removes them from new chunks.")
+                .translation("crazyalloy_revival.configuration.dwarfHutFrequency")
+                .worldRestart()
+                .defineEnum("dwarfHutFrequency", StructureFrequency.NORMAL);
         MYSTIC_REGION_WEIGHT = b
                 .comment("Weight of the Crazy Alloy mystic TerraBlender region. Inside it, dark forests and windswept forests become Mystic Groves. 0 disables the Mystic Grove in new worlds. Vanilla regions use 10.")
                 .translation("crazyalloy_revival.configuration.mysticRegionWeight")

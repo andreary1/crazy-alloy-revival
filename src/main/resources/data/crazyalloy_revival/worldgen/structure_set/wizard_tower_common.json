@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "crazyalloy_revival:structure_frequency",
+      "frequency": "common",
+      "structure": "wizard_tower"
+    }
+  ],
+  "structures": [
+    {
+      "structure": "crazyalloy_revival:wizard_tower",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 23,
+    "separation": 7,
+    "salt": 731902442
+  }
+}

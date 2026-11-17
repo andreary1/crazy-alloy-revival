@@ -606,5 +606,7 @@ if __name__ == "__main__":
     gen_stage7.generate()
     import gen_stage8  # tools/gen_stage8.py: the Mystic Grove, mystic wood, Troll, fairies and Ent (Enchanted tab)
     gen_stage8.generate()
+    import gen_stage8b  # tools/gen_stage8b.py: Purple/Blue Mushrooms, Wizard, Dwarf, Dwarf Hut and Wizard Tower
+    gen_stage8b.generate()
     gen_lang()
     print("resources generated")

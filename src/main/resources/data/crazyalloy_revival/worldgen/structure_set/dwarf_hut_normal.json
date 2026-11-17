@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "crazyalloy_revival:structure_frequency",
+      "frequency": "normal",
+      "structure": "dwarf_hut"
+    }
+  ],
+  "structures": [
+    {
+      "structure": "crazyalloy_revival:dwarf_hut",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 18,
+    "separation": 6,
+    "salt": 731902441
+  }
+}

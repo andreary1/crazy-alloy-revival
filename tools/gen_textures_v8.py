@@ -523,9 +523,159 @@ def shadow_wanderer():
     }
     paint("shadow_wanderer", "ShadowWandererModel.java", 64, 64, painters)
 
+# ================================================================== small mushrooms (block textures)
+def mystic_mushrooms():
+    """Purple and Blue Mushroom: a cap top with light square spots, a cap side band and a beige stem."""
+    def cap(base, light, dark, spot, edge_line):
+        top = blank(); px = top.load()
+        for y in range(16):
+            for x in range(16):
+                c = jitter(base, 0.08)
+                # stepped rings: the outer ring (brim) darker, the middle step lighter
+                ring = min(x, y, 15 - x, 15 - y)
+                if ring == 3:
+                    c = dark
+                elif ring == 4 and edge_line:
+                    c = edge_line
+                elif ring >= 6:
+                    c = jitter(light, 0.06)
+                px[x, y] = c
+        for (x, y) in [(5, 5), (10, 4), (7, 9), (11, 10), (4, 11), (8, 6), (12, 7)]:
+            px[x, y] = spot
+        side = blank(); px = side.load()
+        for y in range(16):
+            for x in range(16):
+                c = jitter(base, 0.08)
+                if y == 8 or y == 11:
+                    c = dark                     # underside edge and the top of the brim
+                if edge_line and y == 7:
+                    c = edge_line                # a lighter line along the step
+                px[x, y] = c
+        for (x, y) in [(4, 9), (9, 10), (13, 9), (6, 7)]:
+            px[x, y] = spot
+        return top, side
+    for name, base, light, dark, spot, edge in [
+            ("purple", hexc("7a1a9a"), hexc("9a2ab8"), hexc("4a0e5e"), hexc("f0e6f2"), None),
+            ("blue", hexc("1a2a8a"), hexc("2a3ca8"), hexc("10185a"), hexc("dfe4ee"), hexc("3e5ac8"))]:
+        top, side = cap(base, light, dark, spot, edge)
+        save(top, f"block/{name}_mushroom_top.png")
+        save(side, f"block/{name}_mushroom_side.png")
+    stem = blank(); px = stem.load()
+    for y in range(16):
+        for x in range(16):
+            px[x, y] = jitter(hexc("d8c8b0") if y < 12 else hexc("c4b49a"), 0.05)
+    save(stem, "block/mystic_mushroom_stem.png")
+
+# ================================================================== Wizard and Dwarf
+ROBE = hexc("2a4aa8")
+ROBE_L = hexc("3a5cc0")
+ROBE_D = hexc("1e3680")
+STAR = hexc("f2f4ff")
+PALE = hexc("f0d8c0")
+BEARD_W = hexc("eeeeea")
+BEARD_G = hexc("d4d4cc")
+
+def robe(stars=0.06):
+    def f(x, y, w, h):
+        if (x * 5 + y * 3) % 11 == 0 and rng.random() < 0.7 or rng.random() < stars * 0.3:
+            return STAR
+        return jitter(ROBE if rng.random() < 0.8 else ROBE_L, 0.06)
+    return f
+
+def robe_band(x, y, w, h):
+    # horizontal bands separate the top of the robe from the skirt
+    if y in (h - 2,):
+        return ROBE_D
+    return robe()(x, y, w, h)
+
+def wizard_face(x, y, w, h):
+    # white hair framing the face, blue eyes, pale skin, white moustache joining the beard
+    if x in (0, w - 1) or y == 0:
+        return jitter(BEARD_W, 0.05)
+    if y == 3 and x in (2, 5):
+        return hexc("2a4ad8")
+    if y == 2 and x in (2, 5):
+        return BEARD_W  # bushy brows
+    if y >= 5 and 1 <= x <= 6:
+        return jitter(BEARD_W, 0.05) if not (y == 5 and x in (3, 4)) else hexc("c89a88")
+    return jitter(PALE, 0.04)
+
+def white_hair(x, y, w, h):
+    return jitter(BEARD_W if rng.random() < 0.7 else BEARD_G, 0.04)
+
+def wizard():
+    beard = lambda x, y, w, h: jitter(BEARD_W if (x + y) % 3 else BEARD_G, 0.04)
+    painters = {
+        "head": {"side": lambda x, y, w, h: white_hair(x, y, w, h) if y >= 2 or x < 2 else jitter(PALE, 0.04),
+                 "front": wizard_face, "back": white_hair, "top": white_hair, "bottom": fill(BEARD_G)},
+        "beard": beard, "beard2": beard, "beard3": beard,
+        "robe_top": {"side": robe(), "front": robe(), "back": robe(), "top": robe(), "bottom": fill(ROBE_D)},
+        "robe_skirt": {"side": robe_band, "front": robe_band, "back": robe_band, "top": robe(), "bottom": fill(ROBE_D)},
+        "sleeve": {"side": robe(), "top": robe(), "bottom": fill(ROBE_D)},
+        "cuff": {"side": lambda x, y, w, h: ROBE_L if y == 0 else robe()(x, y, w, h), "top": robe(), "bottom": fill(ROBE_D)},
+        "hand": fill(PALE),
+        "brim": {"side": fill(ROBE_D), "top": robe(), "bottom": fill(ROBE_D)},
+        "hat1": {"side": robe(), "top": robe(), "bottom": fill(ROBE_D)},
+        "hat2": {"side": robe(), "top": robe(), "bottom": fill(ROBE_D)},
+        "hat3": {"side": robe(), "top": robe(), "bottom": fill(ROBE_D)},
+        "hat4": {"side": robe(), "top": fill(ROBE_L), "bottom": fill(ROBE_D)},
+    }
+    paint("wizard", "WizardModel.java", 128, 64, painters)
+
+GINGER = hexc("d0661a")
+GINGER_D = hexc("a8480e")
+GINGER_L = hexc("e8842a")
+SLEEVE_R = hexc("a8202a")
+VEST = hexc("6a4428")
+TROUSER = hexc("3a3a40")
+BOOT = hexc("5a3418")
+CAP_D = hexc("2a2224")
+
+def ginger(x, y, w, h):
+    # vertical strands
+    return [GINGER, GINGER_D, GINGER_L][(x + (y // 3)) % 3] if rng.random() > 0.15 else GINGER_D
+
+def dwarf_face(x, y, w, h):
+    if y <= 1:
+        return CAP_D if y == 0 else jitter(GINGER_D, 0.05)
+    if x in (0, w - 1) and y >= 2:
+        return ginger(x, y, w, h)  # hair at the sides
+    if y == 4 and x in (2, 6):
+        return hexc("2a4ad8")
+    if y == 4 and x in (1, 3, 5, 7):
+        return hexc("f4f4f4") if x in (3, 5) else jitter(PALE, 0.04)
+    if y >= 6:
+        if y == 6 and x in (4,):
+            return hexc("e8c8b0")  # the light patch at the mouth
+        return ginger(x, y, w, h)
+    if y == 5 and x == 4:
+        return shade(PALE, 0.85)  # nose
+    return jitter(PALE, 0.04)
+
+def dwarf():
+    painters = {
+        "head": {"side": lambda x, y, w, h: ginger(x, y, w, h) if y >= 2 else jitter(GINGER_D, 0.05),
+                 "front": dwarf_face, "back": ginger, "top": fill(GINGER_D), "bottom": ginger},
+        "beard": ginger, "beard_low": ginger,
+        "braid": lambda x, y, w, h: jitter(hexc("6a3a1a"), 0.08),
+        "body": {"side": lambda x, y, w, h: SLEEVE_R if y < 5 else TROUSER,
+                 "front": lambda x, y, w, h: jitter(VEST, 0.06) if y < 6 else (hexc("2a1a10") if y == 6 else TROUSER),
+                 "back": lambda x, y, w, h: jitter(SLEEVE_R, 0.06) if y < 6 else TROUSER, "top": fill(SLEEVE_R), "bottom": fill(TROUSER)},
+        "arm": {"side": lambda x, y, w, h: jitter(PALE, 0.04) if y >= h - 2 else jitter(SLEEVE_R, 0.06),
+                "top": fill(SLEEVE_R), "bottom": fill(PALE)},
+        "leg": {"side": lambda x, y, w, h: jitter(BOOT, 0.06) if y >= h - 2 else jitter(TROUSER, 0.06), "bottom": fill(BOOT)},
+        "cap": {"side": lambda x, y, w, h: jitter(CAP_D, 0.08), "top": lambda x, y, w, h: jitter(CAP_D, 0.08), "bottom": fill(CAP_D)},
+        "visor": fill(hexc("1e181a")),
+        "lamp": {"side": fill(hexc("b89a10")), "front": fill(hexc("f2e030"))},
+    }
+    paint("dwarf", "DwarfModel.java", 64, 64, painters)
+
 def main():
     blocks(); items()
     troll(); fairy_textures(); ent(); shadow_eye(); shadow_wanderer()
+    mystic_mushrooms(); wizard(); dwarf()
+    spawn_egg("wizard", ROBE, STAR)
+    spawn_egg("dwarf", SLEEVE_R, GINGER)
     print("stage 8 textures generated")
 
 if __name__ == "__main__":

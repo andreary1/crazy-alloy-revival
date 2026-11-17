@@ -93,6 +93,8 @@ public final class CrazyAlloyRevivalClient {
         event.registerLayerDefinition(ModModelLayers.TROLL, com.crazyalloy.revival.client.model.TrollModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.FAIRY, com.crazyalloy.revival.client.model.FairyModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.ENT, com.crazyalloy.revival.client.model.EntModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.WIZARD, com.crazyalloy.revival.client.model.WizardModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.DWARF, com.crazyalloy.revival.client.model.DwarfModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.SHADOW_EYE, com.crazyalloy.revival.client.model.ShadowEyeModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.SHADOW_WANDERER, com.crazyalloy.revival.client.model.ShadowWandererModel::createBodyLayer);
     }
@@ -168,6 +170,10 @@ public final class CrazyAlloyRevivalClient {
                 new com.crazyalloy.revival.client.model.FairyModel(c.bakeLayer(ModModelLayers.FAIRY)), 0.4F, "evil_fairy", 0.6F));
         event.registerEntityRenderer(ModEntities.ENT.get(), c -> new RevivalMobRenderer<>(c,
                 new com.crazyalloy.revival.client.model.EntModel(c.bakeLayer(ModModelLayers.ENT)), 0.7F, "ent", 1.4F));
+        event.registerEntityRenderer(ModEntities.WIZARD.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.WizardModel(c.bakeLayer(ModModelLayers.WIZARD)), 0.5F, "wizard", 1.0F));
+        event.registerEntityRenderer(ModEntities.DWARF.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.DwarfModel(c.bakeLayer(ModModelLayers.DWARF)), 0.45F, "dwarf", 1.0F));
         event.registerEntityRenderer(ModEntities.SHADOW_EYE.get(), c -> new RevivalMobRenderer<>(c,
                 new com.crazyalloy.revival.client.model.ShadowEyeModel(c.bakeLayer(ModModelLayers.SHADOW_EYE)), 0.5F, "shadow_eye", 1.0F));
         event.registerEntityRenderer(ModEntities.SHADOW_WANDERER.get(), c -> new RevivalMobRenderer<>(c,

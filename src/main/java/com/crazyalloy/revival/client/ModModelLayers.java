@@ -32,6 +32,8 @@ public final class ModModelLayers {
     public static final ModelLayerLocation FAIRY = layer("fairy");
     public static final ModelLayerLocation ENT = layer("ent");
     public static final ModelLayerLocation SHADOW_EYE = layer("shadow_eye");
+    public static final ModelLayerLocation WIZARD = layer("wizard");
+    public static final ModelLayerLocation DWARF = layer("dwarf");
     public static final ModelLayerLocation SHADOW_WANDERER = layer("shadow_wanderer");
 
     private static ModelLayerLocation layer(String name) {

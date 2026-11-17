@@ -184,6 +184,8 @@ public final class ModItems {
     public static final DeferredItem<?> MYSTIC_PLANKS = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_PLANKS));
     public static final DeferredItem<?> MYSTIC_LEAVES = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_LEAVES));
     public static final DeferredItem<?> MYSTIC_SAPLING = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_SAPLING));
+    public static final DeferredItem<?> PURPLE_MUSHROOM = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.PURPLE_MUSHROOM));
+    public static final DeferredItem<?> BLUE_MUSHROOM = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.BLUE_MUSHROOM));
     public static final DeferredItem<?> MYSTIC_STAIRS = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_STAIRS));
     public static final DeferredItem<?> MYSTIC_SLAB = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_SLAB));
     public static final DeferredItem<?> MYSTIC_FENCE = enchanted(ITEMS.registerSimpleBlockItem(ModBlocks.MYSTIC_FENCE));
@@ -207,6 +209,10 @@ public final class ModItems {
             p -> new SpawnEggItem(p.spawnEgg(ModEntities.EVIL_FAIRY.get()))));
     public static final DeferredItem<SpawnEggItem> ENT_SPAWN_EGG = enchanted(ITEMS.registerItem("ent_spawn_egg",
             p -> new SpawnEggItem(p.spawnEgg(ModEntities.ENT.get()))));
+    public static final DeferredItem<SpawnEggItem> WIZARD_SPAWN_EGG = enchanted(ITEMS.registerItem("wizard_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.WIZARD.get()))));
+    public static final DeferredItem<SpawnEggItem> DWARF_SPAWN_EGG = enchanted(ITEMS.registerItem("dwarf_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.DWARF.get()))));
     public static final DeferredItem<SpawnEggItem> SHADOW_EYE_SPAWN_EGG = enchanted(ITEMS.registerItem("shadow_eye_spawn_egg",
             p -> new SpawnEggItem(p.spawnEgg(ModEntities.SHADOW_EYE.get()))));
     public static final DeferredItem<SpawnEggItem> SHADOW_WANDERER_SPAWN_EGG = enchanted(ITEMS.registerItem("shadow_wanderer_spawn_egg",

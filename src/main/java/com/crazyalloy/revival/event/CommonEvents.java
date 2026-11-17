@@ -77,6 +77,8 @@ public final class CommonEvents {
         event.put(ModEntities.FAIRY.get(), com.crazyalloy.revival.entity.Fairy.createAttributes().build());
         event.put(ModEntities.EVIL_FAIRY.get(), com.crazyalloy.revival.entity.EvilFairy.createAttributes().build());
         event.put(ModEntities.ENT.get(), com.crazyalloy.revival.entity.Ent.createAttributes().build());
+        event.put(ModEntities.WIZARD.get(), com.crazyalloy.revival.entity.MysticDweller.createAttributes().build());
+        event.put(ModEntities.DWARF.get(), com.crazyalloy.revival.entity.MysticDweller.createAttributes().build());
         event.put(ModEntities.SHADOW_EYE.get(), com.crazyalloy.revival.entity.ShadowEye.createAttributes().build());
         event.put(ModEntities.SHADOW_WANDERER.get(), com.crazyalloy.revival.entity.ShadowWanderer.createAttributes().build());
     }

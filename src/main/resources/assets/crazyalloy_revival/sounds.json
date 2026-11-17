@@ -1398,5 +1398,115 @@
         "volume": 0.9
       }
     ]
+  },
+  "entity.wizard.ambient": {
+    "subtitle": "subtitles.crazyalloy_revival.wizard.ambient",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/idle1",
+        "pitch": 0.8,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/villager/idle2",
+        "pitch": 0.8,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/villager/idle3",
+        "pitch": 0.8,
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.wizard.hurt": {
+    "subtitle": "subtitles.crazyalloy_revival.wizard.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/hit1",
+        "pitch": 0.8,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/villager/hit2",
+        "pitch": 0.8,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/villager/hit3",
+        "pitch": 0.8,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/villager/hit4",
+        "pitch": 0.8,
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.wizard.death": {
+    "subtitle": "subtitles.crazyalloy_revival.wizard.death",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/death",
+        "pitch": 0.8,
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.dwarf.ambient": {
+    "subtitle": "subtitles.crazyalloy_revival.dwarf.ambient",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/idle1",
+        "pitch": 0.62,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/villager/idle2",
+        "pitch": 0.62,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/villager/idle3",
+        "pitch": 0.62,
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.dwarf.hurt": {
+    "subtitle": "subtitles.crazyalloy_revival.dwarf.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/hit1",
+        "pitch": 0.62,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/villager/hit2",
+        "pitch": 0.62,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/villager/hit3",
+        "pitch": 0.62,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/villager/hit4",
+        "pitch": 0.62,
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.dwarf.death": {
+    "subtitle": "subtitles.crazyalloy_revival.dwarf.death",
+    "sounds": [
+      {
+        "name": "minecraft:mob/villager/death",
+        "pitch": 0.62,
+        "volume": 1.0
+      }
+    ]
   }
 }

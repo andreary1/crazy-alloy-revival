@@ -298,6 +298,7 @@ def gen_worldgen():
                      ["minecraft:spring_water", "minecraft:spring_lava"],
                      ["minecraft:glow_lichen", f"{NS}:giant_red_mushrooms", f"{NS}:giant_mystic_trees", f"{NS}:mystic_trees",
                       f"{NS}:moss_carpets", f"{NS}:mystic_flowers", f"{NS}:mystic_grass",
+                      f"{NS}:purple_mushroom_patch", f"{NS}:blue_mushroom_patch",
                       "minecraft:brown_mushroom_normal", "minecraft:red_mushroom_normal"],
                      ["minecraft:freeze_top_layer"]],
         "has_precipitation": True,

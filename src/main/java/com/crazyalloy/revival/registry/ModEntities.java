@@ -111,6 +111,10 @@ public final class ModEntities {
             "evil_fairy", EvilFairy::new, MobCategory.MONSTER, b -> b.sized(0.4F, 0.7F).eyeHeight(0.55F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Ent>> ENT = ENTITIES.registerEntityType(
             "ent", Ent::new, MobCategory.CREATURE, b -> b.sized(1.4F, 4.2F).eyeHeight(3.5F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.Wizard>> WIZARD = ENTITIES.registerEntityType(
+            "wizard", com.crazyalloy.revival.entity.Wizard::new, MobCategory.CREATURE, b -> b.sized(0.6F, 2.3F).eyeHeight(1.62F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.Dwarf>> DWARF = ENTITIES.registerEntityType(
+            "dwarf", com.crazyalloy.revival.entity.Dwarf::new, MobCategory.CREATURE, b -> b.sized(0.6F, 1.5F).eyeHeight(1.15F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.ShadowEye>> SHADOW_EYE = ENTITIES.registerEntityType(
             "shadow_eye", com.crazyalloy.revival.entity.ShadowEye::new, MobCategory.MONSTER, b -> b.sized(0.9F, 0.9F).eyeHeight(0.45F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.ShadowWanderer>> SHADOW_WANDERER = ENTITIES.registerEntityType(

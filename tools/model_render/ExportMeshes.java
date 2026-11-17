@@ -64,5 +64,7 @@ public class ExportMeshes {
         dump("ent", EntModel::createBodyLayer, EntModel::new, RevivalRenderState::new, out);
         dump("shadow_eye", ShadowEyeModel::createBodyLayer, ShadowEyeModel::new, RevivalRenderState::new, out);
         dump("shadow_wanderer", ShadowWandererModel::createBodyLayer, ShadowWandererModel::new, RevivalRenderState::new, out);
+        dump("wizard", WizardModel::createBodyLayer, WizardModel::new, RevivalRenderState::new, out);
+        dump("dwarf", DwarfModel::createBodyLayer, DwarfModel::new, RevivalRenderState::new, out);
     }
 }

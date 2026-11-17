@@ -133,6 +133,13 @@ public final class RevivalGameTests {
         TESTS.put("shadow_wanderer_claws_players", RevivalGameTests::wandererClaws);
         TESTS.put("shadow_creatures_spawn_only_at_night", RevivalGameTests::shadowNightSpawns);
         TESTS.put("shadow_creatures_registry", RevivalGameTests::shadowRegistry);
+        TESTS.put("mystic_dwellers_tick_without_crashing", RevivalGameTests::dwellersTick);
+        TESTS.put("wizard_trades", RevivalGameTests::wizardTrades);
+        TESTS.put("dwarf_trades", RevivalGameTests::dwarfTrades);
+        TESTS.put("mystic_mushrooms_need_soil", RevivalGameTests::mysticMushroomSoil);
+        TESTS.put("dwarf_hut_template_has_dwarf_and_chest", RevivalGameTests::dwarfHutTemplate);
+        TESTS.put("wizard_tower_template_has_wizard_and_lab", RevivalGameTests::wizardTowerTemplate);
+        TESTS.put("wizard_and_dwarf_registry_and_worldgen", RevivalGameTests::dwellerRegistry);
     }
 
     private RevivalGameTests() {}
@@ -1414,6 +1421,140 @@ public final class RevivalGameTests {
         var enchanted = ModItems.ENCHANTED_TAB_ORDER.stream().map(d -> (net.minecraft.world.item.Item) d.get()).toList();
         helper.assertTrue(enchanted.contains(ModItems.SHADOW_EYE_SPAWN_EGG.get()) && enchanted.contains(ModItems.SHADOW_WANDERER_SPAWN_EGG.get()),
                 "shadow spawn eggs missing from the Enchanted tab");
+        helper.succeed();
+    }
+
+    // ------------------------------------------------------------------ wizard, dwarf, mushrooms
+
+    private static void dwellersTick(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        List<Mob> mobs = List.of(helper.spawn(ModEntities.WIZARD.get(), 2, 1, 2), helper.spawn(ModEntities.DWARF.get(), 6, 1, 6));
+        helper.runAfterDelay(100, () -> {
+            for (Mob mob : mobs) {
+                helper.assertTrue(mob.isAlive(), mob.getType().toShortString() + " died or was removed while ticking");
+                helper.assertTrue(mob.getMaxHealth() == 20.0F, mob.getType().toShortString() + " should have 20 health");
+                helper.assertFalse(mob.removeWhenFarAway(1000.0), mob.getType().toShortString() + " should never despawn");
+            }
+            helper.succeed();
+        });
+    }
+
+    private static void wizardTrades(GameTestHelper helper) {
+        var wizard = helper.spawn(ModEntities.WIZARD.get(), 4, 1, 4);
+        wizard.setNoAi(true);
+        var offers = wizard.getOffers();
+        helper.assertTrue(offers.size() == 7, "expected 7 wizard offers, got " + offers.size());
+        helper.assertTrue(offers.stream().anyMatch(o -> o.getCostA().is(ModItems.PURPLE_MUSHROOM.get()) && o.getResult().is(Items.EMERALD)), "does not buy purple mushrooms");
+        helper.assertTrue(offers.stream().anyMatch(o -> o.getCostA().is(ModItems.BLUE_MUSHROOM.get()) && o.getResult().is(Items.EMERALD)), "does not buy blue mushrooms");
+        var elixir = offers.stream().filter(o -> o.getResult().is(ModItems.ELIXIR_OF_LIFE.get())).findFirst();
+        helper.assertTrue(elixir.isPresent() && elixir.get().getCostB().is(Items.GLASS_BOTTLE), "no elixir of life for emeralds and a bottle");
+        // A completed trade uses the offer up once and drops experience.
+        var jar = offers.stream().filter(o -> o.getResult().is(ModItems.JAR.get())).findFirst().orElseThrow();
+        wizard.notifyTrade(jar);
+        helper.assertTrue(jar.getUses() == 1, "the trade was not counted");
+        helper.runAfterDelay(1, () -> {
+            var box = wizard.getBoundingBox().inflate(3.0);
+            helper.assertFalse(helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.ExperienceOrb.class, box).isEmpty(), "trading gave no experience");
+            helper.succeed();
+        });
+    }
+
+    private static void dwarfTrades(GameTestHelper helper) {
+        var dwarf = helper.spawn(ModEntities.DWARF.get(), 4, 1, 4);
+        dwarf.setNoAi(true);
+        var offers = dwarf.getOffers();
+        helper.assertTrue(offers.size() == 7, "expected 7 dwarf offers, got " + offers.size());
+        helper.assertTrue(offers.stream().anyMatch(o -> o.getCostA().is(Items.RAW_IRON) && o.getResult().is(Items.EMERALD)), "does not buy raw iron");
+        helper.assertTrue(offers.stream().anyMatch(o -> o.getCostA().is(Items.EMERALD) && o.getResult().is(Items.IRON_PICKAXE)), "does not sell an iron pickaxe");
+        helper.assertTrue(offers.stream().anyMatch(o -> o.getResult().is(ModItems.TOURMALINE.get())), "does not sell tourmaline");
+        helper.succeed();
+    }
+
+    /** The mushrooms stand on mystic grass and dirt but not on stone, and break when their soil turns to stone. */
+    private static void mysticMushroomSoil(GameTestHelper helper) {
+        var level = helper.getLevel();
+        for (var block : List.of(ModBlocks.PURPLE_MUSHROOM.get(), ModBlocks.BLUE_MUSHROOM.get())) {
+            int z = block == ModBlocks.PURPLE_MUSHROOM.get() ? 2 : 6;
+            helper.setBlock(new BlockPos(2, 0, z), ModBlocks.MYSTIC_GRASS_BLOCK.get());
+            helper.setBlock(new BlockPos(6, 0, z), net.minecraft.world.level.block.Blocks.STONE);
+            BlockState state = block.defaultBlockState();
+            helper.assertTrue(state.canSurvive(level, helper.absolutePos(new BlockPos(2, 1, z))), block + " cannot stand on mystic grass");
+            helper.assertFalse(state.canSurvive(level, helper.absolutePos(new BlockPos(6, 1, z))), block + " can stand on stone");
+            helper.setBlock(new BlockPos(2, 1, z), block);
+            helper.setBlock(new BlockPos(2, 0, z), net.minecraft.world.level.block.Blocks.STONE);
+        }
+        helper.runAfterDelay(2, () -> {
+            helper.assertBlockNotPresent(ModBlocks.PURPLE_MUSHROOM.get(), new BlockPos(2, 1, 2));
+            helper.assertBlockNotPresent(ModBlocks.BLUE_MUSHROOM.get(), new BlockPos(2, 1, 6));
+            helper.succeed();
+        });
+    }
+
+    private static void dwarfHutTemplate(GameTestHelper helper) {
+        BlockPos where = helper.absolutePos(new BlockPos(0, 60, 0));
+        placeTemplate(helper, "dwarf_hut", where);
+        helper.runAfterDelay(5, () -> {
+            var level = helper.getLevel();
+            var box = new net.minecraft.world.phys.AABB(where.getX(), where.getY(), where.getZ(), where.getX() + 11, where.getY() + 9, where.getZ() + 9);
+            var dwarves = level.getEntitiesOfClass(com.crazyalloy.revival.entity.Dwarf.class, box);
+            helper.assertTrue(dwarves.size() == 1, "expected 1 dwarf in the hut, found " + dwarves.size());
+            var dwarf = dwarves.get(0);
+            helper.assertTrue(dwarf.isFromStructure() && dwarf.hasHome(), "the hut dwarf should be tied to his hut");
+            helper.assertTrue(level.getBlockEntity(where.offset(7, 1, 4)) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity, "no chest at the back of the hut");
+            helper.assertTrue(level.getBlockState(where.offset(7, 1, 1)).isAir() && level.getBlockState(where.offset(7, 2, 1)).isAir(), "the doorway should be open");
+            helper.assertTrue(level.getBlockState(where.offset(1, 1, 3)).is(net.minecraft.world.level.block.Blocks.IRON_ORE), "no ore block in the yard");
+            helper.succeed();
+        });
+    }
+
+    private static void wizardTowerTemplate(GameTestHelper helper) {
+        BlockPos where = helper.absolutePos(new BlockPos(0, 100, 0));
+        placeTemplate(helper, "wizard_tower", where);
+        helper.runAfterDelay(5, () -> {
+            var level = helper.getLevel();
+            var box = new net.minecraft.world.phys.AABB(where.getX(), where.getY(), where.getZ(), where.getX() + 33, where.getY() + 30, where.getZ() + 11);
+            var wizards = level.getEntitiesOfClass(com.crazyalloy.revival.entity.Wizard.class, box);
+            helper.assertTrue(wizards.size() == 1, "expected 1 wizard in the tower, found " + wizards.size());
+            var wizard = wizards.get(0);
+            helper.assertTrue(wizard.isFromStructure() && wizard.hasHome(), "the tower wizard should be tied to his tower");
+            helper.assertTrue(wizard.getY() >= where.getY() + 14.5, "the wizard should live on the glass top floor, he is at y " + (wizard.getY() - where.getY()));
+            helper.assertTrue(level.getBlockState(where.offset(16, 16, 8)).is(net.minecraft.world.level.block.Blocks.BREWING_STAND), "no brewing stand in the lab");
+            helper.assertTrue(level.getBlockEntity(where.offset(13, 15, 3)) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity
+                    && level.getBlockEntity(where.offset(13, 15, 4)) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity, "no double chest in the lab");
+            int lecterns = 0, glass = 0;
+            for (BlockPos p : BlockPos.betweenClosed(where, where.offset(32, 29, 10))) {
+                BlockState st = level.getBlockState(p);
+                if (st.is(net.minecraft.world.level.block.Blocks.LECTERN)) {
+                    lecterns++;
+                } else if (st.is(net.minecraft.tags.BlockTags.IMPERMEABLE)) {
+                    glass++;
+                }
+            }
+            helper.assertTrue(lecterns >= 2, "the study needs two lecterns, found " + lecterns);
+            helper.assertTrue(glass > 40, "the top floor should be glass, found only " + glass + " glass blocks");
+            helper.succeed();
+        });
+    }
+
+    private static void dwellerRegistry(GameTestHelper helper) {
+        var access = helper.getLevel().registryAccess();
+        for (String id : List.of("wizard_tower", "dwarf_hut")) {
+            helper.assertTrue(access.lookupOrThrow(Registries.STRUCTURE).containsKey(CrazyAlloyRevival.id(id)), "no " + id + " structure");
+            var tag = net.minecraft.tags.TagKey.create(Registries.BIOME, CrazyAlloyRevival.id("has_structure/" + id));
+            helper.assertTrue(access.lookupOrThrow(Registries.BIOME).getOrThrow(com.crazyalloy.revival.worldgen.ModWorldgen.MYSTIC_GROVE).is(tag), id + " should generate in the mystic grove");
+        }
+        var grove = access.lookupOrThrow(Registries.BIOME).getOrThrow(com.crazyalloy.revival.worldgen.ModWorldgen.MYSTIC_GROVE);
+        var features = grove.value().getGenerationSettings().features().stream().flatMap(h -> h.stream())
+                .map(h -> h.unwrapKey().map(k -> k.identifier().getPath()).orElse("")).toList();
+        helper.assertTrue(features.contains("purple_mushroom_patch") && features.contains("blue_mushroom_patch"), "mushroom patches missing from the mystic grove: " + features);
+        var recipes = helper.getLevel().getServer().getRecipeManager();
+        for (String id : List.of("purple_dye_from_purple_mushroom", "blue_dye_from_blue_mushroom")) {
+            helper.assertTrue(recipes.byKey(net.minecraft.resources.ResourceKey.create(Registries.RECIPE, CrazyAlloyRevival.id(id))).isPresent(), "missing recipe " + id);
+        }
+        var enchanted = ModItems.ENCHANTED_TAB_ORDER.stream().map(d -> (net.minecraft.world.item.Item) d.get()).toList();
+        for (var item : List.of(ModItems.PURPLE_MUSHROOM.get(), ModItems.BLUE_MUSHROOM.get(), ModItems.WIZARD_SPAWN_EGG.get(), ModItems.DWARF_SPAWN_EGG.get())) {
+            helper.assertTrue(enchanted.contains(item), item + " is missing from the Enchanted tab");
+        }
         helper.succeed();
     }
 }

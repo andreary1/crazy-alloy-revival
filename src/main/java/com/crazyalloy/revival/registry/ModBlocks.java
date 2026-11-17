@@ -224,6 +224,14 @@ public final class ModBlocks {
             p -> new SaplingBlock(ModTreeGrowers.MYSTIC, p),
             p -> p.mapColor(MapColor.COLOR_CYAN).noCollision().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY));
 
+    /** Small mushrooms of the Mystic Grove floor (see MysticMushroomBlock). */
+    public static final DeferredBlock<com.crazyalloy.revival.block.MysticMushroomBlock> PURPLE_MUSHROOM = BLOCKS.registerBlock("purple_mushroom",
+            com.crazyalloy.revival.block.MysticMushroomBlock::new,
+            p -> p.mapColor(MapColor.COLOR_PURPLE).noCollision().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY).offsetType(BlockBehaviour.OffsetType.XZ));
+    public static final DeferredBlock<com.crazyalloy.revival.block.MysticMushroomBlock> BLUE_MUSHROOM = BLOCKS.registerBlock("blue_mushroom",
+            com.crazyalloy.revival.block.MysticMushroomBlock::new,
+            p -> p.mapColor(MapColor.COLOR_BLUE).noCollision().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY).offsetType(BlockBehaviour.OffsetType.XZ));
+
     private static BlockBehaviour.Properties mysticWood(BlockBehaviour.Properties p) {
         return p.mapColor(MapColor.TERRACOTTA_CYAN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava();
     }

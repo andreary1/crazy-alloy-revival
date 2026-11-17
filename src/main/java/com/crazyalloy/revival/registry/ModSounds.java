@@ -68,6 +68,8 @@ public final class ModSounds {
     public static final MobSounds FAIRY = mob("fairy");
     public static final MobSounds EVIL_FAIRY = mob("evil_fairy");
     public static final MobSounds SHADOW_EYE = mob("shadow_eye");
+    public static final MobSounds WIZARD = mob("wizard");
+    public static final MobSounds DWARF = mob("dwarf");
     public static final MobSounds SHADOW_WANDERER = mob("shadow_wanderer");
     public static final MobSounds ENT = mob("ent");
 
