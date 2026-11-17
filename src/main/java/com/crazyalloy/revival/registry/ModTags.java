@@ -30,5 +30,13 @@ public final class ModTags {
         private Blocks() {}
     }
 
+    public static final class Entities {
+        /** Creatures Trolls hunt on sight: the Shadow Eye and the Shadow Wanderer (optional entries until they exist). */
+        public static final TagKey<net.minecraft.world.entity.EntityType<?>> TROLL_ENEMIES =
+                TagKey.create(Registries.ENTITY_TYPE, CrazyAlloyRevival.id("troll_enemies"));
+
+        private Entities() {}
+    }
+
     private ModTags() {}
 }

@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "crazyalloy_revival:block/mystic_grass_block"
+      },
+      {
+        "model": "crazyalloy_revival:block/mystic_grass_block",
+        "y": 90
+      },
+      {
+        "model": "crazyalloy_revival:block/mystic_grass_block",
+        "y": 180
+      },
+      {
+        "model": "crazyalloy_revival:block/mystic_grass_block",
+        "y": 270
+      }
+    ]
+  }
+}

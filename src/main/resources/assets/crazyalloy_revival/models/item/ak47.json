@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "crazyalloy_revival:item/ak47"
+  }
+}

@@ -16,6 +16,8 @@ public final class ModWorldgen {
     public static final ResourceKey<Biome> SWEET_FOREST = ResourceKey.create(Registries.BIOME, CrazyAlloyRevival.id("sweet_forest"));
     public static final ResourceKey<Biome> JELLY_BEAN_FIELDS = ResourceKey.create(Registries.BIOME, CrazyAlloyRevival.id("jelly_bean_fields"));
     public static final ResourceKey<Biome> CANDY_CAVE = ResourceKey.create(Registries.BIOME, CrazyAlloyRevival.id("candy_cave"));
+    /** The Mystic Grove (stage 8), placed by {@link MysticRegion}. */
+    public static final ResourceKey<Biome> MYSTIC_GROVE = ResourceKey.create(Registries.BIOME, CrazyAlloyRevival.id("mystic_grove"));
     public static final ResourceKey<Biome> ICE_CREAM_PLAINS = ResourceKey.create(Registries.BIOME, CrazyAlloyRevival.id("ice_cream_plains"));
     /** The Ice Cream Dimension (stage 6), defined by data/crazyalloy_revival/dimension/ice_cream.json. */
     public static final ResourceKey<net.minecraft.world.level.Level> ICE_CREAM_DIMENSION =
@@ -34,8 +36,14 @@ public final class ModWorldgen {
         } else {
             CrazyAlloyRevival.LOGGER.info("Crazy Alloy candy region disabled by config");
         }
+        int mysticWeight = RevivalConfig.MYSTIC_REGION_WEIGHT.get();
+        if (mysticWeight > 0 && RevivalConfig.MYSTIC_GROVE_ENABLED.get()) {
+            Regions.register(new MysticRegion(CrazyAlloyRevival.id("overworld_mystic"), mysticWeight));
+        } else {
+            CrazyAlloyRevival.LOGGER.info("Crazy Alloy mystic region disabled by config");
+        }
         SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, CrazyAlloyRevival.MOD_ID,
-                SurfaceRules.sequence(candyCaveSurface(), sweetForestSurface(), jellyBeanFieldsSurface()));
+                SurfaceRules.sequence(candyCaveSurface(), sweetForestSurface(), jellyBeanFieldsSurface(), mysticGroveSurface()));
     }
 
     /**
@@ -64,6 +72,25 @@ public final class ModWorldgen {
         return SurfaceRules.ifTrue(SurfaceRules.isBiome(SWEET_FOREST), SurfaceRules.sequence(
                 SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, SurfaceRules.sequence(SurfaceRules.ifTrue(aboveWater, grass), soil)),
                 SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, soil)));
+    }
+
+    /**
+     * Turquoise Mystic Grass on top of Mystic Dirt. Steep slopes show bare dirt and, in patches, stone, like the small
+     * openings in the hillsides of the reference.
+     */
+    private static SurfaceRules.RuleSource mysticGroveSurface() {
+        SurfaceRules.RuleSource grass = SurfaceRules.state(ModBlocks.MYSTIC_GRASS_BLOCK.get().defaultBlockState());
+        SurfaceRules.RuleSource dirt = SurfaceRules.state(ModBlocks.MYSTIC_DIRT.get().defaultBlockState());
+        SurfaceRules.RuleSource stone = SurfaceRules.state(net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+        SurfaceRules.ConditionSource aboveWater = SurfaceRules.waterBlockCheck(-1, 0);
+        SurfaceRules.RuleSource steep = SurfaceRules.sequence(
+                SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.GRAVEL, 0.1D), stone), dirt);
+
+        return SurfaceRules.ifTrue(SurfaceRules.isBiome(MYSTIC_GROVE), SurfaceRules.sequence(
+                SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, SurfaceRules.sequence(
+                        SurfaceRules.ifTrue(SurfaceRules.steep(), steep),
+                        SurfaceRules.ifTrue(aboveWater, grass), dirt)),
+                SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, dirt)));
     }
 
     /** Green jelly on top, a yellow layer below it, red jelly at the bottom of lakes and rivers. */

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "W": "#minecraft:wooden_slabs",
+    "G": "minecraft:glass"
+  },
+  "pattern": [
+    " W ",
+    "G G",
+    "GGG"
+  ],
+  "result": {
+    "id": "crazyalloy_revival:jar",
+    "count": 2
+  }
+}

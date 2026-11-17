@@ -17,6 +17,10 @@ public final class ModFeatures {
     public static final DeferredHolder<Feature<?>, IceCreamPinnacleFeature> ICE_CREAM_PINNACLE = FEATURES.register("ice_cream_pinnacle",
             () -> new IceCreamPinnacleFeature(NoneFeatureConfiguration.CODEC));
 
+    /** Giant red mushrooms with stepped caps of the Mystic Grove (stage 8). */
+    public static final DeferredHolder<Feature<?>, com.crazyalloy.revival.worldgen.GiantMushroomFeature> GIANT_MUSHROOM = FEATURES.register("giant_mushroom",
+            () -> new com.crazyalloy.revival.worldgen.GiantMushroomFeature(NoneFeatureConfiguration.CODEC));
+
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES = DeferredRegister.create(Registries.STRUCTURE_TYPE, CrazyAlloyRevival.MOD_ID);
 
     /** The Ice Cream Nest: placed on the lowest point of a not-too-steep footprint (stage 6). */

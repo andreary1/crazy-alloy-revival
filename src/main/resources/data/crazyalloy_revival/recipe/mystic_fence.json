@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "W": "crazyalloy_revival:mystic_planks",
+    "#": "minecraft:stick"
+  },
+  "pattern": [
+    "W#W",
+    "W#W"
+  ],
+  "result": {
+    "id": "crazyalloy_revival:mystic_fence",
+    "count": 3
+  },
+  "group": "wooden_fence"
+}

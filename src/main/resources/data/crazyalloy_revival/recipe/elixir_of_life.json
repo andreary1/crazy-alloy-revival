@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:glass_bottle",
+    "minecraft:glistering_melon_slice",
+    "minecraft:red_mushroom",
+    "crazyalloy_revival:mystic_leaves"
+  ],
+  "result": {
+    "id": "crazyalloy_revival:elixir_of_life",
+    "count": 1
+  }
+}

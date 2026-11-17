@@ -60,46 +60,47 @@ def rotated_state(name, table):
         v[key] = m
     write(f"{A}/blockstates/{name}.json", {"variants": v})
 
-def wood_set():
-    planks = f"{NS}:block/sweetwood_planks"
-    stairs_slab("sweetwood", "sweetwood_planks", "sweetwood_planks")
+def wood_set(wood="sweetwood"):
+    """Stairs, slab, fence, gate, door, button and pressure plate models for a wood set (also used by stage 8)."""
+    planks = f"{NS}:block/{wood}_planks"
+    stairs_slab(wood, f"{wood}_planks", f"{wood}_planks")
     # fence
     for part, parent in [("post", "fence_post"), ("side", "fence_side"), ("inventory", "fence_inventory")]:
-        write(f"{A}/models/block/sweetwood_fence_{part}.json", {"parent": f"minecraft:block/{parent}", "textures": {"texture": planks}})
-    mp = [{"apply": {"model": f"{NS}:block/sweetwood_fence_post"}}]
+        write(f"{A}/models/block/{wood}_fence_{part}.json", {"parent": f"minecraft:block/{parent}", "textures": {"texture": planks}})
+    mp = [{"apply": {"model": f"{NS}:block/{wood}_fence_post"}}]
     for d, y in [("north", 0), ("east", 90), ("south", 180), ("west", 270)]:
-        ap = {"model": f"{NS}:block/sweetwood_fence_side", "uvlock": True}
+        ap = {"model": f"{NS}:block/{wood}_fence_side", "uvlock": True}
         if y:
             ap["y"] = y
         mp.append({"apply": ap, "when": {d: "true"}})
-    write(f"{A}/blockstates/sweetwood_fence.json", {"multipart": mp})
-    item_def("sweetwood_fence", f"{NS}:block/sweetwood_fence_inventory")
+    write(f"{A}/blockstates/{wood}_fence.json", {"multipart": mp})
+    item_def(f"{wood}_fence", f"{NS}:block/{wood}_fence_inventory")
     # fence gate
     for suffix, parent in [("", "template_fence_gate"), ("_open", "template_fence_gate_open"),
                            ("_wall", "template_fence_gate_wall"), ("_wall_open", "template_fence_gate_wall_open")]:
-        write(f"{A}/models/block/sweetwood_fence_gate{suffix}.json", {"parent": f"minecraft:block/{parent}", "textures": {"texture": planks}})
-    rotated_state("sweetwood_fence_gate", ROTATIONS["fence_gate"])
-    item_def("sweetwood_fence_gate", f"{NS}:block/sweetwood_fence_gate")
+        write(f"{A}/models/block/{wood}_fence_gate{suffix}.json", {"parent": f"minecraft:block/{parent}", "textures": {"texture": planks}})
+    rotated_state(f"{wood}_fence_gate", ROTATIONS["fence_gate"])
+    item_def(f"{wood}_fence_gate", f"{NS}:block/{wood}_fence_gate")
     # door
     for half in ["bottom", "top"]:
         for side in ["left", "right"]:
             for op in ["", "_open"]:
-                write(f"{A}/models/block/sweetwood_door_{half}_{side}{op}.json", {"parent": f"minecraft:block/door_{half}_{side}{op}",
+                write(f"{A}/models/block/{wood}_door_{half}_{side}{op}.json", {"parent": f"minecraft:block/door_{half}_{side}{op}",
                     "render_type": "minecraft:cutout",
-                    "textures": {"bottom": f"{NS}:block/sweetwood_door_bottom", "top": f"{NS}:block/sweetwood_door_top"}})
-    rotated_state("sweetwood_door", ROTATIONS["door"])
-    flat_item("sweetwood_door")
+                    "textures": {"bottom": f"{NS}:block/{wood}_door_bottom", "top": f"{NS}:block/{wood}_door_top"}})
+    rotated_state(f"{wood}_door", ROTATIONS["door"])
+    flat_item(f"{wood}_door")
     # button and pressure plate
     for suffix, parent in [("", "button"), ("_pressed", "button_pressed"), ("_inventory", "button_inventory")]:
-        write(f"{A}/models/block/sweetwood_button{suffix}.json", {"parent": f"minecraft:block/{parent}", "textures": {"texture": planks}})
-    rotated_state("sweetwood_button", ROTATIONS["button"])
-    item_def("sweetwood_button", f"{NS}:block/sweetwood_button_inventory")
-    write(f"{A}/models/block/sweetwood_pressure_plate.json", {"parent": "minecraft:block/pressure_plate_up", "textures": {"texture": planks}})
-    write(f"{A}/models/block/sweetwood_pressure_plate_down.json", {"parent": "minecraft:block/pressure_plate_down", "textures": {"texture": planks}})
-    write(f"{A}/blockstates/sweetwood_pressure_plate.json", {"variants": {
-        "powered=false": {"model": f"{NS}:block/sweetwood_pressure_plate"},
-        "powered=true": {"model": f"{NS}:block/sweetwood_pressure_plate_down"}}})
-    item_def("sweetwood_pressure_plate", f"{NS}:block/sweetwood_pressure_plate")
+        write(f"{A}/models/block/{wood}_button{suffix}.json", {"parent": f"minecraft:block/{parent}", "textures": {"texture": planks}})
+    rotated_state(f"{wood}_button", ROTATIONS["button"])
+    item_def(f"{wood}_button", f"{NS}:block/{wood}_button_inventory")
+    write(f"{A}/models/block/{wood}_pressure_plate.json", {"parent": "minecraft:block/pressure_plate_up", "textures": {"texture": planks}})
+    write(f"{A}/models/block/{wood}_pressure_plate_down.json", {"parent": "minecraft:block/pressure_plate_down", "textures": {"texture": planks}})
+    write(f"{A}/blockstates/{wood}_pressure_plate.json", {"variants": {
+        "powered=false": {"model": f"{NS}:block/{wood}_pressure_plate"},
+        "powered=true": {"model": f"{NS}:block/{wood}_pressure_plate_down"}}})
+    item_def(f"{wood}_pressure_plate", f"{NS}:block/{wood}_pressure_plate")
 
 JELLY_COLOURS = ["green", "yellow", "red", "orange", "purple"]
 

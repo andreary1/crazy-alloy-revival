@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "crazyalloy_revival:blocks/mystic_door",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "crazyalloy_revival:mystic_door",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "crazyalloy_revival:mystic_door",
+              "properties": {
+                "half": "lower"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

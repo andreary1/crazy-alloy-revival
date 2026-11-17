@@ -13,6 +13,15 @@
     "crazyalloy_revival:gingerbread_block",
     "crazyalloy_revival:frosted_gingerbread_block",
     "crazyalloy_revival:gingerbread_stairs",
-    "crazyalloy_revival:gingerbread_slab"
+    "crazyalloy_revival:gingerbread_slab",
+    "crazyalloy_revival:mystic_log",
+    "crazyalloy_revival:mystic_planks",
+    "crazyalloy_revival:mystic_stairs",
+    "crazyalloy_revival:mystic_slab",
+    "crazyalloy_revival:mystic_fence",
+    "crazyalloy_revival:mystic_fence_gate",
+    "crazyalloy_revival:mystic_door",
+    "crazyalloy_revival:mystic_button",
+    "crazyalloy_revival:mystic_pressure_plate"
   ]
 }

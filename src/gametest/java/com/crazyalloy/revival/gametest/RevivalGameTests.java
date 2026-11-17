@@ -109,6 +109,30 @@ public final class RevivalGameTests {
         TESTS.put("ice_cream_nest_template_has_egg", RevivalGameTests::nestTemplate);
         TESTS.put("stage6_registry_and_worldgen", RevivalGameTests::stage6Registry);
         TESTS.put("ice_cream_flavors_are_variants", RevivalGameTests::flavorVariants);
+        TESTS.put("stage7_mobs_tick_without_crashing", RevivalGameTests::stage7MobsTick);
+        TESTS.put("mineral_converter_follows_table", RevivalGameTests::converterTable);
+        TESTS.put("mineral_converter_convert_button", RevivalGameTests::converterButton);
+        TESTS.put("guard_dinosaur_raises_alarm_before_attacking", RevivalGameTests::guardAlarm);
+        TESTS.put("ak47_fires_bullets_and_uses_ammo", RevivalGameTests::ak47Fires);
+        TESTS.put("bank_template_has_guards_and_vault", RevivalGameTests::bankTemplate);
+        TESTS.put("stage7_registry_and_worldgen", RevivalGameTests::stage7Registry);
+        TESTS.put("stage8_mobs_tick_without_crashing", RevivalGameTests::stage8MobsTick);
+        TESTS.put("jar_catches_fairy", RevivalGameTests::jarCatchesFairy);
+        TESTS.put("jar_with_a_fairy_releases_it", RevivalGameTests::fairyJarReleases);
+        TESTS.put("elixir_of_life_cures_evil_fairy", RevivalGameTests::elixirCuresEvilFairy);
+        TESTS.put("troll_fights_back_and_hunts_its_enemies", RevivalGameTests::trollFightsBack);
+        TESTS.put("ent_uproots_when_hurt", RevivalGameTests::entUproots);
+        TESTS.put("giant_red_mushroom_generates", RevivalGameTests::giantMushroomGrows);
+        TESTS.put("mystic_sapling_grows", RevivalGameTests::mysticSaplingGrows);
+        TESTS.put("stage8_registry_and_worldgen", RevivalGameTests::stage8Registry);
+        TESTS.put("shadow_creatures_tick_without_crashing", RevivalGameTests::shadowMobsTick);
+        TESTS.put("troll_hunts_shadow_wanderer", RevivalGameTests::trollHuntsWanderer);
+        TESTS.put("troll_hunts_shadow_eye", RevivalGameTests::trollHuntsEye);
+        TESTS.put("shadow_eye_gaze_needs_line_of_sight", RevivalGameTests::shadowEyeGaze);
+        TESTS.put("shadow_eye_gazes_at_its_target", RevivalGameTests::shadowEyeGazeGoal);
+        TESTS.put("shadow_wanderer_claws_players", RevivalGameTests::wandererClaws);
+        TESTS.put("shadow_creatures_spawn_only_at_night", RevivalGameTests::shadowNightSpawns);
+        TESTS.put("shadow_creatures_registry", RevivalGameTests::shadowRegistry);
     }
 
     private RevivalGameTests() {}
@@ -445,6 +469,14 @@ public final class RevivalGameTests {
         var level = helper.getLevel();
         var template = level.getStructureManager().get(CrazyAlloyRevival.id(name)).orElseThrow();
         var settings = new net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings().setFinalizeEntities(true);
+        // Large templates reach past the chunks the test loads; entities placed in unloaded chunks would be lost.
+        var tsize = template.getSize();
+        for (int cx = where.getX() >> 4; cx <= (where.getX() + tsize.getX()) >> 4; cx++) {
+            for (int cz = where.getZ() >> 4; cz <= (where.getZ() + tsize.getZ()) >> 4; cz++) {
+                level.setChunkForced(cx, cz, true);
+                level.getChunk(cx, cz);
+            }
+        }
         template.placeInWorld(level, where, where, settings, level.getRandom(), 2);
         var size = template.getSize();
         var box = new net.minecraft.world.phys.AABB(where.getX(), where.getY(), where.getZ(),
@@ -927,6 +959,461 @@ public final class RevivalGameTests {
         helper.assertTrue(mint, "12 mint zombies dropped no mint ice cream");
         helper.assertTrue(ModEntities.ICE_CREAM_BEAST.get().getHeight() > 3.5F, "the beast should be bigger");
         helper.assertTrue(ModEntities.ICE_CREAM_DRAGON.get().getWidth() > 3.5F && ModEntities.ICE_CREAM_DRAGON.get().getHeight() > 4.5F, "the dragon should be bigger");
+        helper.succeed();
+    }
+    // ------------------------------------------------------------------ stage 7: the Bank (Overworld tab)
+
+    private static void stage7MobsTick(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        List<Mob> mobs = List.of(helper.spawn(ModEntities.GUARD_DINOSAUR.get(), 2, 1, 2), helper.spawn(ModEntities.SEGWAY.get(), 6, 1, 6));
+        helper.runAfterDelay(100, () -> {
+            for (Mob mob : mobs) {
+                helper.assertTrue(mob.isAlive(), mob.getType().toShortString() + " died or was removed while ticking");
+            }
+            helper.assertTrue(mobs.get(0).getMaxHealth() == 30.0F && mobs.get(0).getAttributeValue(Attributes.ATTACK_DAMAGE) == 5.0,
+                    "guard dinosaur should have 30 health and 5 damage");
+            helper.assertTrue(mobs.get(1).getMaxHealth() == 20.0F && mobs.get(1).getAttributeValue(Attributes.ATTACK_DAMAGE) == 3.0,
+                    "segway should have 20 health and 3 damage");
+            helper.succeed();
+        });
+    }
+
+    /** Every row of the original table, one unit at a time; refused materials and a full output change nothing. */
+    private static void converterTable(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(4, 1, 4);
+        helper.setBlock(pos, ModBlocks.MINERAL_CONVERTER.get());
+        var converter = helper.getBlockEntity(pos, com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.class);
+        record Row(net.minecraft.world.item.Item item, int money, int coin) {}
+        List<Row> table = List.of(new Row(Items.COPPER_INGOT, 1, 1), new Row(Items.IRON_INGOT, 2, 2), new Row(Items.GOLD_INGOT, 3, 5),
+                new Row(Items.EMERALD, 7, 10), new Row(Items.DIAMOND, 10, 15), new Row(ModItems.TOURMALINE.get(), 20, 20),
+                new Row(Items.NETHERITE_INGOT, 64, 64));
+        int slotIn = com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_INPUT;
+        int slotMoney = com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_MONEY;
+        int slotCoin = com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_COIN;
+        for (Row row : table) {
+            converter.setItem(slotMoney, ItemStack.EMPTY);
+            converter.setItem(slotCoin, ItemStack.EMPTY);
+            converter.setItem(slotIn, new ItemStack(row.item(), 2));
+            helper.assertTrue(converter.convert(), "converting " + row.item() + " failed");
+            ItemStack money = converter.getItem(slotMoney);
+            ItemStack coin = converter.getItem(slotCoin);
+            helper.assertTrue(money.is(ModItems.MONEY.get()) && money.getCount() == row.money(), row.item() + " should give " + row.money() + " money, got " + money);
+            helper.assertTrue(coin.is(ModItems.COIN.get()) && coin.getCount() == row.coin(), row.item() + " should give " + row.coin() + " coins, got " + coin);
+            helper.assertTrue(converter.getItem(slotIn).getCount() == 1, "one unit of " + row.item() + " should be used");
+        }
+        // The netherite row filled both slots to 64: a second netherite ingot must wait.
+        helper.assertFalse(converter.convert(), "converted although the output slots are full");
+        helper.assertTrue(converter.getItem(slotIn).getCount() == 1, "a refused conversion used the material");
+        converter.setItem(slotMoney, ItemStack.EMPTY);
+        converter.setItem(slotCoin, ItemStack.EMPTY);
+        converter.setItem(slotIn, new ItemStack(Items.COBBLESTONE));
+        helper.assertFalse(converter.convert(), "cobblestone is not on the table");
+        helper.assertTrue(converter.getItem(slotMoney).isEmpty() && converter.getItem(slotIn).getCount() == 1, "a refused material changed the slots");
+        helper.succeed();
+    }
+
+    /** The Convert button reaches the server through the menu (as the client's button click does). */
+    private static void converterButton(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(4, 1, 4);
+        helper.setBlock(pos, ModBlocks.MINERAL_CONVERTER.get());
+        var converter = helper.getBlockEntity(pos, com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.class);
+        converter.setItem(com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_INPUT, new ItemStack(Items.DIAMOND, 3));
+        ServerPlayer player = survivalMockPlayer(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(4.5, 1, 6.5)));
+        var menu = (com.crazyalloy.revival.menu.MineralConverterMenu) converter.createMenu(1, player.getInventory(), player);
+        helper.assertTrue(menu.money() == 10 && menu.coin() == 15 && menu.ready(), "the screen preview should show 10 + 15 for a diamond");
+        menu.clickMenuButton(player, com.crazyalloy.revival.menu.MineralConverterMenu.BUTTON_CONVERT);
+        menu.clickMenuButton(player, com.crazyalloy.revival.menu.MineralConverterMenu.BUTTON_CONVERT);
+        helper.assertTrue(converter.getItem(com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_MONEY).getCount() == 20,
+                "two presses should give 20 money");
+        helper.assertTrue(converter.getItem(com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_COIN).getCount() == 30,
+                "two presses should give 30 coins");
+        helper.assertTrue(converter.getItem(com.crazyalloy.revival.block.entity.MineralConverterBlockEntity.SLOT_INPUT).getCount() == 1,
+                "two presses should use two diamonds");
+        helper.succeed();
+    }
+
+    /**
+     * A guard that spots a player first stops and raises the alarm (the player is not hit during the pause); the
+     * alarm sends the other guard and the Segway (both without AI, so only the alarm can give them a target) after
+     * the same player; then the guard attacks.
+     */
+    private static void guardAlarm(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var guard = helper.spawn(ModEntities.GUARD_DINOSAUR.get(), 2, 1, 2);
+        var other = helper.spawn(ModEntities.GUARD_DINOSAUR.get(), 7, 1, 7);
+        var segway = helper.spawn(ModEntities.SEGWAY.get(), 7, 1, 2);
+        other.setNoAi(true);
+        segway.setNoAi(true);
+        ServerPlayer player = survivalMockPlayer(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(5.5, 1, 4.5)));
+        float[] healthAtAlarm = {-1.0F};
+        helper.onEachTick(() -> {
+            if (healthAtAlarm[0] < 0.0F && other.getTarget() == player) {
+                healthAtAlarm[0] = player.getHealth();
+            }
+        });
+        helper.succeedWhen(() -> {
+            helper.assertTrue(guard.getTarget() == player, "the guard did not notice the player");
+            helper.assertTrue(other.getTarget() == player, "the alarm did not reach the other guard");
+            helper.assertTrue(segway.getTarget() == player, "the alarm did not reach the Segway");
+            helper.assertTrue(healthAtAlarm[0] == player.getMaxHealth(), "the player was hit before the alarm, health " + healthAtAlarm[0]);
+            helper.assertTrue(player.getHealth() < player.getMaxHealth(), "the guard never attacked after the alarm");
+        });
+    }
+
+    /** Each shot uses one ammo and one point of durability, and the bullet hurts what it hits. */
+    private static void ak47Fires(GameTestHelper helper) {
+        ServerPlayer player = survivalMockPlayer(helper);
+        Pig pig = helper.spawn(EntityType.PIG, 2, 1, 7);
+        pig.setNoAi(true);
+        Vec3 eye = helper.absoluteVec(new Vec3(2.5, 1, 2.5));
+        player.snapTo(eye.x, eye.y, eye.z, 0.0F, 12.0F);
+        ItemStack gun = new ItemStack(ModItems.AK47.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, gun);
+        player.getInventory().add(new ItemStack(ModItems.AK47_AMMO.get(), 5));
+        helper.assertTrue(com.crazyalloy.revival.item.Ak47Item.fire(helper.getLevel(), player, gun), "the AK47 did not fire");
+        int ammo = player.getInventory().countItem(ModItems.AK47_AMMO.get());
+        helper.assertTrue(ammo == 4, "one shot should use one ammo, 4 left, found " + ammo);
+        helper.assertTrue(gun.getDamageValue() == 1, "one shot should cost one durability");
+        helper.succeedWhen(() -> helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the bullet did not hit the pig"));
+    }
+
+    /** The bank: guards in the security room, four vault chests behind obsidian with bank loot, the gold "$". */
+    private static void bankTemplate(GameTestHelper helper) {
+        BlockPos where = helper.absolutePos(new BlockPos(0, 100, 0));
+        placeTemplate(helper, "bank", where);
+        var level = helper.getLevel();
+        // Entities in freshly loaded chunks only become visible once those chunks tick, so check a few ticks later.
+        helper.runAfterDelay(5, () -> bankTemplateChecks(helper, where));
+    }
+
+    private static void bankTemplateChecks(GameTestHelper helper, BlockPos where) {
+        var level = helper.getLevel();
+        var box = new net.minecraft.world.phys.AABB(where.getX(), where.getY(), where.getZ(), where.getX() + 21, where.getY() + 22, where.getZ() + 48);
+        List<net.minecraft.world.entity.Entity> found = level.getEntitiesOfClass(net.minecraft.world.entity.Entity.class, box, e -> !(e instanceof Player));
+        long dinos = found.stream().filter(e -> e instanceof com.crazyalloy.revival.entity.GuardDinosaur).count();
+        long segways = found.stream().filter(e -> e instanceof com.crazyalloy.revival.entity.Segway).count();
+        helper.assertTrue(dinos == 2 && segways == 1, "expected 2 guard dinosaurs and 1 segway, found " + dinos + " and " + segways);
+        helper.assertTrue(level.getBlockState(where.offset(10, 14, 3)).is(net.minecraft.world.level.block.Blocks.GOLD_BLOCK), "no gold $ on the facade");
+        helper.assertTrue(level.getBlockState(where.offset(10, 1, 4)).is(net.minecraft.world.level.block.Blocks.IRON_DOOR), "no iron front door");
+        helper.assertTrue(level.getBlockState(where.offset(2, 5, 2)).is(net.minecraft.world.level.block.Blocks.QUARTZ_PILLAR), "no fluted column");
+        for (int x = 1; x <= 19; x++) {
+            helper.assertTrue(level.getBlockState(where.offset(x, 2, 43)).is(net.minecraft.world.level.block.Blocks.OBSIDIAN), "gap in the obsidian barrier at x " + x);
+        }
+        int spawners = 0;
+        for (BlockPos p : BlockPos.betweenClosed(where, where.offset(20, 3, 47))) {
+            if (level.getBlockEntity(p) instanceof net.minecraft.world.level.block.entity.SpawnerBlockEntity) {
+                spawners++;
+            }
+        }
+        helper.assertTrue(spawners == 3, "expected 3 spawners (2 guard dinosaurs, 1 segway), found " + spawners);
+        java.util.Set<net.minecraft.world.item.Item> allowed = java.util.Set.of(ModItems.MONEY.get(), ModItems.COIN.get(), Items.GOLD_INGOT,
+                Items.EMERALD, Items.DIAMOND, ModItems.AK47.get(), ModItems.AK47_AMMO.get(), ModItems.MINERAL_CONVERTER.get());
+        int stacks = 0;
+        for (int x : new int[] {4, 8, 12, 16}) {
+            var chest = level.getBlockEntity(where.offset(x, 1, 46));
+            helper.assertTrue(chest instanceof net.minecraft.world.level.block.entity.ChestBlockEntity, "no vault chest at x " + x);
+            var c = (net.minecraft.world.level.block.entity.ChestBlockEntity) chest;
+            c.unpackLootTable(null);
+            for (int i = 0; i < c.getContainerSize(); i++) {
+                ItemStack stack = c.getItem(i);
+                if (!stack.isEmpty()) {
+                    stacks++;
+                    helper.assertTrue(allowed.contains(stack.getItem()), "unexpected vault loot " + stack);
+                }
+            }
+        }
+        helper.assertTrue(stacks >= 4, "the four vault chests held only " + stacks + " stacks");
+        helper.succeed();
+    }
+
+    /** The bank is registered for Plains only, the converter knows the 7 materials, and the Overworld tab holds the new items. */
+    private static void stage7Registry(GameTestHelper helper) {
+        var access = helper.getLevel().registryAccess();
+        helper.assertTrue(access.lookupOrThrow(Registries.STRUCTURE).containsKey(CrazyAlloyRevival.id("bank")), "no bank structure");
+        var biomes = access.lookupOrThrow(Registries.BIOME);
+        var bankTag = net.minecraft.tags.TagKey.create(Registries.BIOME, CrazyAlloyRevival.id("has_structure/bank"));
+        helper.assertTrue(biomes.getOrThrow(net.minecraft.world.level.biome.Biomes.PLAINS).is(bankTag), "banks must generate in Plains");
+        helper.assertFalse(biomes.getOrThrow(net.minecraft.world.level.biome.Biomes.FOREST).is(bankTag), "banks should only generate in Plains");
+        long recipes = helper.getLevel().getServer().getRecipeManager().getRecipes().stream()
+                .filter(h -> h.value().getType() == com.crazyalloy.revival.registry.ModRecipes.MINERAL_CONVERTER_TYPE.get()).count();
+        helper.assertTrue(recipes == 7, "expected 7 mineral converter recipes, found " + recipes);
+        helper.assertTrue(net.minecraft.core.registries.BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(CrazyAlloyRevival.id("overworld")), "no Overworld tab");
+        var overworld = ModItems.OVERWORLD_TAB_ORDER.stream().map(d -> (net.minecraft.world.item.Item) d.get()).toList();
+        for (var item : List.of(ModItems.MINERAL_CONVERTER.get().asItem(), ModItems.MONEY.get(), ModItems.COIN.get(), ModItems.AK47.get(),
+                ModItems.AK47_AMMO.get(), ModItems.GUARD_DINOSAUR_SPAWN_EGG.get(), ModItems.SEGWAY_SPAWN_EGG.get())) {
+            helper.assertTrue(overworld.contains(item), item + " is missing from the Overworld tab");
+        }
+        helper.assertFalse(ModItems.TAB_ORDER.stream().anyMatch(d -> d.get() == ModItems.MONEY.get()), "money should not be in the candy tab");
+        helper.succeed();
+    }
+
+    // ------------------------------------------------------------------ stage 8
+
+    private static void stage8MobsTick(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        List<Mob> mobs = List.of(helper.spawn(ModEntities.TROLL.get(), 2, 1, 2), helper.spawn(ModEntities.FAIRY.get(), 6, 2, 2),
+                helper.spawn(ModEntities.EVIL_FAIRY.get(), 6, 2, 6), helper.spawn(ModEntities.ENT.get(), 2, 1, 6));
+        helper.runAfterDelay(100, () -> {
+            for (Mob mob : mobs) {
+                // The evil fairy hunts fairies, so the fairy may be dead, but only by its hand.
+                boolean killedByEvil = mob == mobs.get(1) && mob.getLastHurtByMob() == mobs.get(2);
+                helper.assertTrue(mob.isAlive() || killedByEvil, mob.getType().toShortString() + " died or was removed while ticking");
+            }
+            helper.assertTrue(mobs.get(0).getMaxHealth() == 40.0F && mobs.get(0).getAttributeValue(Attributes.ATTACK_DAMAGE) == 7.0, "troll should have 40 health and 7 damage");
+            helper.assertTrue(mobs.get(1).getMaxHealth() == 6.0F, "fairy should have 6 health");
+            helper.assertTrue(mobs.get(2).getMaxHealth() == 10.0F && mobs.get(2).getAttributeValue(Attributes.ATTACK_DAMAGE) == 3.0, "evil fairy should have 10 health and 3 damage");
+            helper.assertTrue(mobs.get(3).getMaxHealth() == 80.0F && mobs.get(3).getAttributeValue(Attributes.ATTACK_DAMAGE) == 9.0, "ent should have 80 health and 9 damage");
+            helper.succeed();
+        });
+    }
+
+    private static void jarCatchesFairy(GameTestHelper helper) {
+        var fairy = helper.spawn(ModEntities.FAIRY.get(), 4, 1, 4);
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.JAR.get(), 3));
+        fairy.interact(player, InteractionHand.MAIN_HAND, Vec3.ZERO);
+        helper.assertTrue(fairy.isRemoved(), "the fairy was not caught");
+        helper.assertTrue(player.getInventory().countItem(ModItems.JAR.get()) == 2, "catching should use up one jar");
+        helper.assertTrue(player.getInventory().countItem(ModItems.JAR_WITH_A_FAIRY.get()) == 1, "catching did not give a Jar With A Fairy");
+        helper.succeed();
+    }
+
+    private static void fairyJarReleases(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.JAR_WITH_A_FAIRY.get()));
+        BlockPos floor = helper.absolutePos(new BlockPos(4, 0, 4));
+        var hit = new net.minecraft.world.phys.BlockHitResult(Vec3.atCenterOf(floor).add(0, 0.5, 0), net.minecraft.core.Direction.UP, floor, false);
+        player.getMainHandItem().useOn(new net.minecraft.world.item.context.UseOnContext(player, InteractionHand.MAIN_HAND, hit));
+        helper.assertEntityPresent(ModEntities.FAIRY.get());
+        helper.assertTrue(player.getMainHandItem().is(ModItems.JAR.get()), "releasing should give the empty jar back");
+        helper.succeed();
+    }
+
+    private static void elixirCuresEvilFairy(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var evil = helper.spawn(ModEntities.EVIL_FAIRY.get(), 4, 2, 4);
+        ServerPlayer player = survivalMockPlayer(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(1.5, 1, 1.5)));
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.ELIXIR_OF_LIFE.get()));
+        evil.interact(player, InteractionHand.MAIN_HAND, Vec3.ZERO);
+        helper.assertTrue(evil.isCuring(), "the elixir did not start the cure");
+        helper.assertTrue(player.getMainHandItem().is(Items.GLASS_BOTTLE), "the elixir was not used up");
+        var adv = helper.getLevel().getServer().getAdvancements().get(CrazyAlloyRevival.id("the_miracle_of_life"));
+        helper.assertTrue(adv != null, "missing advancement the_miracle_of_life");
+        helper.runAfterDelay(com.crazyalloy.revival.entity.EvilFairy.CURE_TICKS + 5, () -> {
+            helper.assertEntityNotPresent(ModEntities.EVIL_FAIRY.get());
+            helper.assertEntityPresent(ModEntities.FAIRY.get());
+            helper.assertTrue(player.getAdvancements().getOrStartProgress(adv).isDone(), "The Miracle Of Life was not granted");
+            player.discard();
+            helper.succeed();
+        });
+    }
+
+    private static void trollFightsBack(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var troll = helper.spawn(ModEntities.TROLL.get(), 2, 1, 4);
+        Mob attacker = helper.spawn(EntityType.PIG, 6, 1, 4);
+        helper.assertFalse(com.crazyalloy.revival.entity.Troll.isEnemy(attacker), "a pig should not be a troll enemy");
+        // Hit it after a few ticks: a hit on the spawn tick has the same timestamp HurtByTargetGoal starts from.
+        helper.runAfterDelay(5, () -> {
+            troll.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(attacker), 1.0F);
+            // The troll may kill the pig quickly, which clears its target, so a hit from the troll also counts.
+            helper.succeedWhen(() -> helper.assertTrue(troll.getTarget() == attacker || attacker.getLastHurtByMob() == troll,
+                    "the troll did not turn on whoever hit it"));
+        });
+    }
+
+    private static void entUproots(GameTestHelper helper) {
+        var ent = helper.spawn(ModEntities.ENT.get(), 4, 1, 4);
+        ent.setRooted(1000);
+        helper.assertTrue(ent.isRooted(), "the ent did not take root");
+        Vec3 start = ent.position();
+        helper.runAfterDelay(20, () -> {
+            helper.assertTrue(ent.position().distanceTo(start) < 0.05, "a rooted ent moved");
+            Mob attacker = helper.spawn(EntityType.PIG, 7, 1, 4);
+            ent.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(attacker), 1.0F);
+            helper.assertFalse(ent.isRooted(), "the ent stayed rooted after being hit");
+            helper.succeed();
+        });
+    }
+
+    private static void giantMushroomGrows(GameTestHelper helper) {
+        for (int x = 0; x < 9; x++) {
+            for (int z = 0; z < 9; z++) {
+                helper.setBlock(new BlockPos(x, 0, z), ModBlocks.MYSTIC_DIRT.get());
+            }
+        }
+        var level = helper.getLevel();
+        var feature = level.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE)
+                .getValue(CrazyAlloyRevival.id("giant_red_mushroom"));
+        helper.assertTrue(feature != null, "missing configured feature giant_red_mushroom");
+        BlockPos origin = helper.absolutePos(new BlockPos(4, 1, 4));
+        boolean placed = false;
+        for (int i = 0; i < 10 && !placed; i++) {
+            placed = feature.place(level, level.getChunkSource().getGenerator(), level.getRandom(), origin);
+        }
+        helper.assertTrue(placed, "the giant mushroom did not generate");
+        helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.MUSHROOM_STEM, new BlockPos(4, 1, 4));
+        int caps = 0;
+        for (BlockPos p : BlockPos.betweenClosed(origin.offset(-7, 0, -7), origin.offset(7, 14, 7))) {
+            if (level.getBlockState(p).is(net.minecraft.world.level.block.Blocks.RED_MUSHROOM_BLOCK)) {
+                caps++;
+            }
+        }
+        helper.assertTrue(caps > 40, "the cap is too small: " + caps + " red mushroom blocks");
+        helper.succeed();
+    }
+
+    private static void mysticSaplingGrows(GameTestHelper helper) {
+        BlockPos soil = new BlockPos(4, 0, 4);
+        BlockPos sapling = soil.above();
+        helper.setBlock(soil, ModBlocks.MYSTIC_GRASS_BLOCK.get());
+        helper.setBlock(sapling, ModBlocks.MYSTIC_SAPLING.get());
+        BlockPos abs = helper.absolutePos(sapling);
+        for (int i = 0; i < 40 && helper.getLevel().getBlockState(abs).getBlock() instanceof SaplingBlock; i++) {
+            BlockState state = helper.getLevel().getBlockState(abs);
+            ((SaplingBlock) state.getBlock()).advanceTree(helper.getLevel(), abs, state, helper.getLevel().getRandom());
+        }
+        helper.assertBlockPresent(ModBlocks.MYSTIC_LOG.get(), sapling);
+        helper.succeed();
+    }
+
+    private static void stage8Registry(GameTestHelper helper) {
+        var access = helper.getLevel().registryAccess();
+        var biomes = access.lookupOrThrow(Registries.BIOME);
+        helper.assertTrue(biomes.containsKey(CrazyAlloyRevival.id("mystic_grove")), "no mystic_grove biome");
+        var grove = biomes.getOrThrow(com.crazyalloy.revival.worldgen.ModWorldgen.MYSTIC_GROVE);
+        helper.assertTrue(grove.is(net.minecraft.tags.BiomeTags.IS_OVERWORLD), "mystic grove should be an overworld biome");
+        helper.assertTrue(grove.is(net.minecraft.tags.BiomeTags.IS_FOREST), "mystic grove should be a forest");
+        helper.assertTrue(access.lookupOrThrow(Registries.ENTITY_TYPE).getOrThrow(ModEntities.TROLL.getKey()).value() == ModEntities.TROLL.get(), "troll not registered");
+        var recipes = helper.getLevel().getServer().getRecipeManager();
+        for (String id : List.of("mystic_planks", "jar", "elixir_of_life", "mystic_door", "mystic_fence")) {
+            helper.assertTrue(recipes.byKey(net.minecraft.resources.ResourceKey.create(Registries.RECIPE, CrazyAlloyRevival.id(id))).isPresent(), "missing recipe " + id);
+        }
+        helper.assertTrue(helper.getLevel().getServer().getAdvancements().get(CrazyAlloyRevival.id("land_of_fantastic_things")) != null, "missing advancement land_of_fantastic_things");
+        helper.assertTrue(net.minecraft.core.registries.BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(CrazyAlloyRevival.id("enchanted")), "no Enchanted tab");
+        var enchanted = ModItems.ENCHANTED_TAB_ORDER.stream().map(d -> (net.minecraft.world.item.Item) d.get()).toList();
+        for (var item : List.of(ModItems.JAR.get(), ModItems.JAR_WITH_A_FAIRY.get(), ModItems.ELIXIR_OF_LIFE.get(), ModItems.TROLL_SPAWN_EGG.get(),
+                ModItems.FAIRY_SPAWN_EGG.get(), ModItems.EVIL_FAIRY_SPAWN_EGG.get(), ModItems.ENT_SPAWN_EGG.get(),
+                ModBlocks.MYSTIC_GRASS_BLOCK.get().asItem(), ModBlocks.MYSTIC_LOG.get().asItem(), ModBlocks.MYSTIC_PRESSURE_PLATE.get().asItem())) {
+            helper.assertTrue(enchanted.contains(item), item + " is missing from the Enchanted tab");
+        }
+        helper.succeed();
+    }
+
+    // ------------------------------------------------------------------ shadow creatures
+
+    private static void shadowMobsTick(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        List<Mob> mobs = List.of(helper.spawn(ModEntities.SHADOW_EYE.get(), 2, 2, 2), helper.spawn(ModEntities.SHADOW_WANDERER.get(), 6, 1, 6));
+        helper.runAfterDelay(100, () -> {
+            for (Mob mob : mobs) {
+                helper.assertTrue(mob.isAlive(), mob.getType().toShortString() + " died or was removed while ticking");
+            }
+            helper.assertTrue(mobs.get(0).getMaxHealth() == 16.0F, "shadow eye should have 16 health");
+            helper.assertTrue(mobs.get(1).getMaxHealth() == 30.0F && mobs.get(1).getAttributeValue(Attributes.ATTACK_DAMAGE) == 6.0,
+                    "shadow wanderer should have 30 health and 6 damage");
+            helper.assertTrue(mobs.get(0).getY() >= helper.absoluteVec(Vec3.ZERO).y + 1.5, "the shadow eye should float above the ground");
+            helper.succeed();
+        });
+    }
+
+    private static void trollHuntsWanderer(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var troll = helper.spawn(ModEntities.TROLL.get(), 1, 1, 4);
+        var wanderer = helper.spawn(ModEntities.SHADOW_WANDERER.get(), 7, 1, 4);
+        wanderer.setNoAi(true);
+        helper.assertTrue(com.crazyalloy.revival.entity.Troll.isEnemy(wanderer), "the shadow wanderer should be a troll enemy");
+        helper.succeedWhen(() -> helper.assertTrue(troll.getTarget() == wanderer || wanderer.getLastHurtByMob() == troll,
+                "the troll did not go after the shadow wanderer"));
+    }
+
+    private static void trollHuntsEye(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var troll = helper.spawn(ModEntities.TROLL.get(), 1, 1, 4);
+        var eye = helper.spawn(ModEntities.SHADOW_EYE.get(), 7, 2, 4);
+        eye.setNoAi(true);
+        helper.assertTrue(com.crazyalloy.revival.entity.Troll.isEnemy(eye), "the shadow eye should be a troll enemy");
+        helper.succeedWhen(() -> helper.assertTrue(troll.getTarget() == eye, "the troll did not go after the shadow eye"));
+    }
+
+    /** A clear line hurts and slows; a wall in between makes the gaze miss. */
+    private static void shadowEyeGaze(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var eye = helper.spawn(ModEntities.SHADOW_EYE.get(), 1, 2, 4);
+        eye.setNoAi(true);
+        var pig = helper.spawn(EntityType.PIG, 6, 1, 4);
+        pig.setNoAi(true);
+        helper.assertTrue(eye.gaze(level, pig), "the gaze missed a pig in plain sight");
+        helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the gaze did no damage");
+        helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "the gaze did not slow the pig");
+        var pig2 = helper.spawn(EntityType.PIG, 6, 1, 7);
+        pig2.setNoAi(true);
+        for (int y = 1; y <= 4; y++) {
+            for (int z = 6; z <= 8; z++) {
+                helper.setBlock(new BlockPos(4, y, z), net.minecraft.world.level.block.Blocks.STONE);
+            }
+        }
+        eye.snapTo(helper.absoluteVec(new Vec3(1.5, 2, 7.5)));
+        helper.assertFalse(eye.gaze(level, pig2), "the gaze went through a wall");
+        helper.assertTrue(pig2.getHealth() == pig2.getMaxHealth(), "a pig behind a wall was hurt");
+        helper.succeed();
+    }
+
+    /** With a target in sight the eye warns, then strikes on its own. */
+    private static void shadowEyeGazeGoal(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var eye = helper.spawn(ModEntities.SHADOW_EYE.get(), 1, 2, 4);
+        var pig = helper.spawn(EntityType.PIG, 7, 1, 4);
+        pig.setNoAi(true);
+        pig.setInvulnerable(false);
+        eye.setTarget(pig);
+        helper.succeedWhen(() -> {
+            eye.setTarget(pig);
+            helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the shadow eye never struck its target");
+        });
+    }
+
+    private static void wandererClaws(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var wanderer = helper.spawn(ModEntities.SHADOW_WANDERER.get(), 2, 1, 4);
+        ServerPlayer player = survivalMockPlayer(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(6.5, 1, 4.5)));
+        helper.succeedWhen(() -> {
+            helper.assertTrue(player.getHealth() < player.getMaxHealth(), "the shadow wanderer did not attack the player");
+            player.discard();
+        });
+    }
+
+    private static void shadowNightSpawns(GameTestHelper helper) {
+        var server = helper.getLevel().getServer();
+        var source = server.createCommandSourceStack().withSuppressedOutput();
+        server.getCommands().performPrefixedCommand(source, "time set noon");
+        helper.runAfterDelay(3, () -> {
+            helper.assertFalse(com.crazyalloy.revival.entity.ShadowWanderer.nightOrNotNatural(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.NATURAL),
+                    "shadow creatures should not spawn naturally at noon");
+            helper.assertTrue(com.crazyalloy.revival.entity.ShadowWanderer.nightOrNotNatural(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.SPAWN_ITEM_USE),
+                    "spawn eggs should work by day");
+            server.getCommands().performPrefixedCommand(source, "time set midnight");
+            helper.runAfterDelay(3, () -> {
+                boolean night = com.crazyalloy.revival.entity.ShadowWanderer.nightOrNotNatural(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.NATURAL);
+                server.getCommands().performPrefixedCommand(source, "time set day");
+                helper.assertTrue(night, "shadow creatures should spawn naturally at midnight");
+                helper.succeed();
+            });
+        });
+    }
+
+    private static void shadowRegistry(GameTestHelper helper) {
+        var grove = helper.getLevel().registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(com.crazyalloy.revival.worldgen.ModWorldgen.MYSTIC_GROVE);
+        var monsters = grove.value().getMobSettings().getMobs(net.minecraft.world.entity.MobCategory.MONSTER).unwrap().stream().map(w -> w.value().type()).toList();
+        helper.assertTrue(monsters.contains(ModEntities.SHADOW_EYE.get()), "the shadow eye does not spawn in the mystic grove");
+        helper.assertTrue(monsters.contains(ModEntities.SHADOW_WANDERER.get()), "the shadow wanderer does not spawn in the mystic grove");
+        var enchanted = ModItems.ENCHANTED_TAB_ORDER.stream().map(d -> (net.minecraft.world.item.Item) d.get()).toList();
+        helper.assertTrue(enchanted.contains(ModItems.SHADOW_EYE_SPAWN_EGG.get()) && enchanted.contains(ModItems.SHADOW_WANDERER_SPAWN_EGG.get()),
+                "shadow spawn eggs missing from the Enchanted tab");
         helper.succeed();
     }
 }

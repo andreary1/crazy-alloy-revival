@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "crazyalloy_revival:block/mystic_log_top",
+    "side": "crazyalloy_revival:block/mystic_log"
+  }
+}

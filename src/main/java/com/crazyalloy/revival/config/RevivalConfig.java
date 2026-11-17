@@ -25,6 +25,11 @@ public final class RevivalConfig {
     public static final ModConfigSpec.BooleanValue ICE_CREAM_PORTAL_ENABLED;
     public static final ModConfigSpec.EnumValue<StructureFrequency> ICE_CREAM_NEST_FREQUENCY;
     public static final ModConfigSpec.IntValue ICE_CREAM_PINNACLES;
+    public static final ModConfigSpec.EnumValue<StructureFrequency> BANK_FREQUENCY;
+    public static final ModConfigSpec.BooleanValue BANK_GUARDS;
+    public static final ModConfigSpec.IntValue MYSTIC_REGION_WEIGHT;
+    public static final ModConfigSpec.BooleanValue MYSTIC_GROVE_ENABLED;
+    public static final ModConfigSpec.IntValue GIANT_MUSHROOMS;
 
     // Creature spawning
     public static final ModConfigSpec.DoubleValue CANDY_TUBE_DOG_SPAWN_CHANCE;
@@ -43,6 +48,13 @@ public final class RevivalConfig {
     public static final ModConfigSpec.DoubleValue ICE_CREAM_GARGOYLE_SPAWN_CHANCE;
     public static final ModConfigSpec.DoubleValue LIVING_ICE_CREAM_SPAWN_CHANCE;
     public static final ModConfigSpec.DoubleValue ANGRY_ICE_CREAM_CONE_SPAWN_CHANCE;
+    public static final ModConfigSpec.DoubleValue TROLL_SPAWN_CHANCE;
+    public static final ModConfigSpec.DoubleValue FAIRY_SPAWN_CHANCE;
+    public static final ModConfigSpec.DoubleValue EVIL_FAIRY_SPAWN_CHANCE;
+    public static final ModConfigSpec.DoubleValue SHADOW_EYE_SPAWN_CHANCE;
+    public static final ModConfigSpec.DoubleValue SHADOW_WANDERER_SPAWN_CHANCE;
+    public static final ModConfigSpec.BooleanValue SHADOW_EYE_GAZE;
+    public static final ModConfigSpec.DoubleValue ENT_SPAWN_CHANCE;
 
     // Difficulty
     public static final ModConfigSpec.DoubleValue MOB_HEALTH_MULTIPLIER;
@@ -62,11 +74,16 @@ public final class RevivalConfig {
     public static final ModConfigSpec.IntValue ICE_CREAM_DRAGON_HEALTH;
     public static final ModConfigSpec.IntValue ICE_CREAM_DRAGON_FIREBALL_POWER;
     public static final ModConfigSpec.IntValue ICE_CREAM_DRAGON_MAX_CONES;
+    public static final ModConfigSpec.BooleanValue GUARD_DINOSAUR_ALERT;
+    public static final ModConfigSpec.IntValue GUARD_DINOSAUR_ALERT_RADIUS;
+    public static final ModConfigSpec.DoubleValue AK47_BULLET_DAMAGE;
+    public static final ModConfigSpec.BooleanValue ENT_ROOTING;
 
     // Machines
     public static final ModConfigSpec.DoubleValue CHOCOLATE_FACTORY_SPEED;
     public static final ModConfigSpec.DoubleValue ICE_CREAM_MACHINE_SPEED;
     public static final ModConfigSpec.IntValue ICE_CREAM_MACHINE_SERVINGS_PER_BUCKET;
+    public static final ModConfigSpec.BooleanValue MINERAL_CONVERTER_ENABLED;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -141,6 +158,29 @@ public final class RevivalConfig {
                 .comment("Attempts per chunk to grow a three-flavour ice cream pinnacle in the Ice Cream Plains (each attempt succeeds about one time in three). 0 disables them.")
                 .translation("crazyalloy_revival.configuration.iceCreamPinnacles")
                 .defineInRange("iceCreamPinnacles", 1, 0, 8);
+        BANK_FREQUENCY = b
+                .comment("How often Banks appear in Plains. DISABLED removes them from new chunks.")
+                .translation("crazyalloy_revival.configuration.bankFrequency")
+                .worldRestart()
+                .defineEnum("bankFrequency", StructureFrequency.NORMAL);
+        BANK_GUARDS = b
+                .comment("Each newly generated Bank has Guard Dinosaurs and a Segway placed in its security rooms (the spawners are separate and always generate). If false, guards placed by banks vanish when first loaded.")
+                .translation("crazyalloy_revival.configuration.bankGuards")
+                .define("bankGuards", true);
+        MYSTIC_REGION_WEIGHT = b
+                .comment("Weight of the Crazy Alloy mystic TerraBlender region. Inside it, dark forests and windswept forests become Mystic Groves. 0 disables the Mystic Grove in new worlds. Vanilla regions use 10.")
+                .translation("crazyalloy_revival.configuration.mysticRegionWeight")
+                .worldRestart()
+                .defineInRange("mysticRegionWeight", 3, 0, 20);
+        MYSTIC_GROVE_ENABLED = b
+                .comment("Generate Mystic Groves in the mystic region.")
+                .translation("crazyalloy_revival.configuration.mysticGroveEnabled")
+                .worldRestart()
+                .define("mysticGroveEnabled", true);
+        GIANT_MUSHROOMS = b
+                .comment("Attempts per chunk to grow a giant red mushroom in the Mystic Grove (about one in two chunks is tried; each try needs dirt or grass and open space). 0 disables them.")
+                .translation("crazyalloy_revival.configuration.giantMushrooms")
+                .defineInRange("giantMushrooms", 1, 0, 8);
         b.pop();
 
         b.comment("Creature spawning. Each value is the chance (0 to 1) that a natural spawn attempt is allowed.").translation("crazyalloy_revival.configuration.spawns").push("spawns");
@@ -192,6 +232,24 @@ public final class RevivalConfig {
         ANGRY_ICE_CREAM_CONE_SPAWN_CHANCE = b
                 .translation("crazyalloy_revival.configuration.angryIceCreamConeSpawnChance")
                 .defineInRange("angryIceCreamConeSpawnChance", 1.0, 0.0, 1.0);
+        TROLL_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.trollSpawnChance")
+                .defineInRange("trollSpawnChance", 1.0, 0.0, 1.0);
+        FAIRY_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.fairySpawnChance")
+                .defineInRange("fairySpawnChance", 1.0, 0.0, 1.0);
+        EVIL_FAIRY_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.evilFairySpawnChance")
+                .defineInRange("evilFairySpawnChance", 1.0, 0.0, 1.0);
+        ENT_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.entSpawnChance")
+                .defineInRange("entSpawnChance", 1.0, 0.0, 1.0);
+        SHADOW_EYE_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.shadowEyeSpawnChance")
+                .defineInRange("shadowEyeSpawnChance", 1.0, 0.0, 1.0);
+        SHADOW_WANDERER_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.shadowWandererSpawnChance")
+                .defineInRange("shadowWandererSpawnChance", 1.0, 0.0, 1.0);
         b.pop();
 
         b.comment("Difficulty of Crazy Alloy creatures, applied when they spawn.").translation("crazyalloy_revival.configuration.difficulty").push("difficulty");
@@ -261,6 +319,26 @@ public final class RevivalConfig {
                 .comment("The Ice Cream Dragon stops calling Angry Ice Cream Cones while this many are within 16 blocks. 0 disables the summon.")
                 .translation("crazyalloy_revival.configuration.iceCreamDragonMaxCones")
                 .defineInRange("iceCreamDragonMaxCones", 4, 0, 12);
+        GUARD_DINOSAUR_ALERT = b
+                .comment("Revival proposal: a Guard Dinosaur that spots a player first stops, raises the alarm (with a roar) and calls the other guards nearby, then attacks. If false it attacks straight away, like the original.")
+                .translation("crazyalloy_revival.configuration.guardDinosaurAlert")
+                .define("guardDinosaurAlert", true);
+        GUARD_DINOSAUR_ALERT_RADIUS = b
+                .comment("How far (in blocks) the alarm of a Guard Dinosaur reaches other Guard Dinosaurs and Segways.")
+                .translation("crazyalloy_revival.configuration.guardDinosaurAlertRadius")
+                .defineInRange("guardDinosaurAlertRadius", 16, 0, 48);
+        AK47_BULLET_DAMAGE = b
+                .comment("Damage of each AK47 bullet.")
+                .translation("crazyalloy_revival.configuration.ak47BulletDamage")
+                .defineInRange("ak47BulletDamage", 4.0, 0.5, 20.0);
+        ENT_ROOTING = b
+                .comment("Revival proposal: an idle Ent sometimes takes root and stands still with its arms raised like branches until it is hit, blending in with the trees. Naturally spawned Ents often start rooted. If false Ents always walk around.")
+                .translation("crazyalloy_revival.configuration.entRooting")
+                .define("entRooting", true);
+        SHADOW_EYE_GAZE = b
+                .comment("Revival proposal: the Shadow Eye warns for 1.5 seconds (rings line up, pupil widens) and then strikes a target still in its sight for 4 magic damage plus a short Darkness. If false it only floats around.")
+                .translation("crazyalloy_revival.configuration.shadowEyeGaze")
+                .define("shadowEyeGaze", true);
         b.pop();
 
         b.translation("crazyalloy_revival.configuration.machines").push("machines");
@@ -276,6 +354,10 @@ public final class RevivalConfig {
                 .comment("Ice creams the Ice Cream Machine makes from one Milk Bucket.")
                 .translation("crazyalloy_revival.configuration.iceCreamMachineServingsPerBucket")
                 .defineInRange("iceCreamMachineServingsPerBucket", 4, 1, 16);
+        MINERAL_CONVERTER_ENABLED = b
+                .comment("The Mineral Converter turns ingots and gems into Money and Coins. If false its Convert button does nothing.")
+                .translation("crazyalloy_revival.configuration.mineralConverterEnabled")
+                .define("mineralConverterEnabled", true);
         b.pop();
 
         SPEC = b.build();

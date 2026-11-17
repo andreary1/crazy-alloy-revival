@@ -24,11 +24,11 @@ NO_ITEM = {"melted_chocolate", "bubbaloo", "ice_cream_portal"}
 # Blocks that drop nothing and have no loot table (noLootTable in ModBlocks).
 NO_LOOT = {"ice_cream_portal"}
 # Items whose name comes from the block key (DoubleHighBlockItem with useBlockDescriptionPrefix).
-BLOCK_NAMED = {"sweetwood_door"}
+BLOCK_NAMED = {"sweetwood_door", "mystic_door"}
 items = (blocks - NO_ITEM) | items_simple
 entities = ids("ModEntities.java", r'registerEntityType\(\s*"([a-z_]+)"')
 # Thrown items: drawn by ThrownItemRenderer from their item, and they drop nothing.
-PROJECTILES = {"brown_sugar_brick", "gumdrop_shot", "jelly_snake_shot"}
+PROJECTILES = {"brown_sugar_brick", "gumdrop_shot", "jelly_snake_shot", "bullet"}
 print(f"{len(blocks)} blocks, {len(items)} items, {len(entities)} entities")
 
 def exists(rel):
@@ -82,7 +82,7 @@ for p in glob.glob(f"{D}/recipe/**/*.json", recursive=True) + glob.glob(f"{D}/lo
     text = re.sub(r'"parent": "[^"]+"', "", open(p).read())
     for ref in re.findall(rf'"({NS}:[a-z_/]+)"', text):
         path = ref.split(":")[1]
-        if "/" in path or path in entities or path in ("sweet_forest", "jelly_bean_fields", "candy_cave", "cookie_hut", "gingerbread_tower", "gingerbread_fortress", "ice_cream_truck", "chocolate_factory", "ice_cream_machine", "ice_cream", "ice_cream_nest", "ice_cream_plains"):
+        if "/" in path or path in entities or path in ("sweet_forest", "jelly_bean_fields", "candy_cave", "cookie_hut", "gingerbread_tower", "gingerbread_fortress", "ice_cream_truck", "chocolate_factory", "ice_cream_machine", "ice_cream", "ice_cream_nest", "ice_cream_plains", "bank", "mystic_grove"):
             continue
         check_ref(os.path.relpath(p, D), ref)
 
@@ -109,6 +109,8 @@ java_keys = set()
 for p in glob.glob(os.path.join(ROOT, "src/main/java/**/*.java"), recursive=True):
     java_keys |= set(re.findall(r'"((?:gui|container|itemGroup|crazyalloy_revival\.configuration)\.[A-Za-z0-9_.]+)"', open(p).read()))
 for k in java_keys:
+    if k.endswith("."):
+        continue  # a prefix the code completes with a number (help.1, help.2, ...)
     if k not in en:
         errors.append(f"translation used in Java but missing: {k}")
 sounds = json.load(open(f"{A}/sounds.json"))

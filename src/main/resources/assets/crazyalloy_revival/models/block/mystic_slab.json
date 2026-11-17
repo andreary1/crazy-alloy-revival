@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "crazyalloy_revival:block/mystic_planks",
+    "top": "crazyalloy_revival:block/mystic_planks",
+    "side": "crazyalloy_revival:block/mystic_planks"
+  }
+}

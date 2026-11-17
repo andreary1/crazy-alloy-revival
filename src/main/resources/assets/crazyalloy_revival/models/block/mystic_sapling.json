@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "cross": "crazyalloy_revival:block/mystic_sapling"
+  }
+}

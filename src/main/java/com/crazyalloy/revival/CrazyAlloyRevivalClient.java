@@ -88,6 +88,13 @@ public final class CrazyAlloyRevivalClient {
         event.registerLayerDefinition(ModModelLayers.LIVING_ICE_CREAM, com.crazyalloy.revival.client.model.LivingIceCreamModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.ANGRY_ICE_CREAM_CONE, com.crazyalloy.revival.client.model.AngryIceCreamConeModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.ICE_CREAM_DRAGON, com.crazyalloy.revival.client.model.IceCreamDragonModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.GUARD_DINOSAUR, com.crazyalloy.revival.client.model.GuardDinosaurModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.SEGWAY, com.crazyalloy.revival.client.model.SegwayModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.TROLL, com.crazyalloy.revival.client.model.TrollModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.FAIRY, com.crazyalloy.revival.client.model.FairyModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.ENT, com.crazyalloy.revival.client.model.EntModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.SHADOW_EYE, com.crazyalloy.revival.client.model.ShadowEyeModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.SHADOW_WANDERER, com.crazyalloy.revival.client.model.ShadowWandererModel::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -122,6 +129,12 @@ public final class CrazyAlloyRevivalClient {
                 c -> new RevivalMobRenderer<>(c, new ImpostorCakeModel(c.bakeLayer(ModModelLayers.IMPOSTOR_CAKE)), 0.55F, "impostor_cake", 1.0F));
         event.registerBlockEntityRenderer(ModBlockEntities.ICE_CREAM_MACHINE.get(), IceCreamMachineRenderer::new);
         registerIceCreamDimension(event);
+        event.registerEntityRenderer(ModEntities.GUARD_DINOSAUR.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.GuardDinosaurModel(c.bakeLayer(ModModelLayers.GUARD_DINOSAUR)), 0.6F, "guard_dinosaur", 1.0F));
+        event.registerEntityRenderer(ModEntities.SEGWAY.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.SegwayModel(c.bakeLayer(ModModelLayers.SEGWAY)), 0.5F, "segway", 1.0F));
+        registerMysticGrove(event);
+        event.registerEntityRenderer(ModEntities.BULLET.get(), c -> new ThrownItemRenderer<>(c, 0.5F, false));
         event.registerEntityRenderer(ModEntities.BROWN_SUGAR_BRICK.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.GUMDROP_SHOT.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.JELLY_SNAKE_SHOT.get(), c -> new ThrownItemRenderer<>(c, 1.5F, false));
@@ -145,6 +158,22 @@ public final class CrazyAlloyRevivalClient {
                 new com.crazyalloy.revival.client.model.IceCreamDragonModel(c.bakeLayer(ModModelLayers.ICE_CREAM_DRAGON)), 1.4F, "ice_cream_dragon", 2.4F));
     }
 
+    /** Stage 8 creatures. The Fairy and the Evil Fairy share one model with different textures. */
+    private static void registerMysticGrove(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.TROLL.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.TrollModel(c.bakeLayer(ModModelLayers.TROLL)), 0.7F, "troll", 1.0F));
+        event.registerEntityRenderer(ModEntities.FAIRY.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.FairyModel(c.bakeLayer(ModModelLayers.FAIRY)), 0.4F, "fairy", 0.6F));
+        event.registerEntityRenderer(ModEntities.EVIL_FAIRY.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.FairyModel(c.bakeLayer(ModModelLayers.FAIRY)), 0.4F, "evil_fairy", 0.6F));
+        event.registerEntityRenderer(ModEntities.ENT.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.EntModel(c.bakeLayer(ModModelLayers.ENT)), 0.7F, "ent", 1.4F));
+        event.registerEntityRenderer(ModEntities.SHADOW_EYE.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.ShadowEyeModel(c.bakeLayer(ModModelLayers.SHADOW_EYE)), 0.5F, "shadow_eye", 1.0F));
+        event.registerEntityRenderer(ModEntities.SHADOW_WANDERER.get(), c -> new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.ShadowWandererModel(c.bakeLayer(ModModelLayers.SHADOW_WANDERER)), 0.5F, "shadow_wanderer", 1.0F));
+    }
+
     @SubscribeEvent
     static void onFluidModels(RegisterFluidModelsEvent event) {
         event.register(new FluidModel.Unbaked(new Material(CrazyAlloyRevival.id("block/melted_chocolate_still")),
@@ -158,6 +187,14 @@ public final class CrazyAlloyRevivalClient {
     static void onClientExtensions(RegisterClientExtensionsEvent event) {
         event.registerFluidType(thickFog(0.30F, 0.17F, 0.09F), ModFluids.MELTED_CHOCOLATE_TYPE.get());
         event.registerFluidType(thickFog(0.95F, 0.45F, 0.70F), ModFluids.BUBBALOO_TYPE.get());
+        // The AK47 is held up in both hands, like a loaded crossbow.
+        event.registerItem(new net.neoforged.neoforge.client.extensions.common.IClientItemExtensions() {
+            @Override
+            public net.minecraft.client.model.HumanoidModel.@Nullable ArmPose getArmPose(net.minecraft.world.entity.LivingEntity entity,
+                                                                                    net.minecraft.world.InteractionHand hand, ItemStack stack) {
+                return net.minecraft.client.model.HumanoidModel.ArmPose.CROSSBOW_HOLD;
+            }
+        }, com.crazyalloy.revival.registry.ModItems.AK47.get());
     }
 
     private static IClientFluidTypeExtensions thickFog(float r, float g, float b) {
@@ -181,6 +218,7 @@ public final class CrazyAlloyRevivalClient {
     static void onMenuScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenus.CHOCOLATE_FACTORY.get(), ChocolateFactoryScreen::new);
         event.register(ModMenus.ICE_CREAM_MACHINE.get(), IceCreamMachineScreen::new);
+        event.register(ModMenus.MINERAL_CONVERTER.get(), com.crazyalloy.revival.client.screen.MineralConverterScreen::new);
     }
 
     /**

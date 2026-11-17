@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "crazyalloy_revival:block/mystic_slab"
+    },
+    "type=double": {
+      "model": "crazyalloy_revival:block/mystic_planks"
+    },
+    "type=top": {
+      "model": "crazyalloy_revival:block/mystic_slab_top"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "crazyalloy_revival:blocks/mystic_grass_block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "predicates": {
+                      "minecraft:enchantments": [
+                        {
+                          "enchantments": "minecraft:silk_touch",
+                          "levels": {
+                            "min": 1
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "name": "crazyalloy_revival:mystic_grass_block"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "crazyalloy_revival:mystic_dirt",
+              "conditions": [
+                {
+                  "condition": "minecraft:survives_explosion"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

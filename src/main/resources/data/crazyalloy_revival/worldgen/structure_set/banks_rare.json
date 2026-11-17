@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "crazyalloy_revival:structure_frequency",
+      "frequency": "rare",
+      "structure": "bank"
+    }
+  ],
+  "structures": [
+    {
+      "structure": "crazyalloy_revival:bank",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 56,
+    "separation": 24,
+    "salt": 518273645
+  }
+}

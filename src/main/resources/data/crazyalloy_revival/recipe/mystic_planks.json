@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "crazyalloy_revival:mystic_log"
+  ],
+  "result": {
+    "id": "crazyalloy_revival:mystic_planks",
+    "count": 4
+  }
+}

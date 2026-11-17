@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "id": "crazyalloy_revival:jar_with_a_fairy",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancements.crazyalloy_revival.fairy_in_a_jar.title"
+    },
+    "description": {
+      "translate": "advancements.crazyalloy_revival.fairy_in_a_jar.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "jar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "crazyalloy_revival:jar_with_a_fairy"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "crazyalloy_revival:land_of_fantastic_things"
+}

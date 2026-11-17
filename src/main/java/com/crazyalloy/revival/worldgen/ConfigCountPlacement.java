@@ -35,7 +35,8 @@ public class ConfigCountPlacement extends RepeatingPlacement {
     public enum Setting implements StringRepresentable {
         TOURMALINE("tourmaline", RevivalConfig.TOURMALINE_VEINS_PER_CHUNK::getAsInt),
         DEEP_TOURMALINE("deep_tourmaline", RevivalConfig.DEEP_TOURMALINE_VEINS_PER_CHUNK::getAsInt),
-        ICE_CREAM_PINNACLES("ice_cream_pinnacles", RevivalConfig.ICE_CREAM_PINNACLES::getAsInt);
+        ICE_CREAM_PINNACLES("ice_cream_pinnacles", RevivalConfig.ICE_CREAM_PINNACLES::getAsInt),
+        GIANT_MUSHROOMS("giant_mushrooms", RevivalConfig.GIANT_MUSHROOMS::getAsInt);
 
         public static final Codec<Setting> CODEC = StringRepresentable.fromEnum(Setting::values);
 
