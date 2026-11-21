@@ -140,6 +140,16 @@ public final class RevivalGameTests {
         TESTS.put("dwarf_hut_template_has_dwarf_and_chest", RevivalGameTests::dwarfHutTemplate);
         TESTS.put("wizard_tower_template_has_wizard_and_lab", RevivalGameTests::wizardTowerTemplate);
         TESTS.put("wizard_and_dwarf_registry_and_worldgen", RevivalGameTests::dwellerRegistry);
+        TESTS.put("mushroom_depths_mobs_tick_without_crashing", RevivalGameTests::depthsMobsTick);
+        TESTS.put("mushroomcopter_shoots_poison_spores", RevivalGameTests::copterShoots);
+        TESTS.put("mushroomcopter_attacks_on_its_own", RevivalGameTests::copterAttacks);
+        TESTS.put("mushroom_cyclops_slam_hits_in_front", RevivalGameTests::cyclopsSlam);
+        TESTS.put("mushroom_man_attacks_players", RevivalGameTests::mushroomManAttacks);
+        TESTS.put("elemental_books_cast_spells", RevivalGameTests::booksCast);
+        TESTS.put("fire_book_sets_target_on_fire", RevivalGameTests::fireBookHits);
+        TESTS.put("mushroom_outpost_template_spawners_and_chests", RevivalGameTests::outpostTemplate);
+        TESTS.put("mushroom_base_template_spawners_and_chests", RevivalGameTests::baseTemplate);
+        TESTS.put("mushroom_depths_registry_and_worldgen", RevivalGameTests::depthsRegistry);
     }
 
     private RevivalGameTests() {}
@@ -1566,6 +1576,205 @@ public final class RevivalGameTests {
         for (var item : List.of(ModItems.PURPLE_MUSHROOM.get(), ModItems.BLUE_MUSHROOM.get(), ModItems.WIZARD_SPAWN_EGG.get(), ModItems.DWARF_SPAWN_EGG.get())) {
             helper.assertTrue(enchanted.contains(item), item + " is missing from the Enchanted tab");
         }
+        helper.succeed();
+    }
+
+    // ============================================================== 0.8.0: Mushroom Depths
+    private static void depthsMobsTick(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        List<Mob> mobs = List.of(helper.spawn(ModEntities.MUSHROOM_MAN.get(), 2, 1, 2), helper.spawn(ModEntities.MUSHROOM_CYCLOPS.get(), 6, 1, 6),
+                helper.spawn(ModEntities.MUSHROOMCOPTER.get(), 2, 2, 6));
+        helper.runAfterDelay(100, () -> {
+            for (Mob mob : mobs) {
+                helper.assertTrue(mob.isAlive(), mob.getType().toShortString() + " died or was removed while ticking");
+            }
+            helper.assertTrue(mobs.get(0).getMaxHealth() == 20.0F && mobs.get(0).getAttributeValue(Attributes.ATTACK_DAMAGE) == 4.0, "mushroom man should have 20 health and 4 damage");
+            helper.assertTrue(mobs.get(1).getMaxHealth() == 40.0F && mobs.get(1).getAttributeValue(Attributes.ATTACK_DAMAGE) == 7.0, "mushroom cyclops should have 40 health and 7 damage");
+            helper.assertTrue(mobs.get(2).getMaxHealth() == 14.0F, "mushroomcopter should have 14 health");
+            helper.assertTrue(mobs.stream().allMatch(m -> m instanceof net.minecraft.world.entity.monster.Enemy), "all three should be hostile monsters");
+            helper.succeed();
+        });
+    }
+
+    private static void copterShoots(GameTestHelper helper) {
+        var copter = helper.spawn(ModEntities.MUSHROOMCOPTER.get(), 2, 2, 4);
+        copter.setNoAi(true);
+        var pig = helper.spawn(EntityType.PIG, 6, 1, 4);
+        pig.setNoAi(true);
+        var shot = copter.shoot(pig);
+        helper.assertTrue(shot != null && shot.isAlive(), "the mushroomcopter did not fire a spore");
+        helper.succeedWhen(() -> helper.assertTrue(pig.getHealth() < pig.getMaxHealth() && pig.hasEffect(MobEffects.POISON),
+                "the spore did not hurt and poison the pig"));
+    }
+
+    private static void copterAttacks(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var copter = helper.spawn(ModEntities.MUSHROOMCOPTER.get(), 1, 3, 4);
+        ServerPlayer player = survivalMockPlayer(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(7.5, 1, 4.5)));
+        helper.succeedWhen(() -> {
+            copter.setTarget(player);
+            helper.assertTrue(!helper.getLevel().getEntitiesOfClass(com.crazyalloy.revival.entity.projectile.SporeShot.class, copter.getBoundingBox().inflate(20)).isEmpty()
+                    || player.getHealth() < player.getMaxHealth(), "the mushroomcopter never shot at the player");
+            player.discard();
+        });
+    }
+
+    private static void cyclopsSlam(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        var cyclops = helper.spawn(ModEntities.MUSHROOM_CYCLOPS.get(), 4, 1, 2);
+        cyclops.setNoAi(true);
+        cyclops.setYRot(0.0F);   // facing south (+z)
+        cyclops.setYBodyRot(0.0F);
+        ServerPlayer front = survivalMockPlayer(helper);
+        front.snapTo(helper.absoluteVec(new Vec3(4.5, 1, 4.6)));
+        ServerPlayer behind = survivalMockPlayer(helper);
+        behind.snapTo(helper.absoluteVec(new Vec3(4.5, 1, 0.2)));
+        int hits = cyclops.slam(helper.getLevel());
+        helper.assertTrue(hits == 1, "the slam should hit only the player in front, hit " + hits);
+        helper.assertTrue(front.getHealth() < front.getMaxHealth() && behind.getHealth() == behind.getMaxHealth(), "the slam hit the wrong player");
+        front.discard();
+        behind.discard();
+        helper.succeed();
+    }
+
+    private static void mushroomManAttacks(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        helper.spawn(ModEntities.MUSHROOM_MAN.get(), 2, 1, 4);
+        ServerPlayer player = survivalMockPlayer(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(6.5, 1, 4.5)));
+        helper.succeedWhen(() -> {
+            helper.assertTrue(player.getHealth() < player.getMaxHealth(), "the mushroom man did not attack the player");
+            player.discard();
+        });
+    }
+
+    private static void booksCast(GameTestHelper helper) {
+        var level = helper.getLevel();
+        ServerPlayer player = survivalMockPlayer(helper);
+        Vec3 eye = helper.absoluteVec(new Vec3(4.5, 1, 4.5));
+        player.snapTo(eye.x, eye.y, eye.z, 0.0F, -60.0F);   // aim up, away from the test floor
+        var books = List.of(ModItems.FIRE_BOOK.get(), ModItems.WATER_BOOK.get(), ModItems.POISON_BOOK.get(), ModItems.AIR_BOOK.get(),
+                ModItems.LIGHTNING_BOOK.get(), ModItems.EARTH_BOOK.get());
+        var seen = new java.util.HashSet<com.crazyalloy.revival.item.ElementalBookItem.Element>();
+        for (var book : books) {
+            ItemStack stack = new ItemStack(book);
+            player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+            book.use(level, player, InteractionHand.MAIN_HAND);
+            helper.assertTrue(stack.getDamageValue() == 1, book + " should lose one use per cast");
+            helper.assertTrue(player.getCooldowns().isOnCooldown(stack), book + " should go on cooldown");
+            helper.assertTrue(stack.getMaxDamage() == com.crazyalloy.revival.item.ElementalBookItem.USES, book + " should have 64 uses");
+        }
+        for (var bolt : level.getEntitiesOfClass(com.crazyalloy.revival.entity.projectile.SpellBolt.class, player.getBoundingBox().inflate(8))) {
+            seen.add(bolt.element());
+        }
+        helper.assertTrue(seen.size() == 6, "expected six spell bolts, one per element, found " + seen);
+        player.discard();
+        helper.succeed();
+    }
+
+    private static void fireBookHits(GameTestHelper helper) {
+        ServerPlayer player = survivalMockPlayer(helper);
+        var pig = helper.spawn(EntityType.PIG, 2, 1, 7);
+        pig.setNoAi(true);
+        Vec3 eye = helper.absoluteVec(new Vec3(2.5, 1, 2.5));
+        player.snapTo(eye.x, eye.y, eye.z, 0.0F, 12.0F);
+        ItemStack stack = new ItemStack(ModItems.FIRE_BOOK.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        ModItems.FIRE_BOOK.get().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+        helper.succeedWhen(() -> {
+            helper.assertTrue(pig.getHealth() < pig.getMaxHealth() && pig.getRemainingFireTicks() > 0, "the fire bolt did not burn the pig");
+            player.discard();
+        });
+    }
+
+    private static void outpostTemplate(GameTestHelper helper) {
+        BlockPos where = helper.absolutePos(new BlockPos(0, 100, 0));
+        placeTemplate(helper, "mushroom_outpost", where);
+        checkMushroomTemplate(helper, "mushroom_outpost", where, new net.minecraft.core.Vec3i(14, 13, 13),
+                Map.of("mushroom_man", 2, "mushroomcopter", 2), Map.of("mushroom_outpost", 2), 0);
+        helper.succeed();
+    }
+
+    private static void baseTemplate(GameTestHelper helper) {
+        BlockPos where = helper.absolutePos(new BlockPos(0, 100, 0));
+        placeTemplate(helper, "mushroom_base", where);
+        checkMushroomTemplate(helper, "mushroom_base", where, new net.minecraft.core.Vec3i(24, 19, 25),
+                Map.of("mushroom_man", 2, "mushroomcopter", 2, "mushroom_cyclops", 1), Map.of("mushroom_outpost", 4, "mushroom_base", 1), 1);
+        helper.succeed();
+    }
+
+    /**
+     * Checks a Mushroom Depths template's size, its spawners (by creature) and its chests (by loot table). When
+     * {@code best} is 1, the single mushroom_base chest must be the highest chest and the cyclops spawner the highest spawner.
+     */
+    private static int checkMushroomTemplate(GameTestHelper helper, String name, BlockPos where, net.minecraft.core.Vec3i size,
+                                             Map<String, Integer> spawners, Map<String, Integer> chests, int best) {
+        var level = helper.getLevel();
+        var template = level.getStructureManager().get(CrazyAlloyRevival.id(name)).orElseThrow();
+        helper.assertTrue(template.getSize().equals(size), "template size should be " + size + ", is " + template.getSize());
+        var foundSpawners = new java.util.HashMap<String, Integer>();
+        var foundChests = new java.util.HashMap<String, Integer>();
+        int topChest = -1, topSpawner = -1, baseChestY = -1;
+        String topSpawnerType = "";
+        for (BlockPos p : BlockPos.betweenClosed(where, where.offset(size.getX() - 1, size.getY() - 1, size.getZ() - 1))) {
+            var be = level.getBlockEntity(p);
+            if (be instanceof net.minecraft.world.level.block.entity.SpawnerBlockEntity spawner) {
+                var shown = spawner.getSpawner().getOrCreateDisplayEntity(level, p.immutable());
+                String type = shown == null ? "none" : EntityType.getKey(shown.getType()).getPath();
+                foundSpawners.merge(type, 1, Integer::sum);
+                if (p.getY() > topSpawner) {
+                    topSpawner = p.getY();
+                    topSpawnerType = type;
+                }
+            } else if (be instanceof net.minecraft.world.level.block.entity.ChestBlockEntity chest) {
+                var table = chest.getLootTable();
+                String id = table == null ? "none" : table.identifier().getPath().replace("chests/", "");
+                foundChests.merge(id, 1, Integer::sum);
+                topChest = Math.max(topChest, p.getY());
+                if (id.equals("mushroom_base")) {
+                    baseChestY = p.getY();
+                }
+            }
+        }
+        helper.assertTrue(foundSpawners.equals(spawners), "spawners should be " + spawners + ", found " + foundSpawners);
+        helper.assertTrue(foundChests.equals(chests), "chests should be " + chests + ", found " + foundChests);
+        if (best == 1) {
+            helper.assertTrue(baseChestY == topChest, "the mushroom_base chest should be the highest chest");
+            helper.assertTrue(topSpawnerType.equals("mushroom_cyclops"), "the cyclops spawner should be at the top, the top one is " + topSpawnerType);
+        }
+        return topChest;
+    }
+
+    private static void depthsRegistry(GameTestHelper helper) {
+        var access = helper.getLevel().registryAccess();
+        var biomes = access.lookupOrThrow(Registries.BIOME);
+        var depths = biomes.getOrThrow(com.crazyalloy.revival.worldgen.ModWorldgen.MUSHROOM_DEPTHS);
+        for (String id : List.of("mushroom_outpost", "mushroom_base")) {
+            helper.assertTrue(access.lookupOrThrow(Registries.STRUCTURE).containsKey(CrazyAlloyRevival.id(id)), "no " + id + " structure");
+            var tag = net.minecraft.tags.TagKey.create(Registries.BIOME, CrazyAlloyRevival.id("has_structure/" + id));
+            helper.assertTrue(depths.is(tag), id + " should generate in the mushroom depths");
+            var loot = net.minecraft.resources.ResourceKey.create(Registries.LOOT_TABLE, CrazyAlloyRevival.id("chests/" + id));
+            helper.assertTrue(helper.getLevel().getServer().reloadableRegistries().lookup().lookup(Registries.LOOT_TABLE).flatMap(l -> l.get(loot)).isPresent(), "no loot table " + loot);
+        }
+        var features = depths.value().getGenerationSettings().features().stream().flatMap(h -> h.stream())
+                .map(h -> h.unwrapKey().map(k -> k.identifier().getPath()).orElse("")).toList();
+        for (String f : List.of("wall_mushrooms", "red_mushroom_floor_patches", "depths_pillars", "depths_stalactites")) {
+            helper.assertTrue(features.contains(f), f + " missing from the mushroom depths: " + features);
+        }
+        helper.assertTrue(features.contains("ore_diamond") || features.contains("ore_diamond_medium"), "no diamond ore in the mushroom depths");
+        helper.assertTrue(features.contains("monster_room") || features.contains("monster_room_deep"), "no monster rooms in the mushroom depths");
+        var spawns = depths.value().getMobSettings().getMobs(net.minecraft.world.entity.MobCategory.MONSTER).unwrap().stream().map(d -> d.value().type()).toList();
+        for (var type : List.of(ModEntities.MUSHROOM_MAN.get(), ModEntities.MUSHROOM_CYCLOPS.get(), ModEntities.MUSHROOMCOPTER.get(),
+                EntityType.ZOMBIE, EntityType.SKELETON, EntityType.WITCH)) {
+            helper.assertTrue(spawns.contains(type), type.toShortString() + " should spawn in the mushroom depths");
+        }
+        var enchanted = ModItems.ENCHANTED_TAB_ORDER.stream().map(d -> (net.minecraft.world.item.Item) d.get()).toList();
+        for (var item : List.of(ModItems.MUSHROOM_SWORD.get(), ModItems.MUSHROOM_SHIELD.get(), ModItems.MUSHROOM_SPORE.get(), ModItems.FIRE_BOOK.get(),
+                ModItems.EARTH_BOOK.get(), ModItems.MUSHROOM_MAN_SPAWN_EGG.get(), ModItems.MUSHROOM_CYCLOPS_SPAWN_EGG.get(), ModItems.MUSHROOMCOPTER_SPAWN_EGG.get())) {
+            helper.assertTrue(enchanted.contains(item), item + " is missing from the Enchanted tab");
+        }
+        helper.assertTrue(ModItems.MUSHROOM_SHIELD.get().getDefaultInstance().has(net.minecraft.core.component.DataComponents.BLOCKS_ATTACKS), "the mushroom shield cannot block");
         helper.succeed();
     }
 }

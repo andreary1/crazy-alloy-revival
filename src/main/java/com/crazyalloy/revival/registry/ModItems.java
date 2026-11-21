@@ -218,6 +218,40 @@ public final class ModItems {
     public static final DeferredItem<SpawnEggItem> SHADOW_WANDERER_SPAWN_EGG = enchanted(ITEMS.registerItem("shadow_wanderer_spawn_egg",
             p -> new SpawnEggItem(p.spawnEgg(ModEntities.SHADOW_WANDERER.get()))));
 
+    // --- Enchanted tab: the Mushroom Depths (0.8.0) ---------------------------------------------
+    /** Spore fired by the Mushroomcopter; also its drop. */
+    public static final DeferredItem<Item> MUSHROOM_SPORE = enchanted(ITEMS.registerSimpleItem("mushroom_spore"));
+    public static final DeferredItem<com.crazyalloy.revival.item.MushroomSwordItem> MUSHROOM_SWORD = enchanted(ITEMS.registerItem("mushroom_sword",
+            com.crazyalloy.revival.item.MushroomSwordItem::new, p -> p.sword(ModMaterials.MUSHROOM_TOOL, 3.0F, -2.4F).rarity(Rarity.UNCOMMON)));
+    /** A shield like the vanilla one (same blocking), 400 uses, repaired with mushrooms; no banner patterns. */
+    public static final DeferredItem<net.minecraft.world.item.ShieldItem> MUSHROOM_SHIELD = enchanted(ITEMS.registerItem("mushroom_shield",
+            net.minecraft.world.item.ShieldItem::new, p -> p.durability(400).rarity(Rarity.UNCOMMON)
+                    .repairable(ModTags.Items.MUSHROOM_REPAIR)
+                    .equippableUnswappable(net.minecraft.world.entity.EquipmentSlot.OFFHAND)
+                    .delayedComponent(DataComponents.BLOCKS_ATTACKS, context -> new net.minecraft.world.item.component.BlocksAttacks(
+                            0.25F, 1.0F, List.of(new net.minecraft.world.item.component.BlocksAttacks.DamageReduction(90.0F, java.util.Optional.empty(), 0.0F, 1.0F)),
+                            new net.minecraft.world.item.component.BlocksAttacks.ItemDamageFunction(3.0F, 1.0F, 1.0F),
+                            java.util.Optional.of(context.getOrThrow(net.minecraft.tags.DamageTypeTags.BYPASSES_SHIELD)),
+                            java.util.Optional.of(net.minecraft.sounds.SoundEvents.SHIELD_BLOCK), java.util.Optional.of(net.minecraft.sounds.SoundEvents.SHIELD_BREAK)))
+                    .component(DataComponents.BREAK_SOUND, net.minecraft.sounds.SoundEvents.SHIELD_BREAK)));
+    public static final DeferredItem<com.crazyalloy.revival.item.ElementalBookItem> FIRE_BOOK = book(com.crazyalloy.revival.item.ElementalBookItem.Element.FIRE);
+    public static final DeferredItem<com.crazyalloy.revival.item.ElementalBookItem> WATER_BOOK = book(com.crazyalloy.revival.item.ElementalBookItem.Element.WATER);
+    public static final DeferredItem<com.crazyalloy.revival.item.ElementalBookItem> POISON_BOOK = book(com.crazyalloy.revival.item.ElementalBookItem.Element.POISON);
+    public static final DeferredItem<com.crazyalloy.revival.item.ElementalBookItem> AIR_BOOK = book(com.crazyalloy.revival.item.ElementalBookItem.Element.AIR);
+    public static final DeferredItem<com.crazyalloy.revival.item.ElementalBookItem> LIGHTNING_BOOK = book(com.crazyalloy.revival.item.ElementalBookItem.Element.LIGHTNING);
+    public static final DeferredItem<com.crazyalloy.revival.item.ElementalBookItem> EARTH_BOOK = book(com.crazyalloy.revival.item.ElementalBookItem.Element.EARTH);
+    public static final DeferredItem<SpawnEggItem> MUSHROOM_MAN_SPAWN_EGG = enchanted(ITEMS.registerItem("mushroom_man_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.MUSHROOM_MAN.get()))));
+    public static final DeferredItem<SpawnEggItem> MUSHROOM_CYCLOPS_SPAWN_EGG = enchanted(ITEMS.registerItem("mushroom_cyclops_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.MUSHROOM_CYCLOPS.get()))));
+    public static final DeferredItem<SpawnEggItem> MUSHROOMCOPTER_SPAWN_EGG = enchanted(ITEMS.registerItem("mushroomcopter_spawn_egg",
+            p -> new SpawnEggItem(p.spawnEgg(ModEntities.MUSHROOMCOPTER.get()))));
+
+    private static DeferredItem<com.crazyalloy.revival.item.ElementalBookItem> book(com.crazyalloy.revival.item.ElementalBookItem.Element element) {
+        return enchanted(ITEMS.registerItem(element.id() + "_book", p -> new com.crazyalloy.revival.item.ElementalBookItem(element, p),
+                p -> p.durability(com.crazyalloy.revival.item.ElementalBookItem.USES).rarity(Rarity.RARE)));
+    }
+
     private static <I extends Item> DeferredItem<I> enchanted(DeferredItem<I> item) {
         ENCHANTED_TAB_ORDER.add(item);
         return item;

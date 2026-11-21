@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:red_mushroom_block",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancements.crazyalloy_revival.into_the_mushroom_depths.title"
+    },
+    "description": {
+      "translate": "advancements.crazyalloy_revival.into_the_mushroom_depths.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "enter": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biomes": "crazyalloy_revival:mushroom_depths"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "parent": "crazyalloy_revival:land_of_fantastic_things"
+}

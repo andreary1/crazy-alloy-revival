@@ -32,6 +32,9 @@ public final class RevivalConfig {
     public static final ModConfigSpec.IntValue MYSTIC_REGION_WEIGHT;
     public static final ModConfigSpec.BooleanValue MYSTIC_GROVE_ENABLED;
     public static final ModConfigSpec.IntValue GIANT_MUSHROOMS;
+    public static final ModConfigSpec.BooleanValue MUSHROOM_DEPTHS_ENABLED;
+    public static final ModConfigSpec.EnumValue<StructureFrequency> MUSHROOM_OUTPOST_FREQUENCY;
+    public static final ModConfigSpec.EnumValue<StructureFrequency> MUSHROOM_BASE_FREQUENCY;
 
     // Creature spawning
     public static final ModConfigSpec.DoubleValue CANDY_TUBE_DOG_SPAWN_CHANCE;
@@ -57,6 +60,10 @@ public final class RevivalConfig {
     public static final ModConfigSpec.DoubleValue SHADOW_WANDERER_SPAWN_CHANCE;
     public static final ModConfigSpec.BooleanValue SHADOW_EYE_GAZE;
     public static final ModConfigSpec.DoubleValue ENT_SPAWN_CHANCE;
+    public static final ModConfigSpec.DoubleValue MUSHROOM_MAN_SPAWN_CHANCE;
+    public static final ModConfigSpec.DoubleValue MUSHROOM_CYCLOPS_SPAWN_CHANCE;
+    public static final ModConfigSpec.DoubleValue MUSHROOMCOPTER_SPAWN_CHANCE;
+    public static final ModConfigSpec.BooleanValue MUSHROOM_CYCLOPS_SLAM;
 
     // Difficulty
     public static final ModConfigSpec.DoubleValue MOB_HEALTH_MULTIPLIER;
@@ -193,6 +200,21 @@ public final class RevivalConfig {
                 .comment("Attempts per chunk to grow a giant red mushroom in the Mystic Grove (about one in two chunks is tried; each try needs dirt or grass and open space). 0 disables them.")
                 .translation("crazyalloy_revival.configuration.giantMushrooms")
                 .defineInRange("giantMushrooms", 1, 0, 8);
+        MUSHROOM_DEPTHS_ENABLED = b
+                .comment("Generate the Mushroom Depths: mushroom caves underground, below the Mystic Groves (needs the mystic region).")
+                .translation("crazyalloy_revival.configuration.mushroomDepthsEnabled")
+                .worldRestart()
+                .define("mushroomDepthsEnabled", true);
+        MUSHROOM_OUTPOST_FREQUENCY = b
+                .comment("How often Mushroom Outposts appear in the Mushroom Depths. DISABLED removes them from new chunks.")
+                .translation("crazyalloy_revival.configuration.mushroomOutpostFrequency")
+                .worldRestart()
+                .defineEnum("mushroomOutpostFrequency", StructureFrequency.NORMAL);
+        MUSHROOM_BASE_FREQUENCY = b
+                .comment("How often Mushroom Bases appear in the Mushroom Depths. DISABLED removes them from new chunks.")
+                .translation("crazyalloy_revival.configuration.mushroomBaseFrequency")
+                .worldRestart()
+                .defineEnum("mushroomBaseFrequency", StructureFrequency.NORMAL);
         b.pop();
 
         b.comment("Creature spawning. Each value is the chance (0 to 1) that a natural spawn attempt is allowed.").translation("crazyalloy_revival.configuration.spawns").push("spawns");
@@ -262,6 +284,15 @@ public final class RevivalConfig {
         SHADOW_WANDERER_SPAWN_CHANCE = b
                 .translation("crazyalloy_revival.configuration.shadowWandererSpawnChance")
                 .defineInRange("shadowWandererSpawnChance", 1.0, 0.0, 1.0);
+        MUSHROOM_MAN_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.mushroomManSpawnChance")
+                .defineInRange("mushroomManSpawnChance", 1.0, 0.0, 1.0);
+        MUSHROOM_CYCLOPS_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.mushroomCyclopsSpawnChance")
+                .defineInRange("mushroomCyclopsSpawnChance", 1.0, 0.0, 1.0);
+        MUSHROOMCOPTER_SPAWN_CHANCE = b
+                .translation("crazyalloy_revival.configuration.mushroomcopterSpawnChance")
+                .defineInRange("mushroomcopterSpawnChance", 1.0, 0.0, 1.0);
         b.pop();
 
         b.comment("Difficulty of Crazy Alloy creatures, applied when they spawn.").translation("crazyalloy_revival.configuration.difficulty").push("difficulty");
@@ -351,6 +382,10 @@ public final class RevivalConfig {
                 .comment("Revival proposal: the Shadow Eye warns for 1.5 seconds (rings line up, pupil widens) and then strikes a target still in its sight for 4 magic damage plus a short Darkness. If false it only floats around.")
                 .translation("crazyalloy_revival.configuration.shadowEyeGaze")
                 .define("shadowEyeGaze", true);
+        MUSHROOM_CYCLOPS_SLAM = b
+                .comment("Revival proposal: the Mushroom Cyclops raises both fists for a moment before it slams (step back to dodge). If false it hits at once, like a plain melee monster.")
+                .translation("crazyalloy_revival.configuration.mushroomCyclopsSlam")
+                .define("mushroomCyclopsSlam", true);
         b.pop();
 
         b.translation("crazyalloy_revival.configuration.machines").push("machines");

@@ -1,0 +1,11 @@
+{
+  "type": "crazyalloy_revival:mushroom_cave_structure",
+  "biomes": "#crazyalloy_revival:has_structure/mushroom_outpost",
+  "step": "underground_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_box",
+  "template": "crazyalloy_revival:mushroom_outpost",
+  "min_y": -44,
+  "max_y": 36,
+  "clearance": 6
+}

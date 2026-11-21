@@ -580,6 +580,9 @@ def gen_lang():
     import lang_stage8  # tools/lang_stage8.py: stage 8 keys (Enchanted tab: Mystic Grove, Troll, fairies, Ent)
     EN = EN | lang_stage8.EN
     PT = PT | lang_stage8.PT
+    import lang_stage9  # tools/lang_stage9.py: 0.8.0 keys (Mushroom Depths, mushroom creatures, books, structures)
+    EN = EN | lang_stage9.EN
+    PT = PT | lang_stage9.PT
     for code, data in [("en_us", EN), ("pt_br", PT)]:
         missing = set(EN) - set(data)
         if missing:
@@ -608,5 +611,7 @@ if __name__ == "__main__":
     gen_stage8.generate()
     import gen_stage8b  # tools/gen_stage8b.py: Purple/Blue Mushrooms, Wizard, Dwarf, Dwarf Hut and Wizard Tower
     gen_stage8b.generate()
+    import gen_stage9  # tools/gen_stage9.py: the Mushroom Depths, its creatures, structures, loot and the elemental books (0.8.0)
+    gen_stage9.generate()
     gen_lang()
     print("resources generated")

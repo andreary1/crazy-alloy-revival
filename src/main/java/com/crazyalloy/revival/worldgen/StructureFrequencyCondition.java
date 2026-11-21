@@ -29,6 +29,8 @@ public record StructureFrequencyCondition(RevivalConfig.StructureFrequency frequ
             case "bank" -> RevivalConfig.BANK_FREQUENCY;
             case "wizard_tower" -> RevivalConfig.WIZARD_TOWER_FREQUENCY;
             case "dwarf_hut" -> RevivalConfig.DWARF_HUT_FREQUENCY;
+            case "mushroom_outpost" -> RevivalConfig.MUSHROOM_OUTPOST_FREQUENCY;
+            case "mushroom_base" -> RevivalConfig.MUSHROOM_BASE_FREQUENCY;
             default -> RevivalConfig.COOKIE_HUT_FREQUENCY;
         };
         return setting.get() == frequency;

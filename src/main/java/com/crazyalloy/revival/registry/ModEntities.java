@@ -120,6 +120,14 @@ public final class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.ShadowWanderer>> SHADOW_WANDERER = ENTITIES.registerEntityType(
             "shadow_wanderer", com.crazyalloy.revival.entity.ShadowWanderer::new, MobCategory.MONSTER, b -> b.sized(0.7F, 2.5F).eyeHeight(2.15F).clientTrackingRange(10));
 
+    // --- Mushroom Depths (0.8.0) -----------------------------------------------------------------
+    public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.MushroomMan>> MUSHROOM_MAN = ENTITIES.registerEntityType(
+            "mushroom_man", com.crazyalloy.revival.entity.MushroomMan::new, MobCategory.MONSTER, b -> b.sized(0.7F, 2.05F).eyeHeight(1.55F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.MushroomCyclops>> MUSHROOM_CYCLOPS = ENTITIES.registerEntityType(
+            "mushroom_cyclops", com.crazyalloy.revival.entity.MushroomCyclops::new, MobCategory.MONSTER, b -> b.sized(1.0F, 2.6F).eyeHeight(2.0F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.Mushroomcopter>> MUSHROOMCOPTER = ENTITIES.registerEntityType(
+            "mushroomcopter", com.crazyalloy.revival.entity.Mushroomcopter::new, MobCategory.MONSTER, b -> b.sized(0.8F, 1.0F).eyeHeight(0.45F).clientTrackingRange(10));
+
     // --- Projectiles ------------------------------------------------------------------------
     public static final DeferredHolder<EntityType<?>, EntityType<BrownSugarBrickEntity>> BROWN_SUGAR_BRICK = ENTITIES.registerEntityType(
             "brown_sugar_brick", BrownSugarBrickEntity::new, MobCategory.MISC, b -> b.noLootTable().sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10));
@@ -130,6 +138,11 @@ public final class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<BulletEntity>> BULLET = ENTITIES.registerEntityType(
             "bullet", BulletEntity::new, MobCategory.MISC, b -> b.noLootTable().sized(0.15F, 0.15F).clientTrackingRange(4).updateInterval(2));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.projectile.SporeShot>> SPORE_SHOT = ENTITIES.registerEntityType(
+            "spore_shot", com.crazyalloy.revival.entity.projectile.SporeShot::new, MobCategory.MISC, b -> b.noLootTable().sized(0.3F, 0.3F).clientTrackingRange(4).updateInterval(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.crazyalloy.revival.entity.projectile.SpellBolt>> SPELL_BOLT = ENTITIES.registerEntityType(
+            "spell_bolt", com.crazyalloy.revival.entity.projectile.SpellBolt::new, MobCategory.MISC, b -> b.noLootTable().sized(0.35F, 0.35F).clientTrackingRange(6).updateInterval(5));
 
     private ModEntities() {}
 }

@@ -21,11 +21,19 @@ public final class ModFeatures {
     public static final DeferredHolder<Feature<?>, com.crazyalloy.revival.worldgen.GiantMushroomFeature> GIANT_MUSHROOM = FEATURES.register("giant_mushroom",
             () -> new com.crazyalloy.revival.worldgen.GiantMushroomFeature(NoneFeatureConfiguration.CODEC));
 
+    /** Stepped red mushroom shelves on the cave walls of the Mushroom Depths (0.8.0). */
+    public static final DeferredHolder<Feature<?>, com.crazyalloy.revival.worldgen.WallMushroomFeature> WALL_MUSHROOM = FEATURES.register("wall_mushroom",
+            () -> new com.crazyalloy.revival.worldgen.WallMushroomFeature(NoneFeatureConfiguration.CODEC));
+
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES = DeferredRegister.create(Registries.STRUCTURE_TYPE, CrazyAlloyRevival.MOD_ID);
 
     /** The Ice Cream Nest: placed on the lowest point of a not-too-steep footprint (stage 6). */
     public static final DeferredHolder<StructureType<?>, StructureType<IceCreamNestStructure>> ICE_CREAM_NEST = STRUCTURE_TYPES.register("ice_cream_nest",
             () -> () -> IceCreamNestStructure.CODEC);
+
+    /** Mushroom Outpost and Mushroom Base: a template standing on a cave floor in the Mushroom Depths (0.8.0). */
+    public static final DeferredHolder<StructureType<?>, StructureType<com.crazyalloy.revival.worldgen.MushroomCaveStructure>> MUSHROOM_CAVE_STRUCTURE =
+            STRUCTURE_TYPES.register("mushroom_cave_structure", () -> () -> com.crazyalloy.revival.worldgen.MushroomCaveStructure.CODEC);
 
     private ModFeatures() {}
 }

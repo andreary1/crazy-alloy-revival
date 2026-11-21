@@ -11,6 +11,7 @@ public final class ModTags {
         public static final TagKey<Item> BROWN_SUGAR_REPAIR = TagKey.create(Registries.ITEM, CrazyAlloyRevival.id("brown_sugar_repair_materials"));
         /** Heals and breeds Jelly Bunnies. */
         public static final TagKey<Item> JELLY_BUNNY_FOOD = TagKey.create(Registries.ITEM, CrazyAlloyRevival.id("jelly_bunny_food"));
+        public static final TagKey<Item> MUSHROOM_REPAIR = TagKey.create(Registries.ITEM, CrazyAlloyRevival.id("mushroom_repair_materials"));
         public static final TagKey<Item> TOURMALINE_REPAIR = TagKey.create(Registries.ITEM, CrazyAlloyRevival.id("tourmaline_repair_materials"));
         /** Heals and breeds Candy Tube Dogs. */
         public static final TagKey<Item> CANDY_TUBE_DOG_FOOD = TagKey.create(Registries.ITEM, CrazyAlloyRevival.id("candy_tube_dog_food"));

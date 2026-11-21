@@ -73,6 +73,14 @@ public final class ModSounds {
     public static final MobSounds SHADOW_WANDERER = mob("shadow_wanderer");
     public static final MobSounds ENT = mob("ent");
 
+    // 0.8.0: the Mushroom Depths (provisional re-pitched vanilla sounds).
+    public static final MobSounds MUSHROOM_MAN = mob("mushroom_man");
+    public static final MobSounds MUSHROOM_CYCLOPS = mob("mushroom_cyclops");
+    /** The Mushroomcopter's ambient sound is the whir of its propeller. */
+    public static final MobSounds MUSHROOMCOPTER = mob("mushroomcopter");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MUSHROOMCOPTER_SHOOT = register("entity.mushroomcopter.shoot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MUSHROOM_DEPTHS_ADDITIONS = register("ambient.mushroom_depths.additions");
+
     public record MobSounds(DeferredHolder<SoundEvent, SoundEvent> ambient, DeferredHolder<SoundEvent, SoundEvent> hurt,
                             DeferredHolder<SoundEvent, SoundEvent> death) {}
 

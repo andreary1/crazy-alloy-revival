@@ -81,6 +81,9 @@ public final class CommonEvents {
         event.put(ModEntities.DWARF.get(), com.crazyalloy.revival.entity.MysticDweller.createAttributes().build());
         event.put(ModEntities.SHADOW_EYE.get(), com.crazyalloy.revival.entity.ShadowEye.createAttributes().build());
         event.put(ModEntities.SHADOW_WANDERER.get(), com.crazyalloy.revival.entity.ShadowWanderer.createAttributes().build());
+        event.put(ModEntities.MUSHROOM_MAN.get(), com.crazyalloy.revival.entity.MushroomMan.createAttributes().build());
+        event.put(ModEntities.MUSHROOM_CYCLOPS.get(), com.crazyalloy.revival.entity.MushroomCyclops.createAttributes().build());
+        event.put(ModEntities.MUSHROOMCOPTER.get(), com.crazyalloy.revival.entity.Mushroomcopter.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -114,6 +117,9 @@ public final class CommonEvents {
         ground(event, ModEntities.ENT.get(), com.crazyalloy.revival.entity.Ent::checkSpawnRules);
         ground(event, ModEntities.SHADOW_EYE.get(), com.crazyalloy.revival.entity.ShadowEye::checkSpawnRules);
         ground(event, ModEntities.SHADOW_WANDERER.get(), com.crazyalloy.revival.entity.ShadowWanderer::checkSpawnRules);
+        ground(event, ModEntities.MUSHROOM_MAN.get(), com.crazyalloy.revival.entity.MushroomMan::checkSpawnRules);
+        ground(event, ModEntities.MUSHROOM_CYCLOPS.get(), com.crazyalloy.revival.entity.MushroomCyclops::checkSpawnRules);
+        ground(event, ModEntities.MUSHROOMCOPTER.get(), com.crazyalloy.revival.entity.Mushroomcopter::checkSpawnRules);
         event.register(ModEntities.JELLY_SHARK.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 JellyShark::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }

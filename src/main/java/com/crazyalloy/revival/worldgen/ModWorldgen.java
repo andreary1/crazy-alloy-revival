@@ -18,6 +18,8 @@ public final class ModWorldgen {
     public static final ResourceKey<Biome> CANDY_CAVE = ResourceKey.create(Registries.BIOME, CrazyAlloyRevival.id("candy_cave"));
     /** The Mystic Grove (stage 8), placed by {@link MysticRegion}. */
     public static final ResourceKey<Biome> MYSTIC_GROVE = ResourceKey.create(Registries.BIOME, CrazyAlloyRevival.id("mystic_grove"));
+    /** The Mushroom Depths (0.8.0): mushroom caves under the Mystic Grove, placed by {@link MysticRegion}. */
+    public static final ResourceKey<Biome> MUSHROOM_DEPTHS = ResourceKey.create(Registries.BIOME, CrazyAlloyRevival.id("mushroom_depths"));
     public static final ResourceKey<Biome> ICE_CREAM_PLAINS = ResourceKey.create(Registries.BIOME, CrazyAlloyRevival.id("ice_cream_plains"));
     /** The Ice Cream Dimension (stage 6), defined by data/crazyalloy_revival/dimension/ice_cream.json. */
     public static final ResourceKey<net.minecraft.world.level.Level> ICE_CREAM_DIMENSION =
@@ -38,12 +40,12 @@ public final class ModWorldgen {
         }
         int mysticWeight = RevivalConfig.MYSTIC_REGION_WEIGHT.get();
         if (mysticWeight > 0 && RevivalConfig.MYSTIC_GROVE_ENABLED.get()) {
-            Regions.register(new MysticRegion(CrazyAlloyRevival.id("overworld_mystic"), mysticWeight));
+            Regions.register(new MysticRegion(CrazyAlloyRevival.id("overworld_mystic"), mysticWeight, RevivalConfig.MUSHROOM_DEPTHS_ENABLED.get()));
         } else {
             CrazyAlloyRevival.LOGGER.info("Crazy Alloy mystic region disabled by config");
         }
         SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, CrazyAlloyRevival.MOD_ID,
-                SurfaceRules.sequence(candyCaveSurface(), sweetForestSurface(), jellyBeanFieldsSurface(), mysticGroveSurface()));
+                SurfaceRules.sequence(candyCaveSurface(), mushroomDepthsSurface(), sweetForestSurface(), jellyBeanFieldsSurface(), mysticGroveSurface()));
     }
 
     /**
@@ -61,6 +63,25 @@ public final class ModWorldgen {
         SurfaceRules.ConditionSource ceilingLayers = SurfaceRules.stoneDepthCheck(0, false, CaveSurface.CEILING);
         return SurfaceRules.ifTrue(SurfaceRules.isBiome(CANDY_CAVE), SurfaceRules.ifTrue(SurfaceRules.not(SurfaceRules.abovePreliminarySurface()),
                 SurfaceRules.sequence(SurfaceRules.ifTrue(floorLayers, rock), SurfaceRules.ifTrue(ceilingLayers, rock))));
+    }
+
+    /**
+     * Mushroom Depths floors and ceilings: wide brown stretches on the floors and slopes (brown mushroom blocks, with
+     * coarse dirt where they thin out) and dark rock (tuff) in patches on the ceilings. The dark bands across the walls
+     * and the red growths come from features (surface rules only see floors and ceilings).
+     */
+    private static SurfaceRules.RuleSource mushroomDepthsSurface() {
+        SurfaceRules.RuleSource brown = SurfaceRules.state(net.minecraft.world.level.block.Blocks.BROWN_MUSHROOM_BLOCK.defaultBlockState());
+        SurfaceRules.RuleSource coarse = SurfaceRules.state(net.minecraft.world.level.block.Blocks.COARSE_DIRT.defaultBlockState());
+        SurfaceRules.RuleSource tuff = SurfaceRules.state(net.minecraft.world.level.block.Blocks.TUFF.defaultBlockState());
+        SurfaceRules.RuleSource floor = SurfaceRules.sequence(
+                SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.CALCITE, -0.35D), brown),
+                SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.GRAVEL, -0.35D), coarse));
+        SurfaceRules.RuleSource ceiling = SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.PATCH, -0.1D), tuff);
+        SurfaceRules.ConditionSource floorLayers = SurfaceRules.stoneDepthCheck(1, false, CaveSurface.FLOOR);
+        SurfaceRules.ConditionSource ceilingLayers = SurfaceRules.stoneDepthCheck(0, false, CaveSurface.CEILING);
+        return SurfaceRules.ifTrue(SurfaceRules.isBiome(MUSHROOM_DEPTHS), SurfaceRules.ifTrue(SurfaceRules.not(SurfaceRules.abovePreliminarySurface()),
+                SurfaceRules.sequence(SurfaceRules.ifTrue(floorLayers, floor), SurfaceRules.ifTrue(ceilingLayers, ceiling))));
     }
 
     /** Gummy Grass on top of Chocolate Dirt. */

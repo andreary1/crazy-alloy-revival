@@ -44,5 +44,12 @@ public final class ModMaterials {
     public static final ToolMaterial BROWN_SUGAR_TOOL = new ToolMaterial(
             BlockTags.INCORRECT_FOR_WOODEN_TOOL, 110, 4.0F, 1.0F, 10, ModTags.Items.BROWN_SUGAR_REPAIR);
 
+    /**
+     * Mushroom Sword (Mushroom Depths loot): iron-tier, a little more durable than iron (350 uses), repaired with
+     * mushrooms.
+     */
+    public static final ToolMaterial MUSHROOM_TOOL = new ToolMaterial(
+            BlockTags.INCORRECT_FOR_IRON_TOOL, 350, 6.0F, 2.0F, 16, ModTags.Items.MUSHROOM_REPAIR);
+
     private ModMaterials() {}
 }

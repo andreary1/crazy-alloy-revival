@@ -1,0 +1,177 @@
+{
+  "attributes": {
+    "minecraft:audio/background_music": {
+      "default": {
+        "max_delay": 24000,
+        "min_delay": 12000,
+        "sound": "minecraft:music.overworld.dripstone_caves"
+      }
+    },
+    "minecraft:audio/ambient_sounds": {
+      "additions": {
+        "sound": "crazyalloy_revival:ambient.mushroom_depths.additions",
+        "tick_chance": 0.003
+      },
+      "mood": {
+        "block_search_extent": 8,
+        "offset": 2.0,
+        "sound": "minecraft:ambient.cave",
+        "tick_delay": 6000
+      }
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:dust",
+          "color": 11569764,
+          "scale": 0.6
+        },
+        "probability": 0.003
+      }
+    ],
+    "minecraft:visual/fog_color": "#3a2a26",
+    "minecraft:visual/sky_color": "#78a7ff",
+    "minecraft:visual/water_fog_color": "#2a1e1a"
+  },
+  "carvers": [
+    "minecraft:cave",
+    "minecraft:cave_extra_underground",
+    "minecraft:canyon",
+    "crazyalloy_revival:mushroom_hall"
+  ],
+  "downfall": 0.8,
+  "effects": {
+    "foliage_color": "#6b4a2a",
+    "grass_color": "#7a5a3a",
+    "water_color": "#3f5a6a"
+  },
+  "features": [
+    [],
+    [
+      "minecraft:lake_lava_underground"
+    ],
+    [
+      "crazyalloy_revival:depths_pillars"
+    ],
+    [
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep"
+    ],
+    [],
+    [],
+    [
+      "crazyalloy_revival:ore_depths_tuff_band",
+      "crazyalloy_revival:ore_depths_dark_band",
+      "crazyalloy_revival:ore_depths_brown_band",
+      "minecraft:ore_dirt",
+      "minecraft:ore_gravel",
+      "minecraft:ore_granite_upper",
+      "minecraft:ore_granite_lower",
+      "minecraft:ore_diorite_upper",
+      "minecraft:ore_diorite_lower",
+      "minecraft:ore_andesite_upper",
+      "minecraft:ore_andesite_lower",
+      "minecraft:ore_tuff",
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_coal_lower",
+      "minecraft:ore_iron_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_iron_small",
+      "minecraft:ore_gold",
+      "minecraft:ore_gold_lower",
+      "minecraft:ore_redstone",
+      "minecraft:ore_redstone_lower",
+      "minecraft:ore_diamond",
+      "minecraft:ore_diamond_medium",
+      "minecraft:ore_diamond_large",
+      "minecraft:ore_diamond_buried",
+      "minecraft:ore_lapis",
+      "minecraft:ore_lapis_buried",
+      "minecraft:ore_copper",
+      "minecraft:underwater_magma",
+      "minecraft:disk_sand",
+      "minecraft:disk_clay",
+      "minecraft:disk_gravel"
+    ],
+    [
+      "crazyalloy_revival:depths_stalactites"
+    ],
+    [
+      "minecraft:spring_water",
+      "minecraft:spring_lava"
+    ],
+    [
+      "crazyalloy_revival:red_mushroom_floor_patches",
+      "crazyalloy_revival:wall_mushrooms",
+      "crazyalloy_revival:ceiling_shroomlights",
+      "minecraft:glow_lichen",
+      "crazyalloy_revival:depths_brown_mushrooms",
+      "crazyalloy_revival:depths_red_mushrooms"
+    ],
+    []
+  ],
+  "has_precipitation": true,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [
+      {
+        "type": "minecraft:bat",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      }
+    ],
+    "axolotls": [],
+    "creature": [],
+    "misc": [],
+    "monster": [
+      {
+        "type": "crazyalloy_revival:mushroom_man",
+        "weight": 100,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "crazyalloy_revival:mushroomcopter",
+        "weight": 50,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "crazyalloy_revival:mushroom_cyclops",
+        "weight": 20,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "minecraft:zombie",
+        "weight": 70,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:skeleton",
+        "weight": 70,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:witch",
+        "weight": 5,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "underground_water_creature": [
+      {
+        "type": "minecraft:glow_squid",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 6
+      }
+    ],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.6
+}

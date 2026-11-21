@@ -36,6 +36,10 @@ public final class ModModelLayers {
     public static final ModelLayerLocation DWARF = layer("dwarf");
     public static final ModelLayerLocation SHADOW_WANDERER = layer("shadow_wanderer");
 
+    public static final ModelLayerLocation MUSHROOM_MAN = layer("mushroom_man");
+    public static final ModelLayerLocation MUSHROOM_CYCLOPS = layer("mushroom_cyclops");
+    public static final ModelLayerLocation MUSHROOMCOPTER = layer("mushroomcopter");
+
     private static ModelLayerLocation layer(String name) {
         return new ModelLayerLocation(CrazyAlloyRevival.id(name), "main");
     }

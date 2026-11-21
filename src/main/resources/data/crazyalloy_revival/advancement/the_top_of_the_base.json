@@ -1,0 +1,91 @@
+{
+  "display": {
+    "icon": {
+      "id": "crazyalloy_revival:fire_book",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancements.crazyalloy_revival.the_top_of_the_base.title"
+    },
+    "description": {
+      "translate": "advancements.crazyalloy_revival.the_top_of_the_base.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "fire": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "crazyalloy_revival:fire_book"
+          }
+        ]
+      }
+    },
+    "water": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "crazyalloy_revival:water_book"
+          }
+        ]
+      }
+    },
+    "poison": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "crazyalloy_revival:poison_book"
+          }
+        ]
+      }
+    },
+    "air": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "crazyalloy_revival:air_book"
+          }
+        ]
+      }
+    },
+    "lightning": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "crazyalloy_revival:lightning_book"
+          }
+        ]
+      }
+    },
+    "earth": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "crazyalloy_revival:earth_book"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "crazyalloy_revival:into_the_mushroom_depths",
+  "requirements": [
+    [
+      "fire",
+      "water",
+      "poison",
+      "air",
+      "lightning",
+      "earth"
+    ]
+  ]
+}

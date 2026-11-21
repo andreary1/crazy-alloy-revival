@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "crazyalloy_revival:structure_frequency",
+      "frequency": "common",
+      "structure": "mushroom_base"
+    }
+  ],
+  "structures": [
+    {
+      "structure": "crazyalloy_revival:mushroom_base",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 16,
+    "separation": 5,
+    "salt": 802114552
+  }
+}

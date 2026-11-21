@@ -97,6 +97,9 @@ public final class CrazyAlloyRevivalClient {
         event.registerLayerDefinition(ModModelLayers.DWARF, com.crazyalloy.revival.client.model.DwarfModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.SHADOW_EYE, com.crazyalloy.revival.client.model.ShadowEyeModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.SHADOW_WANDERER, com.crazyalloy.revival.client.model.ShadowWandererModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.MUSHROOM_MAN, com.crazyalloy.revival.client.model.MushroomManModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.MUSHROOM_CYCLOPS, com.crazyalloy.revival.client.model.MushroomCyclopsModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.MUSHROOMCOPTER, com.crazyalloy.revival.client.model.MushroomcopterModel::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -178,6 +181,19 @@ public final class CrazyAlloyRevivalClient {
                 new com.crazyalloy.revival.client.model.ShadowEyeModel(c.bakeLayer(ModModelLayers.SHADOW_EYE)), 0.5F, "shadow_eye", 1.0F));
         event.registerEntityRenderer(ModEntities.SHADOW_WANDERER.get(), c -> new RevivalMobRenderer<>(c,
                 new com.crazyalloy.revival.client.model.ShadowWandererModel(c.bakeLayer(ModModelLayers.SHADOW_WANDERER)), 0.5F, "shadow_wanderer", 1.0F));
+        registerMushroomDepths(event);
+    }
+
+    /** 0.8.0 creatures of the Mushroom Depths; all three have glowing eyes. */
+    private static void registerMushroomDepths(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.MUSHROOM_MAN.get(), c -> RevivalMobRenderer.withGlowingEyes(new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.MushroomManModel(c.bakeLayer(ModModelLayers.MUSHROOM_MAN)), 0.5F, "mushroom_man", 1.0F), "mushroom_man"));
+        event.registerEntityRenderer(ModEntities.MUSHROOM_CYCLOPS.get(), c -> RevivalMobRenderer.withGlowingEyes(new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.MushroomCyclopsModel(c.bakeLayer(ModModelLayers.MUSHROOM_CYCLOPS)), 0.6F, "mushroom_cyclops", 1.1F), "mushroom_cyclops"));
+        event.registerEntityRenderer(ModEntities.MUSHROOMCOPTER.get(), c -> RevivalMobRenderer.withGlowingEyes(new RevivalMobRenderer<>(c,
+                new com.crazyalloy.revival.client.model.MushroomcopterModel(c.bakeLayer(ModModelLayers.MUSHROOMCOPTER)), 0.4F, "mushroomcopter", 1.0F), "mushroomcopter"));
+        event.registerEntityRenderer(ModEntities.SPORE_SHOT.get(), c -> new ThrownItemRenderer<>(c, 0.75F, false));
+        event.registerEntityRenderer(ModEntities.SPELL_BOLT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
     }
 
     @SubscribeEvent

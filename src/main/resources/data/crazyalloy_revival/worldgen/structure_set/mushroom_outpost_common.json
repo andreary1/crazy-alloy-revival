@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "crazyalloy_revival:structure_frequency",
+      "frequency": "common",
+      "structure": "mushroom_outpost"
+    }
+  ],
+  "structures": [
+    {
+      "structure": "crazyalloy_revival:mushroom_outpost",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 9,
+    "separation": 4,
+    "salt": 802114551
+  }
+}

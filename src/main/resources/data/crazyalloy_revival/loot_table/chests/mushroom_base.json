@@ -1,0 +1,173 @@
+{
+  "type": "minecraft:chest",
+  "random_sequence": "crazyalloy_revival:chests/mushroom_base",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 6.0,
+        "max": 8.0
+      },
+      "bonus_rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:red_mushroom",
+          "weight": 25,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 10.0,
+                "max": 13.0
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:brown_mushroom",
+          "weight": 25,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 10.0,
+                "max": 13.0
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crazyalloy_revival:blue_mushroom",
+          "weight": 20,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 10.0,
+                "max": 13.0
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:iron_ingot",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 10.0,
+                "max": 15.0
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gold_ingot",
+          "weight": 12,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 7.0,
+                "max": 10.0
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:emerald",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 8.0,
+                "max": 11.0
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond",
+          "weight": 8,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 6.0,
+                "max": 9.0
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:mushroom_stew",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crazyalloy_revival:mushroom_sword",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crazyalloy_revival:mushroom_shield",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crazyalloy_revival:fire_book",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crazyalloy_revival:water_book",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crazyalloy_revival:poison_book",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crazyalloy_revival:air_book",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crazyalloy_revival:lightning_book",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "crazyalloy_revival:earth_book",
+          "weight": 2
+        }
+      ]
+    }
+  ]
+}

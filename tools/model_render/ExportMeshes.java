@@ -66,5 +66,8 @@ public class ExportMeshes {
         dump("shadow_wanderer", ShadowWandererModel::createBodyLayer, ShadowWandererModel::new, RevivalRenderState::new, out);
         dump("wizard", WizardModel::createBodyLayer, WizardModel::new, RevivalRenderState::new, out);
         dump("dwarf", DwarfModel::createBodyLayer, DwarfModel::new, RevivalRenderState::new, out);
+        dump("mushroom_man", MushroomManModel::createBodyLayer, MushroomManModel::new, RevivalRenderState::new, out);
+        dump("mushroom_cyclops", MushroomCyclopsModel::createBodyLayer, MushroomCyclopsModel::new, RevivalRenderState::new, out);
+        dump("mushroomcopter", MushroomcopterModel::createBodyLayer, MushroomcopterModel::new, RevivalRenderState::new, out);
     }
 }

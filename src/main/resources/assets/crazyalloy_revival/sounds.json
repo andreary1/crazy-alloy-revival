@@ -1508,5 +1508,230 @@
         "volume": 1.0
       }
     ]
+  },
+  "entity.mushroom_man.ambient": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroom_man.ambient",
+    "sounds": [
+      {
+        "name": "minecraft:mob/husk/idle1",
+        "pitch": 1.35,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:mob/husk/idle2",
+        "pitch": 1.35,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:mob/husk/idle3",
+        "pitch": 1.35,
+        "volume": 0.8
+      }
+    ]
+  },
+  "entity.mushroom_man.hurt": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroom_man.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:mob/husk/hurt1",
+        "pitch": 1.35,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:mob/husk/hurt2",
+        "pitch": 1.35,
+        "volume": 0.8
+      }
+    ]
+  },
+  "entity.mushroom_man.death": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroom_man.death",
+    "sounds": [
+      {
+        "name": "minecraft:mob/husk/death1",
+        "pitch": 1.35,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:mob/husk/death2",
+        "pitch": 1.35,
+        "volume": 0.8
+      }
+    ]
+  },
+  "entity.mushroom_cyclops.ambient": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroom_cyclops.ambient",
+    "sounds": [
+      {
+        "name": "minecraft:mob/zoglin/idle1",
+        "pitch": 0.6,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/zoglin/idle2",
+        "pitch": 0.6,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/zoglin/idle3",
+        "pitch": 0.6,
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.mushroom_cyclops.hurt": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroom_cyclops.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:mob/zoglin/hurt1",
+        "pitch": 0.6,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/zoglin/hurt2",
+        "pitch": 0.6,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/zoglin/hurt3",
+        "pitch": 0.6,
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.mushroom_cyclops.death": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroom_cyclops.death",
+    "sounds": [
+      {
+        "name": "minecraft:mob/zoglin/death1",
+        "pitch": 0.6,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/zoglin/death2",
+        "pitch": 0.6,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:mob/zoglin/death3",
+        "pitch": 0.6,
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.mushroomcopter.ambient": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroomcopter.ambient",
+    "sounds": [
+      {
+        "name": "minecraft:mob/bee/loop1",
+        "pitch": 0.5,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/bee/loop2",
+        "pitch": 0.5,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/bee/loop3",
+        "pitch": 0.5,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/bee/loop4",
+        "pitch": 0.5,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/bee/loop5",
+        "pitch": 0.5,
+        "volume": 0.7
+      }
+    ]
+  },
+  "entity.mushroomcopter.hurt": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroomcopter.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:mob/breeze/hurt1",
+        "pitch": 1.3,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/breeze/hurt2",
+        "pitch": 1.3,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/breeze/hurt3",
+        "pitch": 1.3,
+        "volume": 0.7
+      }
+    ]
+  },
+  "entity.mushroomcopter.death": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroomcopter.death",
+    "sounds": [
+      {
+        "name": "minecraft:mob/breeze/death1",
+        "pitch": 1.3,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/breeze/death2",
+        "pitch": 1.3,
+        "volume": 0.7
+      }
+    ]
+  },
+  "entity.mushroomcopter.shoot": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroomcopter.shoot",
+    "sounds": [
+      {
+        "name": "minecraft:block/fungus/break1",
+        "pitch": 1.5,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:block/fungus/break2",
+        "pitch": 1.5,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:block/fungus/break3",
+        "pitch": 1.5,
+        "volume": 1.0
+      }
+    ]
+  },
+  "ambient.mushroom_depths.additions": {
+    "subtitle": "subtitles.crazyalloy_revival.mushroom_depths.additions",
+    "sounds": [
+      {
+        "name": "minecraft:ambient/cave/cave3",
+        "pitch": 0.65,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:ambient/cave/cave7",
+        "pitch": 0.65,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:ambient/cave/cave13",
+        "pitch": 0.65,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:ambient/cave/cave14",
+        "pitch": 0.65,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:ambient/cave/cave17",
+        "pitch": 0.65,
+        "volume": 0.5
+      }
+    ]
   }
 }

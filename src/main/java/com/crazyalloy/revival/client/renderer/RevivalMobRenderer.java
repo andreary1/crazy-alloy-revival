@@ -37,6 +37,12 @@ public class RevivalMobRenderer<T extends Mob, M extends EntityModel<RevivalRend
         return java.util.Arrays.stream(IceCreamFlavor.values()).map(f -> base + "_" + f.id()).toArray(String[]::new);
     }
 
+    /** Adds a {@link com.crazyalloy.revival.client.layer.GlowEyesLayer} (textures/entity/NAME_eyes.png) and returns the renderer. */
+    public static <T extends Mob, M extends EntityModel<RevivalRenderState>> RevivalMobRenderer<T, M> withGlowingEyes(RevivalMobRenderer<T, M> renderer, String name) {
+        renderer.addLayer(new com.crazyalloy.revival.client.layer.GlowEyesLayer<>(renderer, name));
+        return renderer;
+    }
+
     @Override
     public RevivalRenderState createRenderState() {
         return new RevivalRenderState();

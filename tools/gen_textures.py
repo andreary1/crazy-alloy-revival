@@ -477,4 +477,6 @@ if __name__ == "__main__":
     gen_textures_v7.main()
     import gen_textures_v8  # tools/gen_textures_v8.py: stage 8 textures (Mystic Grove blocks, jars, elixir, Troll, fairies, Ent)
     gen_textures_v8.main()
+    import gen_textures_v9  # tools/gen_textures_v9.py: stage 9 textures (Mushroom Depths creatures, sword, shield, books)
+    gen_textures_v9.main()
     print("textures generated")

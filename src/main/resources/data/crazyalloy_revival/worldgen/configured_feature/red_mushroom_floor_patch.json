@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:disk",
+  "config": {
+    "half_height": 1,
+    "radius": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 2,
+      "max_inclusive": 5
+    },
+    "state_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "minecraft:red_mushroom_block"
+      }
+    },
+    "target": {
+      "type": "minecraft:matching_blocks",
+      "blocks": [
+        "minecraft:stone",
+        "minecraft:deepslate",
+        "minecraft:tuff",
+        "minecraft:brown_mushroom_block",
+        "minecraft:coarse_dirt",
+        "minecraft:andesite",
+        "minecraft:diorite",
+        "minecraft:granite",
+        "minecraft:packed_mud",
+        "minecraft:dirt",
+        "minecraft:gravel"
+      ]
+    }
+  }
+}
