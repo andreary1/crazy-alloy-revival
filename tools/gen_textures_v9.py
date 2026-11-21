@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage 9 textures for Crazy Alloy: Revival (0.8.0): the Mushroom Depths.
+"""Stage 9 (the three creatures have white bodies) textures for Crazy Alloy: Revival (0.8.0): the Mushroom Depths.
 
 Creatures: the Mushroom Man (thin, dark body, big red cap with light spots, two light yellow rectangular eyes), the
 Mushroom Cyclops (bulky, very dark blue cap, one big square yellow eye, a mouth line, segmented arms, dark fists) and
@@ -24,9 +24,11 @@ def jitter(c, amount=0.08):
 
 RED = hexc("c0262a"); RED_D = hexc("8e1a1e"); RED_L = hexc("dc3a36")
 SPOT = hexc("f2e8d8")
-BODY = hexc("2b2622"); BODY_D = hexc("1a1714"); BODY_L = hexc("3b342e")
+BODY = hexc("e6e2d8"); BODY_D = hexc("c8c2b4"); BODY_L = hexc("f6f4ee")
+# The Mushroomcopter keeps its dark face (from the description).
+FACE = hexc("2b2622"); FACE_D = hexc("1a1714"); FACE_L = hexc("3b342e")
 GILL = hexc("d8c8a8"); GILL_D = hexc("b8a888")
-EYE_Y = hexc("f6f0a0"); EYE_YL = hexc("fffbd0")
+EYE_Y = hexc("ecd24a"); EYE_YL = hexc("f8e890")
 NAVY = hexc("1c2448"); NAVY_D = hexc("10162e"); NAVY_L = hexc("2c3868")
 PURPLE = hexc("7a3aa8"); PURPLE_D = hexc("552478"); PURPLE_L = hexc("9a58c8")
 STEM = hexc("e2dccb"); STEM_D = hexc("c4bca8")
@@ -47,9 +49,14 @@ def spotted(base, light, dark, spot, density=0.12, size=2):
     return f
 
 
-def dark_body(x, y, w, h):
+def pale_body(x, y, w, h):
     r = rng.random()
     return BODY_L if r < 0.12 else BODY_D if r < 0.3 else jitter(BODY, 0.1)
+
+
+def dark_face(x, y, w, h):
+    r = rng.random()
+    return FACE_L if r < 0.12 else FACE_D if r < 0.3 else jitter(FACE, 0.1)
 
 
 def gills(x, y, w, h):
@@ -67,18 +74,18 @@ def cap_side(base, dark, spot):
 # ================================================================== Mushroom Man (64x64)
 def mushroom_man(eyes_only=False):
     eye = lambda x, y, w, h: EYE_YL if y == 0 and x == 0 else EYE_Y
-    face = lambda x, y, w, h: BODY_D if y == 0 else dark_body(x, y, w, h)
+    face = lambda x, y, w, h: BODY_D if y == 0 else pale_body(x, y, w, h)
     red_top = spotted(RED, RED_L, RED_D, SPOT, 0.14, 2)
     painters = {
-        "head": {"side": dark_body, "front": face, "back": dark_body, "top": fill(BODY_D), "bottom": fill(BODY_D)},
+        "head": {"side": pale_body, "front": face, "back": pale_body, "top": fill(BODY_D), "bottom": fill(BODY_D)},
         "eye": {"side": fill(shade(EYE_Y, 0.8)), "front": eye, "back": eye, "top": eye, "bottom": eye},
         "cap_brim": {"side": cap_side(RED, RED_D, SPOT), "top": red_top, "bottom": gills},
         "cap_top": {"side": cap_side(RED, RED_D, SPOT), "top": red_top, "bottom": fill(RED_D)},
         "cap_dome": {"side": cap_side(RED, RED_D, SPOT), "top": red_top, "bottom": fill(RED_D)},
-        "torso": {"side": dark_body, "front": lambda x, y, w, h: BODY_L if x == w // 2 and y > 1 else dark_body(x, y, w, h),
-                  "top": dark_body, "bottom": fill(BODY_D)},
-        "arm": {"side": lambda x, y, w, h: BODY_D if y >= h - 2 else dark_body(x, y, w, h), "bottom": fill(BODY_D)},
-        "leg": {"side": lambda x, y, w, h: BODY_D if y >= h - 2 else dark_body(x, y, w, h), "bottom": fill(BODY_D)},
+        "torso": {"side": pale_body, "front": lambda x, y, w, h: BODY_L if x == w // 2 and y > 1 else pale_body(x, y, w, h),
+                  "top": pale_body, "bottom": fill(BODY_D)},
+        "arm": {"side": lambda x, y, w, h: BODY_D if y >= h - 2 else pale_body(x, y, w, h), "bottom": fill(BODY_D)},
+        "leg": {"side": lambda x, y, w, h: BODY_D if y >= h - 2 else pale_body(x, y, w, h), "bottom": fill(BODY_D)},
     }
     if eyes_only:
         paint("mushroom_man_eyes", "MushroomManModel.java", 64, 64, {"eye": painters["eye"]}, only=lambda k: k == "eye")
@@ -95,19 +102,19 @@ def mushroom_cyclops(eyes_only=False):
     navy_top = spotted(NAVY, NAVY_L, NAVY_D, hexc("6878a8"), 0.06, 1)
     seg = lambda base: (lambda x, y, w, h: BODY_D if y % 4 == 3 else base(x, y, w, h))
     painters = {
-        "head": {"side": dark_body, "front": lambda x, y, w, h: BODY_D if y == 0 else dark_body(x, y, w, h),
-                 "back": dark_body, "top": fill(BODY_D), "bottom": fill(BODY_D)},
+        "head": {"side": pale_body, "front": lambda x, y, w, h: BODY_D if y == 0 else pale_body(x, y, w, h),
+                 "back": pale_body, "top": fill(BODY_D), "bottom": fill(BODY_D)},
         "eye": {"side": fill(hexc("c8a828")), "front": big_eye, "back": big_eye, "top": fill(hexc("c8a828")), "bottom": fill(hexc("c8a828"))},
         "mouth": fill(hexc("0e0c0a")),
         "cap": {"side": cap_side(NAVY, NAVY_D, hexc("6878a8")), "top": navy_top, "bottom": lambda x, y, w, h: jitter(hexc("3a4268"), 0.06) if (x + y) % 3 else hexc("2a3050")},
         "cap_top": {"side": cap_side(NAVY, NAVY_D, hexc("6878a8")), "top": navy_top, "bottom": fill(NAVY_D)},
-        "chest": {"side": dark_body, "front": lambda x, y, w, h: BODY_L if y in (2, 3) and 1 < x < w - 2 and x % 3 else dark_body(x, y, w, h),
-                  "top": dark_body, "bottom": fill(BODY_D)},
-        "waist": {"side": seg(dark_body), "top": dark_body, "bottom": fill(BODY_D)},
-        "upper_arm": {"side": seg(dark_body), "top": dark_body, "bottom": fill(BODY_D)},
-        "forearm": {"side": seg(dark_body), "top": fill(BODY_D), "bottom": fill(BODY_D)},
+        "chest": {"side": pale_body, "front": lambda x, y, w, h: BODY_L if y in (2, 3) and 1 < x < w - 2 and x % 3 else pale_body(x, y, w, h),
+                  "top": pale_body, "bottom": fill(BODY_D)},
+        "waist": {"side": seg(pale_body), "top": pale_body, "bottom": fill(BODY_D)},
+        "upper_arm": {"side": seg(pale_body), "top": pale_body, "bottom": fill(BODY_D)},
+        "forearm": {"side": seg(pale_body), "top": fill(BODY_D), "bottom": fill(BODY_D)},
         "fist": {"side": lambda x, y, w, h: jitter(hexc("121010"), 0.1), "bottom": fill(hexc("0a0808"))},
-        "leg": {"side": lambda x, y, w, h: BODY_D if y >= h - 2 or y % 5 == 4 else dark_body(x, y, w, h), "bottom": fill(BODY_D)},
+        "leg": {"side": lambda x, y, w, h: BODY_D if y >= h - 2 or y % 5 == 4 else pale_body(x, y, w, h), "bottom": fill(BODY_D)},
     }
     if eyes_only:
         paint("mushroom_cyclops_eyes", "MushroomCyclopsModel.java", 128, 64, {"eye": painters["eye"]}, only=lambda k: k == "eye")
@@ -123,8 +130,8 @@ def mushroomcopter(eyes_only=False):
     painters = {
         "cap": {"side": lambda x, y, w, h: jitter(PURPLE_D, 0.06) if y == h - 1 else purple_cap(x, y, w, h),
                 "top": purple_cap, "bottom": gills},
-        "face": {"side": dark_body, "front": lambda x, y, w, h: BODY_D if y == h - 1 else dark_body(x, y, w, h),
-                 "top": fill(BODY_D), "bottom": fill(BODY_D)},
+        "face": {"side": dark_face, "front": lambda x, y, w, h: FACE_D if y == h - 1 else dark_face(x, y, w, h),
+                 "top": fill(FACE_D), "bottom": fill(FACE_D)},
         "eye": {"side": fill(hexc("90c8e0")), "front": slanted, "back": slanted, "top": slanted, "bottom": slanted},
         "rod": fill(hexc("4a4a52")),
         "hub": fill(hexc("2e2e34")),
