@@ -220,24 +220,27 @@ def items():
         for (x, y) in [(5, 11), (10, 6), (9, 12)]:
             px[x, y] = glow                                         # sparkles
     save(jar_image(fairy), "item/jar_with_a_fairy.png")
+    # 0.8.0: matched to the owner's description of the reference: light yellow liquid, a light outline, a small cap and
+    # sparkles around the bottle.
     elixir = art([
-        "................",
-        "......kk........",
+        "..*.............",
+        "......kk.....*..",
         "......cc........",
         ".....eccE.......",
         "......ee........",
-        ".....e..e.......",
+        ".*...e..e.......",
         "....e....e......",
-        "...eRRRRRRe.....",
-        "...eRrRRsRe.....",
-        "...eRRRRRRe.....",
-        "...eRRsRrRe.....",
-        "....eRRRRe......",
+        "...eYYYYYYe.....",
+        "...eYyYYsYe..*..",
+        "...eYYYYYYe.....",
+        "...eYYsYyYe.....",
+        "....eYYYYe......",
         ".....eeee.......",
+        "..........*.....",
         "................",
         "................",
-        "................",
-    ], {"k": LID_D, "c": hexc("d8c49a"), "e": GLASS_E, "E": GLASS_L, "R": hexc("e04a7a"), "r": hexc("ff9ac0"), "s": hexc("fff6a8")})
+    ], {"k": LID_D, "c": hexc("d8c49a"), "e": hexc("e8f4f4"), "E": hexc("ffffff"), "Y": hexc("f2e48a"), "y": hexc("fff6c0"),
+        "s": hexc("ffffff"), "*": hexc("fffbd8")})
     save(elixir, "item/elixir_of_life.png")
     door = art([
         "....bbbbbbbb....",

@@ -241,6 +241,8 @@ public final class CrazyAlloyRevivalClient {
         event.register(ModMenus.CHOCOLATE_FACTORY.get(), ChocolateFactoryScreen::new);
         event.register(ModMenus.ICE_CREAM_MACHINE.get(), IceCreamMachineScreen::new);
         event.register(ModMenus.MINERAL_CONVERTER.get(), com.crazyalloy.revival.client.screen.MineralConverterScreen::new);
+        event.register(ModMenus.WIZARD_TRADING.get(), com.crazyalloy.revival.client.screen.WizardTradingScreen::new);
+        event.register(ModMenus.WIZARD_STAFF.get(), com.crazyalloy.revival.client.screen.StaffScreen::new);
     }
 
     /**

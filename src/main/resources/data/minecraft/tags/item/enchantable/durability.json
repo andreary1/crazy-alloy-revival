@@ -1,12 +1,6 @@
 {
   "replace": false,
   "values": [
-    "crazyalloy_revival:mushroom_shield",
-    "crazyalloy_revival:fire_book",
-    "crazyalloy_revival:water_book",
-    "crazyalloy_revival:poison_book",
-    "crazyalloy_revival:air_book",
-    "crazyalloy_revival:lightning_book",
-    "crazyalloy_revival:earth_book"
+    "crazyalloy_revival:mushroom_shield"
   ]
 }

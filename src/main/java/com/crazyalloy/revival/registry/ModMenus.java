@@ -22,5 +22,11 @@ public final class ModMenus {
     public static final Supplier<MenuType<MineralConverterMenu>> MINERAL_CONVERTER = MENUS.register("mineral_converter",
             () -> IMenuTypeExtension.create(MineralConverterMenu::clientSide));
 
+    public static final Supplier<MenuType<com.crazyalloy.revival.menu.WizardTradingMenu>> WIZARD_TRADING = MENUS.register("wizard_trading",
+            () -> IMenuTypeExtension.create(com.crazyalloy.revival.menu.WizardTradingMenu::clientSide));
+
+    public static final Supplier<MenuType<com.crazyalloy.revival.menu.StaffMenu>> WIZARD_STAFF = MENUS.register("wizard_staff",
+            () -> IMenuTypeExtension.create(com.crazyalloy.revival.menu.StaffMenu::clientSide));
+
     private ModMenus() {}
 }

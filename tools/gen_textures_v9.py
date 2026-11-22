@@ -245,11 +245,88 @@ def books():
         save(art(rows, pal), f"item/{name}.png")
 
 
+# ================================================================== Wizard magic items
+def magic_items():
+    # Shadow Fragment: an elongated purple shard with a light edge.
+    save(art([
+        "................",
+        "............kk..",
+        "...........kLPk.",
+        "..........kLPDk.",
+        ".........kLPPDk.",
+        "........kLPPDk..",
+        ".......kLPPDk...",
+        "......kLPPDk....",
+        ".....kLPPDk.....",
+        "....kLPPDk......",
+        "...kLPPDk.......",
+        "..kPPPDk........",
+        "..kPDDk.........",
+        "..kDkk..........",
+        "...k............",
+        "................",
+    ], {"k": hexc("1e0f2a"), "P": hexc("7a3ab0"), "L": hexc("b88ae0"), "D": hexc("4a2070")}), "item/shadow_fragment.png")
+    # Ent Heart: an irregular dark teal-green lump with bark veins.
+    save(art([
+        "................",
+        "................",
+        ".....kk...kkk...",
+        "....kGGk.kGGGk..",
+        "...kGLGGkGGTGGk.",
+        "...kGLGGGGTGGGk.",
+        "..kGGGTGGGGGGDk.",
+        "..kGGGGTTGGGGDk.",
+        "..kDGGGGGTGGDk..",
+        "...kDGGGGGGGDk..",
+        "....kDGGGTGDk...",
+        ".....kDGGGDk....",
+        "......kDGDk.....",
+        ".......kDk......",
+        "........k.......",
+        "................",
+    ], {"k": hexc("0e1c1a"), "G": hexc("2a6a60"), "L": hexc("4f9a8a"), "D": hexc("1a4440"), "T": hexc("3a2a1a")}), "item/ent_heart.png")
+    # Wizard Staff: a long diagonal brown-gold rod with a curled top; one variant per element with a glow at the tip.
+    rows = [
+        "................",
+        "..........kkk...",
+        ".........kGGGk..",
+        "........kGkkkGk.",
+        "........kGk.kGk.",
+        ".......kWk..kGk.",
+        "......kWk....k..",
+        ".....kWk........",
+        "....kWk.........",
+        "...kWk..........",
+        "..kWk...........",
+        ".kWk............",
+        "kWk.............",
+        "kWk.............",
+        "kk..............",
+        "................",
+    ]
+    pal = {"k": hexc("2a1a0a"), "W": hexc("9a6a2a"), "G": hexc("d0a040")}
+    save(art(rows, pal), "item/wizard_staff.png")
+    from gen_textures_v2 import blank as _blank
+    glow = {"fire": "ff7a1a", "water": "3a8fe8", "poison": "6abf3a", "air": "e8f2f8", "lightning": "f2e030", "earth": "9a6a3a"}
+    for name, col in glow.items():
+        im = art(rows, pal).convert("RGBA")
+        px = im.load()
+        c = hexc(col)
+        # The curl's hollow fills with the element's light, with a soft halo around the curl.
+        for (x, y) in [(11, 4), (10, 5), (11, 5), (12, 5), (13, 6)]:
+            px[x, y] = c
+        for (x, y) in [(11, 6), (12, 6), (13, 7), (10, 6)]:
+            if px[x, y][3] == 0:
+                px[x, y] = c[:3] + (150,)
+        save(im, f"item/wizard_staff_{name}.png")
+
+
 def main():
     mushroom_man(); mushroom_man(True)
     mushroom_cyclops(); mushroom_cyclops(True)
     mushroomcopter(); mushroomcopter(True)
     items()
+    magic_items()
     print("stage 9 textures generated")
 
 

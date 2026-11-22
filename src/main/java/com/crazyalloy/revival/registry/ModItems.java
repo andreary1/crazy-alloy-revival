@@ -247,9 +247,18 @@ public final class ModItems {
     public static final DeferredItem<SpawnEggItem> MUSHROOMCOPTER_SPAWN_EGG = enchanted(ITEMS.registerItem("mushroomcopter_spawn_egg",
             p -> new SpawnEggItem(p.spawnEgg(ModEntities.MUSHROOMCOPTER.get()))));
 
+    // --- Enchanted tab: the Wizard's magic (0.8.0) -------------------------------------------------
+    /** Dropped by the Shadow Eye and the Shadow Wanderer; the Wizard asks 64 for his staff. */
+    public static final DeferredItem<Item> SHADOW_FRAGMENT = enchanted(ITEMS.registerSimpleItem("shadow_fragment", p -> p.rarity(Rarity.UNCOMMON)));
+    /** Dropped by the Ent; the Wizard asks 32 for his staff. */
+    public static final DeferredItem<Item> ENT_HEART = enchanted(ITEMS.registerSimpleItem("ent_heart", p -> p.rarity(Rarity.UNCOMMON)));
+    /** Casts the elemental powers learned from the books; Shift + right click picks the power. */
+    public static final DeferredItem<com.crazyalloy.revival.item.WizardStaffItem> WIZARD_STAFF = enchanted(ITEMS.registerItem("wizard_staff",
+            com.crazyalloy.revival.item.WizardStaffItem::new, p -> p.stacksTo(1).rarity(Rarity.EPIC)));
+
     private static DeferredItem<com.crazyalloy.revival.item.ElementalBookItem> book(com.crazyalloy.revival.item.ElementalBookItem.Element element) {
         return enchanted(ITEMS.registerItem(element.id() + "_book", p -> new com.crazyalloy.revival.item.ElementalBookItem(element, p),
-                p -> p.durability(com.crazyalloy.revival.item.ElementalBookItem.USES).rarity(Rarity.RARE)));
+                p -> p.stacksTo(16).rarity(Rarity.RARE)));
     }
 
     private static <I extends Item> DeferredItem<I> enchanted(DeferredItem<I> item) {

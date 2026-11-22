@@ -145,8 +145,11 @@ public final class RevivalGameTests {
         TESTS.put("mushroomcopter_attacks_on_its_own", RevivalGameTests::copterAttacks);
         TESTS.put("mushroom_cyclops_slam_hits_in_front", RevivalGameTests::cyclopsSlam);
         TESTS.put("mushroom_man_attacks_players", RevivalGameTests::mushroomManAttacks);
-        TESTS.put("elemental_books_cast_spells", RevivalGameTests::booksCast);
-        TESTS.put("fire_book_sets_target_on_fire", RevivalGameTests::fireBookHits);
+        TESTS.put("elemental_books_teach_their_element_once", RevivalGameTests::booksCast);
+        TESTS.put("fire_power_sets_target_on_fire", RevivalGameTests::fireBookHits);
+        TESTS.put("wizard_staff_selects_and_casts_learned_powers", RevivalGameTests::staffSelectsAndCasts);
+        TESTS.put("wizard_trading_staff_and_elixir", RevivalGameTests::wizardTrading);
+        TESTS.put("ent_and_shadow_creatures_drop_staff_materials", RevivalGameTests::magicDrops);
         TESTS.put("mushroom_outpost_template_spawners_and_chests", RevivalGameTests::outpostTemplate);
         TESTS.put("mushroom_base_template_spawners_and_chests", RevivalGameTests::baseTemplate);
         TESTS.put("mushroom_depths_registry_and_worldgen", RevivalGameTests::depthsRegistry);
@@ -1453,11 +1456,9 @@ public final class RevivalGameTests {
         var wizard = helper.spawn(ModEntities.WIZARD.get(), 4, 1, 4);
         wizard.setNoAi(true);
         var offers = wizard.getOffers();
-        helper.assertTrue(offers.size() == 7, "expected 7 wizard offers, got " + offers.size());
+        helper.assertTrue(offers.size() == 6, "expected 6 wizard emerald offers, got " + offers.size());
         helper.assertTrue(offers.stream().anyMatch(o -> o.getCostA().is(ModItems.PURPLE_MUSHROOM.get()) && o.getResult().is(Items.EMERALD)), "does not buy purple mushrooms");
         helper.assertTrue(offers.stream().anyMatch(o -> o.getCostA().is(ModItems.BLUE_MUSHROOM.get()) && o.getResult().is(Items.EMERALD)), "does not buy blue mushrooms");
-        var elixir = offers.stream().filter(o -> o.getResult().is(ModItems.ELIXIR_OF_LIFE.get())).findFirst();
-        helper.assertTrue(elixir.isPresent() && elixir.get().getCostB().is(Items.GLASS_BOTTLE), "no elixir of life for emeralds and a bottle");
         // A completed trade uses the offer up once and drops experience.
         var jar = offers.stream().filter(o -> o.getResult().is(ModItems.JAR.get())).findFirst().orElseThrow();
         wizard.notifyTrade(jar);
@@ -1649,26 +1650,62 @@ public final class RevivalGameTests {
         });
     }
 
+    /** Every book teaches its element once: used up the first time, kept (and refused) when already known. */
     private static void booksCast(GameTestHelper helper) {
         var level = helper.getLevel();
         ServerPlayer player = survivalMockPlayer(helper);
-        Vec3 eye = helper.absoluteVec(new Vec3(4.5, 1, 4.5));
-        player.snapTo(eye.x, eye.y, eye.z, 0.0F, -60.0F);   // aim up, away from the test floor
         var books = List.of(ModItems.FIRE_BOOK.get(), ModItems.WATER_BOOK.get(), ModItems.POISON_BOOK.get(), ModItems.AIR_BOOK.get(),
                 ModItems.LIGHTNING_BOOK.get(), ModItems.EARTH_BOOK.get());
-        var seen = new java.util.HashSet<com.crazyalloy.revival.item.ElementalBookItem.Element>();
+        helper.assertTrue(com.crazyalloy.revival.item.ElementalBookItem.learnedMask(player) == 0, "a new player should know no element");
         for (var book : books) {
-            ItemStack stack = new ItemStack(book);
+            ItemStack stack = new ItemStack(book, 2);
             player.setItemInHand(InteractionHand.MAIN_HAND, stack);
             book.use(level, player, InteractionHand.MAIN_HAND);
-            helper.assertTrue(stack.getDamageValue() == 1, book + " should lose one use per cast");
-            helper.assertTrue(player.getCooldowns().isOnCooldown(stack), book + " should go on cooldown");
-            helper.assertTrue(stack.getMaxDamage() == com.crazyalloy.revival.item.ElementalBookItem.USES, book + " should have 64 uses");
+            helper.assertTrue(stack.getCount() == 1, book + " should be used up when it teaches its element");
+            helper.assertTrue(com.crazyalloy.revival.item.ElementalBookItem.hasLearned(player, book.element()), book + " did not teach " + book.element());
+            var result = book.use(level, player, InteractionHand.MAIN_HAND);
+            helper.assertTrue(stack.getCount() == 1 && result == net.minecraft.world.InteractionResult.FAIL, book + " was used again although its element is known");
+            var adv = level.getServer().getAdvancements().get(CrazyAlloyRevival.id("learn_" + book.element().id()));
+            helper.assertTrue(adv != null && player.getAdvancements().getOrStartProgress(adv).isDone(), "no advancement for learning " + book.element());
         }
-        for (var bolt : level.getEntitiesOfClass(com.crazyalloy.revival.entity.projectile.SpellBolt.class, player.getBoundingBox().inflate(8))) {
-            seen.add(bolt.element());
+        helper.assertTrue(com.crazyalloy.revival.item.ElementalBookItem.learnedMask(player) == 0b111111, "all six elements should be known");
+        player.discard();
+        helper.succeed();
+    }
+
+    /** The staff needs a selected, learned element; Shift + right click opens the power menu, whose buttons select. */
+    private static void staffSelectsAndCasts(GameTestHelper helper) {
+        var level = helper.getLevel();
+        ServerPlayer player = survivalMockPlayer(helper);
+        Vec3 eye = helper.absoluteVec(new Vec3(4.5, 1, 4.5));
+        player.snapTo(eye.x, eye.y, eye.z, 0.0F, -60.0F);
+        ItemStack staff = new ItemStack(ModItems.WIZARD_STAFF.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, staff);
+        var staffItem = ModItems.WIZARD_STAFF.get();
+        helper.assertTrue(staffItem.use(level, player, InteractionHand.MAIN_HAND) == net.minecraft.world.InteractionResult.FAIL, "the staff cast with no power selected");
+        // Shift + right click opens the power menu.
+        player.setShiftKeyDown(true);
+        staffItem.use(level, player, InteractionHand.MAIN_HAND);
+        player.setShiftKeyDown(false);
+        helper.assertTrue(player.containerMenu instanceof com.crazyalloy.revival.menu.StaffMenu, "Shift + right click did not open the power menu, open: " + player.containerMenu);
+        var menu = player.containerMenu;
+        int fire = com.crazyalloy.revival.item.ElementalBookItem.Element.FIRE.ordinal();
+        helper.assertTrue(!menu.clickMenuButton(player, fire), "a locked element could be selected");
+        helper.assertTrue(com.crazyalloy.revival.item.WizardStaffItem.selected(staff) == null, "a locked element was selected");
+        com.crazyalloy.revival.item.ElementalBookItem.learn(player, com.crazyalloy.revival.item.ElementalBookItem.Element.FIRE);
+        helper.assertTrue(menu.clickMenuButton(player, fire), "a learned element could not be selected");
+        helper.assertTrue(com.crazyalloy.revival.item.WizardStaffItem.selected(staff) == com.crazyalloy.revival.item.ElementalBookItem.Element.FIRE, "fire was not selected");
+        var cmd = staff.get(net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA);
+        helper.assertTrue(cmd != null && "fire".equals(cmd.getString(0)), "the staff model data does not show the fire glow");
+        player.closeContainer();
+        helper.assertTrue(staffItem.use(level, player, InteractionHand.MAIN_HAND) == net.minecraft.world.InteractionResult.SUCCESS, "the staff did not cast fire");
+        helper.assertTrue(player.getCooldowns().isOnCooldown(staff), "the staff should go on cooldown after a cast");
+        var bolts = level.getEntitiesOfClass(com.crazyalloy.revival.entity.projectile.SpellBolt.class, player.getBoundingBox().inflate(8));
+        helper.assertTrue(bolts.size() == 1 && bolts.get(0).element() == com.crazyalloy.revival.item.ElementalBookItem.Element.FIRE, "expected one fire bolt, found " + bolts.size());
+        // Each element casts its own bolt.
+        for (var e : com.crazyalloy.revival.item.ElementalBookItem.Element.values()) {
+            helper.assertTrue(com.crazyalloy.revival.item.WizardStaffItem.cast(level, player, e).element() == e, "wrong bolt for " + e);
         }
-        helper.assertTrue(seen.size() == 6, "expected six spell bolts, one per element, found " + seen);
         player.discard();
         helper.succeed();
     }
@@ -1679,13 +1716,77 @@ public final class RevivalGameTests {
         pig.setNoAi(true);
         Vec3 eye = helper.absoluteVec(new Vec3(2.5, 1, 2.5));
         player.snapTo(eye.x, eye.y, eye.z, 0.0F, 12.0F);
-        ItemStack stack = new ItemStack(ModItems.FIRE_BOOK.get());
-        player.setItemInHand(InteractionHand.MAIN_HAND, stack);
-        ModItems.FIRE_BOOK.get().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+        ItemStack staff = new ItemStack(ModItems.WIZARD_STAFF.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, staff);
+        com.crazyalloy.revival.item.ElementalBookItem.learn(player, com.crazyalloy.revival.item.ElementalBookItem.Element.FIRE);
+        com.crazyalloy.revival.item.WizardStaffItem.select(staff, com.crazyalloy.revival.item.ElementalBookItem.Element.FIRE);
+        ModItems.WIZARD_STAFF.get().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
         helper.succeedWhen(() -> {
             helper.assertTrue(pig.getHealth() < pig.getMaxHealth() && pig.getRemainingFireTicks() > 0, "the fire bolt did not burn the pig");
             player.discard();
         });
+    }
+
+    /** Talking to the Wizard opens Wizard Trading; the staff and elixir recipes take exactly their materials. */
+    private static void wizardTrading(GameTestHelper helper) {
+        var level = helper.getLevel();
+        ServerPlayer player = survivalMockPlayer(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(4.5, 1, 3.5)));
+        var wizard = helper.spawn(ModEntities.WIZARD.get(), 4, 1, 5);
+        wizard.setNoAi(true);
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        wizard.mobInteract(player, InteractionHand.MAIN_HAND);
+        helper.assertTrue(player.containerMenu instanceof com.crazyalloy.revival.menu.WizardTradingMenu, "talking to the wizard did not open Wizard Trading: " + player.containerMenu);
+        var menu = player.containerMenu;
+        // Not enough materials: nothing changes.
+        player.getInventory().add(new ItemStack(ModItems.SHADOW_FRAGMENT.get(), 64));
+        player.getInventory().add(new ItemStack(ModItems.ENT_HEART.get(), 31));
+        helper.assertTrue(!menu.clickMenuButton(player, 0), "the staff was traded with only 31 ent hearts");
+        helper.assertTrue(com.crazyalloy.revival.menu.WizardTradingMenu.carried(player, ModItems.SHADOW_FRAGMENT.get()) == 64, "a failed trade took materials");
+        player.getInventory().add(new ItemStack(ModItems.ENT_HEART.get(), 3));
+        helper.assertTrue(menu.clickMenuButton(player, 0), "the staff trade failed with enough materials");
+        helper.assertTrue(player.getInventory().countItem(ModItems.WIZARD_STAFF.get()) == 1, "no staff after the trade");
+        helper.assertTrue(com.crazyalloy.revival.menu.WizardTradingMenu.carried(player, ModItems.SHADOW_FRAGMENT.get()) == 0
+                && com.crazyalloy.revival.menu.WizardTradingMenu.carried(player, ModItems.ENT_HEART.get()) == 2, "the staff trade took the wrong amounts");
+        // The elixir: 64 blue mushrooms, split over two stacks.
+        player.getInventory().add(new ItemStack(ModItems.BLUE_MUSHROOM.get(), 40));
+        player.getInventory().add(new ItemStack(ModItems.BLUE_MUSHROOM.get(), 30));
+        helper.assertTrue(menu.clickMenuButton(player, 1), "the elixir trade failed");
+        helper.assertTrue(player.getInventory().countItem(ModItems.ELIXIR_OF_LIFE.get()) == 1
+                && com.crazyalloy.revival.menu.WizardTradingMenu.carried(player, ModItems.BLUE_MUSHROOM.get().asItem()) == 6, "the elixir trade took the wrong amounts");
+        helper.assertTrue(!menu.clickMenuButton(player, 1), "a second elixir was traded with 6 mushrooms");
+        // "Other trades" opens the vanilla merchant window with the emerald trades.
+        menu.clickMenuButton(player, com.crazyalloy.revival.menu.WizardTradingMenu.BUTTON_OTHER_TRADES);
+        helper.assertTrue(player.containerMenu instanceof net.minecraft.world.inventory.MerchantMenu, "other trades did not open the merchant window");
+        helper.assertTrue(wizard.getOffers().stream().noneMatch(o -> o.getResult().is(ModItems.ELIXIR_OF_LIFE.get())), "the elixir should no longer be sold for emeralds");
+        player.closeContainer();
+        player.discard();
+        helper.succeed();
+    }
+
+    private static void magicDrops(GameTestHelper helper) {
+        var tables = helper.getLevel().getServer().reloadableRegistries();
+        for (var pair : List.of(java.util.Map.entry("ent", ModItems.ENT_HEART.get()), java.util.Map.entry("shadow_eye", ModItems.SHADOW_FRAGMENT.get()),
+                java.util.Map.entry("shadow_wanderer", ModItems.SHADOW_FRAGMENT.get()))) {
+            var key = net.minecraft.resources.ResourceKey.create(Registries.LOOT_TABLE, CrazyAlloyRevival.id("entities/" + pair.getKey()));
+            var table = tables.getLootTable(key);
+            boolean found = false;
+            var pig = helper.spawn(EntityType.PIG, 1, 1, 1);
+            for (int i = 0; i < 20 && !found; i++) {
+                var ctx = new net.minecraft.world.level.storage.loot.LootParams.Builder(helper.getLevel())
+                        .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.THIS_ENTITY, pig)
+                        .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN, helper.absoluteVec(new Vec3(1, 1, 1)))
+                        .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.DAMAGE_SOURCE, helper.getLevel().damageSources().generic())
+                        .create(net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.ENTITY);
+                found = table.getRandomItems(ctx).stream().anyMatch(st -> st.is(pair.getValue()));
+            }
+            helper.assertTrue(found, pair.getKey() + " never dropped " + pair.getValue());
+        }
+        var enchanted = ModItems.ENCHANTED_TAB_ORDER.stream().map(d -> (net.minecraft.world.item.Item) d.get()).toList();
+        for (var item : List.of(ModItems.WIZARD_STAFF.get(), ModItems.SHADOW_FRAGMENT.get(), ModItems.ENT_HEART.get())) {
+            helper.assertTrue(enchanted.contains(item), item + " is missing from the Enchanted tab");
+        }
+        helper.succeed();
     }
 
     private static void outpostTemplate(GameTestHelper helper) {

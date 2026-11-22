@@ -1,7 +1,9 @@
 package com.crazyalloy.revival;
 
 import com.crazyalloy.revival.config.RevivalConfig;
+import com.crazyalloy.revival.registry.ModAttachments;
 import com.crazyalloy.revival.registry.ModBlockEntities;
+import com.crazyalloy.revival.registry.ModDataComponents;
 import com.crazyalloy.revival.registry.ModBlocks;
 import com.crazyalloy.revival.registry.ModConditions;
 import com.crazyalloy.revival.registry.ModCreativeTabs;
@@ -36,6 +38,8 @@ public final class CrazyAlloyRevival {
         ModFluids.FLUID_TYPES.register(modBus);
         ModFluids.FLUIDS.register(modBus);
         ModBlocks.BLOCKS.register(modBus);
+        ModDataComponents.COMPONENTS.register(modBus);
+        ModAttachments.ATTACHMENTS.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modBus);
         ModEntities.ENTITIES.register(modBus);

@@ -1,0 +1,55 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "cases": [
+      {
+        "when": "fire",
+        "model": {
+          "type": "minecraft:model",
+          "model": "crazyalloy_revival:item/wizard_staff_fire"
+        }
+      },
+      {
+        "when": "water",
+        "model": {
+          "type": "minecraft:model",
+          "model": "crazyalloy_revival:item/wizard_staff_water"
+        }
+      },
+      {
+        "when": "poison",
+        "model": {
+          "type": "minecraft:model",
+          "model": "crazyalloy_revival:item/wizard_staff_poison"
+        }
+      },
+      {
+        "when": "air",
+        "model": {
+          "type": "minecraft:model",
+          "model": "crazyalloy_revival:item/wizard_staff_air"
+        }
+      },
+      {
+        "when": "lightning",
+        "model": {
+          "type": "minecraft:model",
+          "model": "crazyalloy_revival:item/wizard_staff_lightning"
+        }
+      },
+      {
+        "when": "earth",
+        "model": {
+          "type": "minecraft:model",
+          "model": "crazyalloy_revival:item/wizard_staff_earth"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "crazyalloy_revival:item/wizard_staff"
+    }
+  }
+}

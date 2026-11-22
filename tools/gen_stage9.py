@@ -57,6 +57,20 @@ def gen_assets():
         flat_item(i)
     handheld_item("mushroom_sword")
     shield_models()
+    flat_item("shadow_fragment")
+    flat_item("ent_heart")
+    staff_models()
+
+
+def staff_models():
+    """Wizard Staff: one handheld model per selected element (its tip glows in the element's colour), picked by the first
+    custom model data string, which the staff sets when an element is selected."""
+    for b in [None] + BOOKS:
+        name = "wizard_staff" if b is None else f"wizard_staff_{b}"
+        write(f"{A}/models/item/{name}.json", {"parent": "minecraft:item/handheld_rod", "textures": {"layer0": f"{NS}:item/{name}"}})
+    write(f"{A}/items/wizard_staff.json", {"model": {"type": "minecraft:select", "property": "minecraft:custom_model_data", "index": 0,
+        "cases": [{"when": b, "model": {"type": "minecraft:model", "model": f"{NS}:item/wizard_staff_{b}"}} for b in BOOKS],
+        "fallback": {"type": "minecraft:model", "model": f"{NS}:item/wizard_staff"}}})
 
 
 def gen_sounds():
@@ -129,6 +143,16 @@ def gen_loot():
     entity("mushroom_man", [pool("minecraft:red_mushroom", 0.0, 2.0), pool("minecraft:brown_mushroom", 0.0, 1.0)])
     entity("mushroom_cyclops", [pool("blue_mushroom", 1.0, 3.0), pool("minecraft:brown_mushroom", 0.0, 2.0)])
     entity("mushroomcopter", [pool("mushroom_spore", 0.0, 2.0), pool("purple_mushroom", 0.0, 1.0)])
+    # Revival choices (the original does not say where they come from): the Ent drops 1-2 Ent Hearts, the Shadow Eye
+    # 1-3 Shadow Fragments and the Shadow Wanderer 1-2, each +0-1 per Looting level. Added to their stage 8 tables.
+    def add_pool(name, item, lo, hi):
+        path = f"{D}/loot_table/entities/{name}.json"
+        table = json.load(open(path, encoding="utf-8"))
+        table["pools"] = [p for p in table["pools"] if all(e.get("name") != ns(item) for e in p["entries"])] + [pool(item, lo, hi)]
+        write(path, table)
+    add_pool("ent", "ent_heart", 1.0, 2.0)
+    add_pool("shadow_eye", "shadow_fragment", 1.0, 3.0)
+    add_pool("shadow_wanderer", "shadow_fragment", 1.0, 2.0)
 
 
 # =================================================================== tags
@@ -136,7 +160,7 @@ def gen_tags():
     n = lambda *xs: [ns(x) for x in xs]
     tag("item", NS, "mushroom_repair_materials", n("minecraft:red_mushroom", "minecraft:brown_mushroom", "blue_mushroom", "purple_mushroom"))
     tag("item", "minecraft", "swords", n("mushroom_sword"))
-    tag("item", "minecraft", "enchantable/durability", n("mushroom_shield") + [ns(f"{b}_book") for b in BOOKS])
+    tag("item", "minecraft", "enchantable/durability", n("mushroom_shield"))
     tag("item", "c", "tools/shield", n("mushroom_shield"))
     tag("entity_type", "minecraft", "fall_damage_immune", n("mushroomcopter"))
     tag("entity_type", NS, "mushroom_creatures", n(*MOBS))
@@ -294,6 +318,10 @@ def gen_advancements():
     adv("one_eyed_giant", "into_the_mushroom_depths", "mushroom_cyclops_spawn_egg", "goal", {"kill": kill("mushroom_cyclops")})
     adv("the_top_of_the_base", "into_the_mushroom_depths", "fire_book", "goal",
         {b: has(f"{b}_book") for b in BOOKS}, requirements=[BOOKS])
+    # Wizard magic: buying the staff, then one advancement per element learned (awarded by the game when a book is used).
+    adv("wizard_staff", "the_top_of_the_base", "wizard_staff", "goal", {"staff": has("wizard_staff")})
+    for b in BOOKS:
+        adv(f"learn_{b}", "wizard_staff", f"{b}_book", "task", {"learned": {"trigger": "minecraft:impossible"}})
 
 
 def generate():

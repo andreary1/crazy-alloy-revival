@@ -1,0 +1,24 @@
+{
+  "display": {
+    "icon": {
+      "id": "crazyalloy_revival:fire_book",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancements.crazyalloy_revival.learn_fire.title"
+    },
+    "description": {
+      "translate": "advancements.crazyalloy_revival.learn_fire.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "learned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "crazyalloy_revival:wizard_staff"
+}
